@@ -29,15 +29,19 @@ class ImporterEx:
     Button(text='File Open', command=callback).pack(fill=X)
 
     if file_extension == ".xlsx":
+
         importer = ExcelImporter(filePath = filePath)
+
+        ###### Fuselage ######
+
+        fuselageLength = ExcelImporter.fuselageLength(importer)
+        fuselageRadius = ExcelImporter.fuselageRadius(importer)
+        fuselageRadius2 = ExcelImporter.fuselageRadius2(importer)
+
+    elif file_extension == '.txt':
+        pass
     else:
         print ("File type is not supported in this application. Please choose a different format")
 
-
-    ###### Fuselage ######
-
-    fuselageLength = ExcelImporter.fuselageLength(importer)
-    fuselageRadius = ExcelImporter.fuselageRadius(importer)
-    fuselageRadius2 = ExcelImporter.fuselageRadius2(importer)
 
     print fuselageLength
