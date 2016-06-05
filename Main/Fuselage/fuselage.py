@@ -294,8 +294,8 @@ class Fuselage(GeomBase):
     def newTailSlenderness(self):
         if self.tailDivergenceAngle > 24:
             if askyesno("Warning",
-                        "The tailcone divergence angle is greater than 24 deg. This is detrimental for form drag. "
-                        "Would you like to search for the minimum feasible slenderness ratio ? "):
+                        "The tail-cone divergence angle is greater than 24 deg. This is detrimental for form drag. "
+                        "Would you like to search for the minimum feasible slenderness ratio? "):
 
                 slendernessIncrement = 0.01
                 while self.tailDivergenceAngle > 24:
