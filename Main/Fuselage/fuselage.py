@@ -61,10 +61,37 @@ class Fuselage(GeomBase):
         """
         return 5.
 
+    @Input
+    def noseSections(self):
+        """
+        Aircraft nose sections magnitude percentage
+        :Unit: [ ]
+        :rtype: collections.Sequence[float]
+        """
+        return [10, 90, 100]
+
+    @Input
+    def tailSections(self):
+        """
+        Aircraft tail sections magnitude percentage
+        :Unit: [ ]
+        :rtype: collections.Sequence[float]
+        """
+        return [100, 10]
+
+    @Input
+    def cylinderSections(self):
+        """
+        Aircraft cylinder sections magnitude percentage
+        :Unit: [ ]
+        :rtype: collections.Sequence[float]
+        """
+        return [100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+
     window = Tk()
     window.wm_withdraw()
 
-    # ### Input required from aircraft ###
+    # ### Input required from aircraft ###################################################################
 
     if __name__ == '__main__':
         settable = True
@@ -75,7 +102,7 @@ class Fuselage(GeomBase):
     def maCruise(self):
         return 0.77
 
-    # ### Attributes ###
+    # ### Attributes ####################################################################################
 
     @Attribute
     def maDD(self):
@@ -113,10 +140,172 @@ class Fuselage(GeomBase):
         """
         return self.fuselageLength - (self.noseLength + self.tailLength)
 
+    @Attribute
+    def noseSectionRadius(self):
+        """
+        Section radius multiplied by the radius distribution
+        through the length. Note that the numbers are percentages.
+        :Unit: [ ]
+        :rtype: collections.Sequence[float]
+        """
+        if self.noseSections[-1] / 100:
+            self.noseSections[-1] = 100
 
+        return [i * self.fuselageDiameter / 2 / 100 for i in self.noseSections]
 
+    @Attribute
+    def noseSectionLength(self):
+        """
+        Section length is determined by dividing the fuselage
+        length by the number of fuselage sections.
+        :Unit: [ ]
+        :rtype: float
+        """
+        return self.noseLength / (len(self.noseSectionRadius) - 1)
 
+    @Part
+    def noseSectionCurves(self):
+        """
+        Sequence of curves composing the nose section of fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return Circle(quantify=len(self.noseSections),
+                      radius=self.noseSectionRadius[child.index],
+                      position=self.position.translate('z',
+                                                       child.index *
+                                                       self.noseSectionLength))
 
+    @Part
+    def noseCap(self):
+        """
+        Extreme point of fuselage nose, represented by a sphere
+        :Unit: [ ]
+        :rtype:
+        """
+        return Sphere(radius=self.noseSectionRadius[0],
+                      position=self.position.translate('z',
+                                                       0))
+
+    @Attribute
+    def cylinderSectionRadius(self):
+        """
+        Section radius multiplied by the radius distribution
+        through the length. Note that the numbers are percentages.
+        :Unit: [ ]
+        :rtype: collections.Sequence[float]
+        """
+        return [i * self.fuselageDiameter / 2 / 100 for i in self.cylinderSections]
+
+    @Attribute
+    def cylinderSectionLength(self):
+        """
+        Section length is determined by dividing the fuselage
+        length by the number of fuselage sections.
+        :Unit: [ ]
+        :rtype: float
+        """
+        if self.tailSlenderness < 1.0:
+            showwarning('Warning', 'Tail slenderness ratios < 1 are detrimental for profile drag.')
+        return self.cylinderLength / (len(self.cylinderSections) - 1)
+
+    @Part
+    def cylinderSectionCurves(self):
+        """
+        Sequence of curves composing the cylindrical section of fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return Circle(quantify=len(self.cylinderSections),
+                      radius=self.cylinderSectionRadius[child.index],
+                      position=self.position.translate('z',
+                                                       child.index * self.cylinderSectionLength + self.noseLength))
+
+    @Attribute
+    def tailSectionRadius(self):
+        """
+        Section radius multiplied by the radius distribution
+        through the length. Note that the numbers are percentages.
+        :Unit: [ ]
+        :rtype: collections.Sequence[float]
+        """
+        if self.tailSections[0] / 100:
+            self.tailSections[0] = 100
+        return [i * self.fuselageDiameter / 2 / 100 for i in self.tailSections]
+
+    @Attribute
+    def tailSectionLength(self):
+        """
+        Section length is determined by dividing the fuselage
+        length by the number of fuselage sections.
+        :Unit: [ ]
+        :rtype: float
+        """
+        return self.tailLength / (len(self.tailSectionRadius) - 1)
+
+    @Part
+    def tailSectionCurves(self):
+        """
+        Sequence of curves composing the tail section of fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return Circle(quantify=len(self.tailSections),
+                      radius=self.tailSectionRadius[child.index],
+                      position=self.position.translate('y', child.index * self.tailSectionLength *
+                                                       tan(radians(self.tailUpAngle)),
+                                                       'z',
+                                                       child.index * self.tailSectionLength + self.noseLength +
+                                                       self.cylinderLength))
+
+    @Attribute
+    def fuselageSectionCurves(self):
+        """
+        Sequence of curves composing the fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return self.noseSectionCurves + self.cylinderSectionCurves + self.tailSectionCurves
+
+    @Part
+    def loft(self):
+        """
+        3D solid representation of the fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return LoftedSolid(profiles=self.fuselageSectionCurves, color="yellow")
+
+    @Attribute
+    def tailDivergenceAngle(self):
+        """
+        Aircraft tail divergence angle, evaluated from 4 characteristic points of the tail sections
+        :Unit: [deg]
+        :rtype: float
+        """
+        return degrees(atan(((self.tailSectionCurves[1].center.y - self.tailSectionCurves[1].radius) -
+                             (self.tailSectionCurves[0].center.y - self.tailSectionCurves[0].radius)) /
+                            (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)) -
+                       atan(((self.tailSectionCurves[1].center.y + self.tailSectionCurves[1].radius) -
+                             (self.tailSectionCurves[0].center.y + self.tailSectionCurves[0].radius)) /
+                            (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)))
+
+    @Attribute
+    def newTailSlenderness(self):
+        if self.tailDivergenceAngle > 24:
+            if askyesno("Warning",
+                        "The tailcone divergence angle is greater than 24 deg. This is detrimental for form drag. "
+                        "Would you like to search for the minimum feasible slenderness ratio ? "):
+
+                slendernessIncrement = 0.01
+                while self.tailDivergenceAngle > 24:
+                    self.tailSlenderness += slendernessIncrement
+
+                return "The new value for tail slenderness is " + repr(self.tailSlenderness)
+            else:
+                return "Divergence angle is too high."
+        else:
+            return "No change needed"
 
 if __name__ == '__main__':
     from parapy.gui import display
