@@ -40,8 +40,10 @@ class ImporterEx:
 
     elif file_extension == '.txt':
         pass
+
+    elif file_extension == '.dat':
+
+        airfoilPath = str(filePath)
+
     else:
         print ("File type is not supported in this application. Please choose a different format")
-
-
-    print fuselageLength
