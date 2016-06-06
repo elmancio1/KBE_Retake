@@ -51,6 +51,18 @@ class Wing(GeomBase):
         return 'low wing'
 
     @Input
+    def dihedral(self):
+        """
+        Wing dihedral angle
+        :Unit: [deg]
+        :rtype: float
+        """
+        if self.wingPosition == 'low wing':
+            return 3 - self.sweep25 / 10 + 2
+        elif self.wing_position == 'high wing':
+            return 3 - self.sweep25 / 10 - 2
+
+    @Input
     def airfoilRoot(self):
         """
         Path to airfoil file for wing root
@@ -254,17 +266,6 @@ class Wing(GeomBase):
         """
         return self.wingLoading / self.dynamicPressure
 
-    @Attribute
-    def dihedral(self):
-        """
-        Wing dihedral angle
-        :Unit: [deg]
-        :rtype: float
-        """
-        if self.wingPosition == 'low wing':
-            return 3 - self.sweep25 / 10 + 2
-        elif self.wing_position == 'high wing':
-            return 3 - self.sweep25 / 10 - 2
 
     @Attribute
     def tcRatio(self):
