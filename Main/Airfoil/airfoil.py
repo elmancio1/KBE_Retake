@@ -49,13 +49,14 @@ class Airfoil(GeomBase):
 
         :rtype: collections.Sequence[Point]
         """
-        with open(self.airfoilData, 'r') as datafile:  # this statement
-            # automatically closes the data file at the end of the code block.
+        with open(self.airfoilData, 'r') as datafile:  # this statement automatically closes the data file
+            # at the end of the code block.
             points = []
             for line in datafile:
                 x, y = line.split(' ', 1)
-                points.append(float(y)*self.chord)  # Convert the string to a number
-                #  and make a Point of the coordinates, already scaled by the chord
+                points.append(
+                    Point(float(x)*self.chord, float(y)*self.chord))  # Convert the string to a number
+                #  and make a Point of the coordinates
         return points
 
     @Attribute
