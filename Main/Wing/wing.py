@@ -4,6 +4,7 @@ from parapy.core import *
 from math import *
 from Tkinter import *
 from tkMessageBox import *
+from Main.Airfoil.airfoil import Airfoil
 
 
 class Wing(GeomBase):
@@ -266,7 +267,6 @@ class Wing(GeomBase):
         """
         return self.wingLoading / self.dynamicPressure
 
-
     @Attribute
     def tcRatio(self):
         """
@@ -277,6 +277,28 @@ class Wing(GeomBase):
         return min(0.18, (((cos(radians(self.sweep50))**3) * (self.maTechnology - self.maDD *
                             cos(radians(self.sweep50)))) - 0.115 * self.clCruise**1.5) /
                             cos(radians(self.sweep50))**2)
+
+    @Part
+    def curveRoot(self):
+        """
+        Root airfoil curve
+        :Unit: [ ]
+        :rtype:
+        """
+        return Airfoil(airfoilData=self.airfoilRoot,
+                       chord=self.chordRoot,
+                       position=self.location.translate('x',
+                                                        self.cMAC))
+
+    @Part
+    def curveTip(self):
+        """
+        Tip airfoil curve
+        :Unit: [ ]
+        :rtype:
+        """
+        return Airfoil(airfoilData=self.airfoilTip,
+                       chord=self.chordTip)
 
 if __name__ == '__main__':
     from parapy.gui import display
