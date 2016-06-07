@@ -33,7 +33,7 @@ class Wing(GeomBase):
 
         if not self.newAirfoil:
 
-            return 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Airfoils\NACA_0012.dat'
+            return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
         else:
             def callback():
                 name = askopenfilename()
@@ -55,7 +55,7 @@ class Wing(GeomBase):
 
         if not self.newAirfoil:
 
-            return 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Airfoils\NACA_0012.dat'
+            return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
         else:
             def callback():
                 name = askopenfilename()
@@ -281,6 +281,33 @@ class Wing(GeomBase):
         return self.taperRatio * self.chordRoot
 
     @Attribute
+    def chord35(self):
+        """
+        Wing chord at 35% of span, used in engines positioning
+        :Unit: [m]
+        :rtype: float
+        """
+        return self.chordRoot + 0.35 * self.span/2 * (tan(radians(self.sweepTE))-tan(radians(self.sweepLE)))
+
+    @Attribute
+    def chord40(self):
+        """
+        Wing chord at 40% of span, used in engines positioning
+        :Unit: [m]
+        :rtype: float
+        """
+        return self.chordRoot + 0.4 * self.span/2 * (tan(radians(self.sweepTE))-tan(radians(self.sweepLE)))
+
+    @Attribute
+    def chord70(self):
+        """
+        Wing chord at 70% of span, used in engines positioning
+        :Unit: [m]
+        :rtype: float
+        """
+        return self.chordRoot + 0.7 * self.span/2 * (tan(radians(self.sweepTE))-tan(radians(self.sweepLE)))
+
+    @Attribute
     def cMAC(self):
         """
         Wing Mean aerodynamic Chord
@@ -392,7 +419,8 @@ class Wing(GeomBase):
         :rtype:
         """
         return Airfoil(airfoilData=self.airfoilRoot,
-                       chord=self.chordRoot)
+                       chord=self.chordRoot,
+                       hidden=True)
 
     @Part
     def curveTip(self):
@@ -402,7 +430,8 @@ class Wing(GeomBase):
         :rtype:
         """
         return Airfoil(airfoilData=self.airfoilTip,
-                       chord=self.chordTip)
+                       chord=self.chordTip,
+                       hidden=True)
 
     @Part
     def curveRootPos(self):
@@ -412,7 +441,8 @@ class Wing(GeomBase):
         :rtype:
         """
         return TranslatedCurve(curve_in=self.curveRoot.crv,
-                               displacement=Vector(0, self.vertPos, self.longPos))
+                               displacement=Vector(0, self.vertPos, self.longPos),
+                               hidden=True)
 
     @Part
     def curveTipPos(self):
@@ -424,7 +454,8 @@ class Wing(GeomBase):
         return TranslatedCurve(curve_in=self.curveTip.crv,
                                displacement=Vector(self.span/2,
                                                    self.vertPos + self.span/2 * tan(radians(self.dihedral)),
-                                                   self.longPos + self.span/2 * tan(radians(self.sweepLE))))
+                                                   self.longPos + self.span/2 * tan(radians(self.sweepLE))),
+                               hidden=True)
 
 #    @Part
 #    def curveRootPos2(self):

@@ -32,7 +32,7 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageDiameter',
-                              Default=7.0).getValue())
+                              Default=4.0).getValue())
 
 
     @Input
@@ -175,30 +175,6 @@ class Fuselage(GeomBase):
         """
         return self.noseLength / (len(self.noseSectionRadius) - 1)
 
-    @Part
-    def noseSectionCurves(self):
-        """
-        Sequence of curves composing the nose section of fuselage
-        :Unit: [ ]
-        :rtype:
-        """
-        return Circle(quantify=len(self.noseSections),
-                      radius=self.noseSectionRadius[child.index],
-                      position=self.position.translate('z',
-                                                       child.index *
-                                                       self.noseSectionLength))
-
-    @Part
-    def noseCap(self):
-        """
-        Extreme point of fuselage nose, represented by a sphere
-        :Unit: [ ]
-        :rtype:
-        """
-        return Sphere(radius=self.noseSectionRadius[0],
-                      position=self.position.translate('z',
-                                                       0))
-
     @Attribute
     def cylinderSectionRadius(self):
         """
@@ -220,18 +196,6 @@ class Fuselage(GeomBase):
         if self.tailSlenderness < 1.0:
             showwarning('Warning', 'Tail slenderness ratios < 1 are detrimental for profile drag.')
         return self.cylinderLength / (len(self.cylinderSections) - 1)
-
-    @Part
-    def cylinderSectionCurves(self):
-        """
-        Sequence of curves composing the cylindrical section of fuselage
-        :Unit: [ ]
-        :rtype:
-        """
-        return Circle(quantify=len(self.cylinderSections),
-                      radius=self.cylinderSectionRadius[child.index],
-                      position=self.position.translate('z',
-                                                       child.index * self.cylinderSectionLength + self.noseLength))
 
     @Attribute
     def tailSectionRadius(self):
@@ -255,21 +219,6 @@ class Fuselage(GeomBase):
         """
         return self.tailLength / (len(self.tailSectionRadius) - 1)
 
-    @Part
-    def tailSectionCurves(self):
-        """
-        Sequence of curves composing the tail section of fuselage
-        :Unit: [ ]
-        :rtype:
-        """
-        return Circle(quantify=len(self.tailSections),
-                      radius=self.tailSectionRadius[child.index],
-                      position=self.position.translate('y', child.index * self.tailSectionLength *
-                                                       tan(radians(self.tailUpAngle)),
-                                                       'z',
-                                                       child.index * self.tailSectionLength + self.noseLength +
-                                                       self.cylinderLength))
-
     @Attribute
     def fuselageSectionCurves(self):
         """
@@ -278,15 +227,6 @@ class Fuselage(GeomBase):
         :rtype:
         """
         return self.noseSectionCurves + self.cylinderSectionCurves + self.tailSectionCurves
-
-    @Part
-    def loft(self):
-        """
-        3D solid representation of the fuselage
-        :Unit: [ ]
-        :rtype:
-        """
-        return LoftedSolid(profiles=self.fuselageSectionCurves, color="yellow")
 
     @Attribute
     def tailDivergenceAngle(self):
@@ -318,6 +258,72 @@ class Fuselage(GeomBase):
                 return "Divergence angle is too high."
         else:
             return "No change needed"
+
+# #### part ############################################################################################
+
+    @Part
+    def noseSectionCurves(self):
+        """
+        Sequence of curves composing the nose section of fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return Circle(quantify=len(self.noseSections),
+                      radius=self.noseSectionRadius[child.index],
+                      position=self.position.translate('z',
+                                                       child.index *
+                                                       self.noseSectionLength),
+                      hidden=True)
+
+    @Part
+    def noseCap(self):
+        """
+        Extreme point of fuselage nose, represented by a sphere
+        :Unit: [ ]
+        :rtype:
+        """
+        return Sphere(radius=self.noseSectionRadius[0],
+                      position=self.position.translate('z',
+                                                       0))
+
+    @Part
+    def cylinderSectionCurves(self):
+        """
+        Sequence of curves composing the cylindrical section of fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return Circle(quantify=len(self.cylinderSections),
+                      radius=self.cylinderSectionRadius[child.index],
+                      position=self.position.translate('z',
+                                                       child.index * self.cylinderSectionLength + self.noseLength),
+                      hidden=True)
+
+    @Part
+    def tailSectionCurves(self):
+        """
+        Sequence of curves composing the tail section of fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return Circle(quantify=len(self.tailSections),
+                      radius=self.tailSectionRadius[child.index],
+                      position=self.position.translate('y', child.index * self.tailSectionLength *
+                                                       tan(radians(self.tailUpAngle)),
+                                                       'z',
+                                                       child.index * self.tailSectionLength + self.noseLength +
+                                                       self.cylinderLength),
+                      hidden=True)
+
+    @Part
+    def loft(self):
+        """
+        3D solid representation of the fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return LoftedSolid(profiles=self.fuselageSectionCurves, color="yellow")
+
 
 if __name__ == '__main__':
     from parapy.gui import display
