@@ -3,12 +3,22 @@ from openpyxl import load_workbook
 
 class ExcelImporter:
 
-    def __init__(self, filePath):
-        self.filePath= filePath
-        self.excelFile = load_workbook(self.filePath)
-        self.sheet=self.excelFile['Sheet1']
+    filePath= 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Files\input.xlsx'
+    excelFile = load_workbook(filePath)
+    sheet = excelFile['Sheet1']
 
     wb = Workbook()
+    componentRead = None
+    row = 1
+
+    while componentRead != 'EOF':
+        print row
+        componentRead = str(sheet['A'+str(row)].value)
+        print componentRead
+        row += 1
+
+
+
 
     def fuselageLength(self):
         importValue = float(self.sheet['C5'].value)
