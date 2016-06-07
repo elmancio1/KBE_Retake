@@ -127,6 +127,24 @@ class Wing(GeomBase):
         """
         return 10000.
 
+    @Input(settable=settable)
+    def enginePos(self):
+        """
+        Engine position, could be either "wing" or "fuselage" mounted
+        :Unit: []
+        :rtype: string
+        """
+        return 'wing'
+
+    @Input(settable=settable)
+    def fuselageLength(self):
+        """
+        Aircraft fuselage length
+        :Unit: [m]
+        :rtype: float
+        """
+        return 35.
+
     # ### Attributes ####################################################################################
 
     @Attribute
@@ -299,6 +317,31 @@ class Wing(GeomBase):
         """
         return Airfoil(airfoilData=self.airfoilTip,
                        chord=self.chordTip)
+
+    @Attribute
+    def posFraction(self):
+        """
+        Wing position fraction of the fuselage, due to engine position
+        :Unit: [m]
+        :rtype: float
+        """
+        if self.enginePos == 'wing':
+            return 0.5
+        elif self.enginePos == 'fuselage':
+            return 0.6
+        else:
+            showwarning("Warning", "Please choose between wing or fuselage mounted")
+            return 0.5
+
+    @Attribute
+    def longPos(self):
+        """
+        Wing root longitudinal position, in order to have the AC in the selected fuselage fraction
+        :Unit: [m]
+        :rtype: float
+        """
+        return (self.posFraction * self.fuselageLength) - (0.25*self.chordRoot) - \
+               (self.cMACyPos * tan(radians(self.sweep25)))
 
 if __name__ == '__main__':
     from parapy.gui import display
