@@ -642,8 +642,6 @@ class Engine(GeomBase):
         return Fused(self.nacelle, self.gasGenerator,
                      hidden=True)
 
-
-
     @Part
     def engineLeft(self):
         """
