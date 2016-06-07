@@ -2,6 +2,7 @@ import os
 from Tkinter import *
 from tkFileDialog import askopenfilename
 from Importers.excelImporter import ExcelImporter
+from Importers.excelAdvanced import ExcelAdvanced
 
 class ImporterEx:
 
@@ -30,13 +31,14 @@ class ImporterEx:
 
     if file_extension == ".xlsx":
 
-        importer = ExcelImporter(filePath = filePath)
+        #importer = ExcelImporter(filePath=filePath)
+        importerADV = ExcelAdvanced(filePath=filePath)
 
-        ###### Fuselage ######
+        ###### Fuselage #####
 
-        fuselageLength = ExcelImporter.fuselageLength(importer)
-        fuselageRadius = ExcelImporter.fuselageRadius(importer)
-        fuselageRadius2 = ExcelImporter.fuselageRadius2(importer)
+        fuselageLength = ExcelAdvanced.fuselageLength(importerADV)
+        fuselageRadius = ExcelAdvanced.fuselageRadius(importerADV)
+        fuselageRadius2 = ExcelAdvanced.fuselageRadius2(importerADV)
 
     elif file_extension == '.txt':
         pass
