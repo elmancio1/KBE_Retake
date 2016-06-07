@@ -110,7 +110,7 @@ class Fuselage(GeomBase):
 
     @Input(settable=settable)
     def maCruise(self):
-        return float(Importer(Component='Aircraft',
+        return float(Importer(Component='Performance',
                               VariableName='M cruise',
                               Default=0.7).getValue())
 

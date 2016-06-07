@@ -96,7 +96,7 @@ class Engine(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        return string(Importer(Component='Engine',
+        return str(Importer(Component='Engine',
                                VariableName='cowling Type',
                                Default='partial').getValue())
 
@@ -118,7 +118,7 @@ class Engine(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
-        return string(Importer(Component='Engine',
+        return str(Importer(Component='Engine',
                                VariableName='engine Position',
                                Default='wing').getValue())
 
