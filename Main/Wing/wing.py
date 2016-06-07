@@ -1,9 +1,11 @@
 from __future__ import division
+from os import *
 from parapy.geom import *
 from parapy.core import *
 from math import *
 from Tkinter import *
 from tkMessageBox import *
+from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 
 
@@ -11,6 +13,59 @@ class Wing(GeomBase):
     """
     Basic class Wing
     """
+
+    @Input
+    def newAirfoil(self):
+        """
+        Boolean input to choose between default path or user chosen.
+
+        :rtype: boolean
+        """
+        return False
+
+    @Attribute
+    def airfoilRoot(self):
+        """
+        Path to airfoil file for wing root. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Airfoils\NACA_0012.dat'
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
+
+    @Attribute
+    def airfoilTip(self):
+        """
+        Path to airfoil file for wing tip. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Airfoils\NACA_0012.dat'
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
 
     @Input
     def aspectRatio(self):
@@ -62,24 +117,6 @@ class Wing(GeomBase):
             return 3 - self.sweep25 / 10 + 2
         elif self.wingPosition == 'high wing':
             return 3 - self.sweep25 / 10 - 2
-
-    @Input
-    def airfoilRoot(self):
-        """
-        Path to airfoil file for wing root
-
-        :rtype: string
-        """
-        return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
-
-    @Input
-    def airfoilTip(self):
-        """
-        Path to airfoil file for wing tip
-
-        :rtype: string
-        """
-        return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
 
     window = Tk()
     window.wm_withdraw()
