@@ -20,8 +20,8 @@ class Fuselage(GeomBase):
         :rtype: float
         """
         return float(Importer(Component='Fuselage',
-                        VariableName='fuselageLength',
-                        Default=30.0).getValue())
+                              VariableName='fuselageLength',
+                              Default=30.0).getValue())
 
     @Input
     def fuselageDiameter(self):
@@ -31,8 +31,8 @@ class Fuselage(GeomBase):
         :rtype: float
         """
         return float(Importer(Component='Fuselage',
-                        VariableName='fuselageDiameter',
-                        Default=7.0).getValue())
+                              VariableName='fuselageDiameter',
+                              Default=7.0).getValue())
 
 
     @Input
@@ -57,8 +57,8 @@ class Fuselage(GeomBase):
         :rtype: float
         """
         return float(Importer(Component='Fuselage',
-                        VariableName='tailSlenderness',
-                        Default=3.0).getValue())
+                              VariableName='tailSlenderness',
+                              Default=3.0).getValue())
 
     @Input
     def tailUpAngle(self):
@@ -68,8 +68,8 @@ class Fuselage(GeomBase):
         :rtype: float
         """
         return float(Importer(Component='Fuselage',
-                        VariableName='tailUpAngle',
-                        Default=5.0).getValue())
+                              VariableName='tailUpAngle',
+                              Default=5.0).getValue())
 
     @Input
     def noseSections(self):
@@ -111,8 +111,8 @@ class Fuselage(GeomBase):
     @Input(settable=settable)
     def maCruise(self):
         return float(Importer(Component='Aircraft',
-                        VariableName='M cruise',
-                        Default=0.7).getValue())
+                              VariableName='M cruise',
+                              Default=0.7).getValue())
 
     # ### Attributes ####################################################################################
 
