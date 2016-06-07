@@ -33,7 +33,7 @@ class WingEx(GeomBase):
 
         if not self.newAirfoil:
 
-            return 'DefaultPath'
+            return '..\Input\Airfoils\NACA_0012.dat'
         else:
             def callback():
                 name = askopenfilename()
@@ -54,7 +54,7 @@ class WingEx(GeomBase):
 
         if not self.newAirfoil:
 
-            return 'DefaultPath'
+            return '..\Input\Airfoils\NACA_0012.dat'
         else:
             def callback():
                 name = askopenfilename()
