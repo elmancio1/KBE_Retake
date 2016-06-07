@@ -60,7 +60,7 @@ class Wing(GeomBase):
         """
         if self.wingPosition == 'low wing':
             return 3 - self.sweep25 / 10 + 2
-        elif self.wing_position == 'high wing':
+        elif self.wingPosition == 'high wing':
             return 3 - self.sweep25 / 10 - 2
 
     @Input
@@ -84,7 +84,7 @@ class Wing(GeomBase):
     window = Tk()
     window.wm_withdraw()
 
-    # ### Input required from aircraft ###################################################################
+    # ### Input required from aircraft ################################################################################
 
     if __name__ == '__main__':  # permit the modification of the input only when running from wing
         settable = True
@@ -145,7 +145,16 @@ class Wing(GeomBase):
         """
         return 35.
 
-    # ### Attributes ####################################################################################
+    @Input(settable=settable)
+    def fuselageDiameter(self):
+        """
+        Aircraft fuselage diameter
+        :Unit: [m]
+        :rtype: float
+        """
+        return 4.
+
+    # ### Attributes ##################################################################################################
 
     @Attribute
     def maDD(self):
@@ -296,28 +305,6 @@ class Wing(GeomBase):
                             cos(radians(self.sweep50)))) - 0.115 * self.clCruise**1.5) /
                             cos(radians(self.sweep50))**2)
 
-    @Part
-    def curveRoot(self):
-        """
-        Root airfoil curve
-        :Unit: [ ]
-        :rtype:
-        """
-        return Airfoil(airfoilData=self.airfoilRoot,
-                       chord=self.chordRoot,
-                       position=self.location.translate('x',
-                                                        self.cMAC))
-
-    @Part
-    def curveTip(self):
-        """
-        Tip airfoil curve
-        :Unit: [ ]
-        :rtype:
-        """
-        return Airfoil(airfoilData=self.airfoilTip,
-                       chord=self.chordTip)
-
     @Attribute
     def posFraction(self):
         """
@@ -342,6 +329,94 @@ class Wing(GeomBase):
         """
         return (self.posFraction * self.fuselageLength) - (0.25*self.chordRoot) - \
                (self.cMACyPos * tan(radians(self.sweep25)))
+
+    @Attribute
+    def vertPos(self):
+        """
+        Wing root vertical position, depending on the selected aircraft configuration
+        :Unit: [m]
+        :rtype: float
+        """
+        if self.wingPosition == 'high wing':
+            return self.fuselageDiameter/2 - self.curveRoot.maxY
+        elif self.wingPosition == 'low wing':
+            return -self.fuselageDiameter/2 - self.curveRoot.minY
+        else:
+            showwarning("Warning", "Please choose between high or low wing configuration")
+            return 0
+
+    # ###### Parts ####################################################################################################
+
+    @Part
+    def curveRoot(self):
+        """
+        Root airfoil curve
+
+        :rtype:
+        """
+        return Airfoil(airfoilData=self.airfoilRoot,
+                       chord=self.chordRoot)
+
+    @Part
+    def curveTip(self):
+        """
+        Tip airfoil curve
+
+        :rtype:
+        """
+        return Airfoil(airfoilData=self.airfoilTip,
+                       chord=self.chordTip)
+
+    @Part
+    def curveRootPos(self):
+        """
+        Wing root airfoil placed in the final wing position
+
+        :rtype:
+        """
+        return TranslatedCurve(curve_in=self.curveRoot.crv,
+                               displacement=Vector(0, self.vertPos, self.longPos))
+
+    @Part
+    def curveTipPos(self):
+        """
+        Wing tip airfoil placed in the final wing position
+
+        :rtype:
+        """
+        return TranslatedCurve(curve_in=self.curveTip.crv,
+                               displacement=Vector(self.span/2,
+                                                   self.vertPos + self.span/2 * tan(radians(self.dihedral)),
+                                                   self.longPos + self.span/2 * tan(radians(self.sweepLE))))
+
+#    @Part
+#    def curveRootPos2(self):
+#        return TransformedCurve(curve_in=self.curveRoot.crv,
+#                                from_position=self.curveRoot.position,
+#                                to_position=translate(self.curveTip.position,
+#                                                      'z', self.longPos,
+#                                                      'y', self.vertPos))
+
+    @Part
+    def rightWing(self):
+        """
+        Right wing solid representation
+
+        :rtype:
+        """
+        return LoftedSolid([self.curveRootPos, self.curveTipPos])
+
+    @Part
+    def leftWing(self):
+        """
+        Right wing solid representation
+
+        :rtype:
+        """
+        return MirroredShape(shape_in=self.rightWing,
+                             reference_point=self.rightWing.position,
+                             vector1=self.rightWing.position.Vy,
+                             vector2=self.rightWing.position.Vz)
 
 if __name__ == '__main__':
     from parapy.gui import display
