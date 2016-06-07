@@ -1,15 +1,70 @@
 from __future__ import division
-from Example.importerEx import ImporterEx
 from parapy.geom import *
 from parapy.core import *
 from math import *
 from Tkinter import *
 from tkMessageBox import *
+from Main.Airfoil.airfoil import Airfoil
+from tkFileDialog import askopenfilename
+
 
 class WingEx(GeomBase):
     """
     Basic class Wing
     """
+
+
+    @Input
+    def newAirfoil(self):
+        """
+        Boolean input to choose between default path or user chosen.
+
+        :rtype: boolean
+        """
+        return False
+
+    @Attribute
+    def airfoilRoot(self):
+        """
+        Path to airfoil file for wing root. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return 'DefaultPath'
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
+
+    @Attribute
+    def airfoilTip(self):
+        """
+        Path to airfoil file for wing tip. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return 'DefaultPath'
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
 
     @Input
     def aspectRatio(self):
@@ -61,24 +116,6 @@ class WingEx(GeomBase):
             return 3 - self.sweep25 / 10 + 2
         elif self.wing_position == 'high wing':
             return 3 - self.sweep25 / 10 - 2
-
-    @Input
-    def airfoilRoot(self):
-        """
-        Path to airfoil file for wing root
-
-        :rtype: string
-        """
-        return ImporterEx.airfoilPath
-
-    @Input
-    def airfoilTip(self):
-        """
-        Path to airfoil file for wing tip
-
-        :rtype: string
-        """
-        return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
 
     window = Tk()
     window.wm_withdraw()
@@ -266,7 +303,6 @@ class WingEx(GeomBase):
         """
         return self.wingLoading / self.dynamicPressure
 
-
     @Attribute
     def tcRatio(self):
         """
@@ -277,6 +313,28 @@ class WingEx(GeomBase):
         return min(0.18, (((cos(radians(self.sweep50))**3) * (self.maTechnology - self.maDD *
                             cos(radians(self.sweep50)))) - 0.115 * self.clCruise**1.5) /
                             cos(radians(self.sweep50))**2)
+
+    @Part
+    def curveRoot(self):
+        """
+        Root airfoil curve
+        :Unit: [ ]
+        :rtype:
+        """
+        return Airfoil(airfoilData=self.airfoilRoot,
+                       chord=self.chordRoot,
+                       position=self.location.translate('x',
+                                                        self.cMAC))
+
+    @Part
+    def curveTip(self):
+        """
+        Tip airfoil curve
+        :Unit: [ ]
+        :rtype:
+        """
+        return Airfoil(airfoilData=self.airfoilTip,
+                       chord=self.chordTip)
 
 if __name__ == '__main__':
     from parapy.gui import display
