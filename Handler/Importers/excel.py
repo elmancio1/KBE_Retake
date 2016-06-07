@@ -3,31 +3,31 @@ from openpyxl import load_workbook
 
 class Excel:
 
-    def __init__(self, filePath = 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Files\input.xlsx'):
+    def __init__(self, Component, VariableName, Default,
+                 filePath = 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Files\input.xlsx'):
         self.excelFile = load_workbook(filePath)
         self.sheet = self.excelFile['Sheet1']
+        self.component = Component
+        self.variableName = VariableName
+        self.default = Default
+
 
     wb = Workbook()
 
-    def finder(self, componentName, valueName, Default):
+    def finder(self):
         componentRead = None
         row = 1
-
         while componentRead != 'EOF':
             valueRead = None
             componentRead = str(self.sheet['A'+str(row)].value)
-            if componentRead == componentName:
-                while valueRead != valueName and valueRead != 'EOC':
+            if componentRead == self.component:
+                while valueRead != self.variableName and valueRead != 'EOC':
                     valueRead = str(self.sheet['B'+str(row)].value)
                     row += 1
-                if valueRead == valueName:
+                if valueRead == self.variableName:
                     return self.sheet['C'+str(row-1)].value
                 elif valueRead == 'EOC':
-                    return Default
+                    return self.Default
             if componentRead == 'EOF':
-                return Default
+                return self.Default
             row += 1
-
-    def fuselageLength(self): return float(self.finder('Fuselage', 'fuselageLength', Default = 30.0))
-
-    def fuselageDiameter(self): return float(self.finder('Fuselage', 'fuselageDiameter', Default = 5.0))

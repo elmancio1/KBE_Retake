@@ -4,6 +4,7 @@ from parapy.core import *
 from math import *
 from Tkinter import *
 from tkMessageBox import *
+from Handler.importer import Importer
 
 
 class Fuselage(GeomBase):
@@ -18,7 +19,9 @@ class Fuselage(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return 35.
+        return float(Importer(Component='Fuselage',
+                        VariableName='fuselageLength',
+                        Default=30.0).VariableValue())
 
     @Input
     def fuselageDiameter(self):
@@ -27,7 +30,10 @@ class Fuselage(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return 4.
+        return float(Importer(Component='Fuselage',
+                        VariableName='fuselageDiameter',
+                        Default=7.0).VariableValue())
+
 
     @Input
     def noseSlenderness(self):

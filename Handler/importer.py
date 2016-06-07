@@ -4,7 +4,12 @@ from Tkinter import *
 from tkMessageBox import *
 
 
-class ImporterEx:
+class Importer:
+
+    def __init__(self, Component, VariableName, Default):
+        self.component = Component
+        self.variableName = VariableName
+        self.default = Default
 
     '''
     Handler that takes care of opening different format files.
@@ -31,22 +36,28 @@ class ImporterEx:
 
     ##### Importer selection based on file extension #####
 
-    if file_extension == ".xlsx":
-        from Importers.excel import Excel as Importer
-        myImporter = Importer(filePath=filePath)
+    def VariableValue(self):
+        """
 
-    elif file_extension == '.txt':
-        pass
 
-    elif file_extension == '.dat':
+        :return:
+        """
+        if self.file_extension == ".xlsx":
+            from Importers.excel import Excel as VarImporter
+            myImporter = VarImporter(Component=self.component,
+                              VariableName=self.variableName,
+                              Default=self.default,
+                              filePath=self.filePath)
+            return VarImporter.finder(myImporter)
 
-        airfoilPath = str(filePath)
+        elif self.file_extension == '.txt':
+            pass
 
-    else:
-        showwarning("File type is not supported in this application. Please choose a different format")
-        print ("File type is not supported in this application. Please choose a different format")
+        elif self.file_extension == '.dat':
 
-    ###### Fuselage #####
+            airfoilPath = str(self.filePath)
 
-    fuselageLength = Importer.fuselageLength(myImporter)
-    fuselageDiameter = Importer.fuselageDiameter(myImporter)
+        else:
+            showwarning("File type is not supported in this application. Please choose a different format")
+            print ("File type is not supported in this application. Please choose a different format")
+

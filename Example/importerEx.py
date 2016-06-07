@@ -1,7 +1,6 @@
 import os
 from Tkinter import *
 from tkFileDialog import askopenfilename
-from Importers.excelImporter import ExcelImporter
 from Importers.excelAdvanced import ExcelAdvanced
 
 class ImporterEx:
