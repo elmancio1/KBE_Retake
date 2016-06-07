@@ -15,7 +15,8 @@ class Aircraft(GeomBase):
 
     @Part
     def wingbase(self):
-        return Wing()
+        return Wing(fuselageLength=self.fuselagebase.fuselageLength,
+                    fuselageDiameter=self.fuselagebase.fuselageDiameter)
 
     @Part
     def fuselagebase(self):
