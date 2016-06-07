@@ -28,7 +28,7 @@ class Airfoil(GeomBase):
 
         :rtype: string
         """
-        return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
+        return '..\Input\Airfoils\NACA_0012.dat'
 
     @Input(settable=settable)
     def chord(self):
