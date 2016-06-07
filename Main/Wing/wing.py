@@ -1,4 +1,5 @@
 from __future__ import division
+from os import *
 from parapy.geom import *
 from parapy.core import *
 from math import *
@@ -32,7 +33,7 @@ class Wing(GeomBase):
 
         if not self.newAirfoil:
 
-            return '..\Input\Airfoils\NACA_0012.dat'
+            return 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Airfoils\NACA_0012.dat'
         else:
             def callback():
                 name = askopenfilename()
@@ -54,7 +55,7 @@ class Wing(GeomBase):
 
         if not self.newAirfoil:
 
-            return '..\Input\Airfoils\NACA_0012.dat'
+            return 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Airfoils\NACA_0012.dat'
         else:
             def callback():
                 name = askopenfilename()
