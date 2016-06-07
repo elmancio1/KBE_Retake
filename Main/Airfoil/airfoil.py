@@ -53,9 +53,25 @@ class Airfoil(GeomBase):
             # at the end of the code block.
             points = []
             for line in datafile:
-                x, y = line.split(' ', 1)
+                z, y = line.split(' ', 1)  # in order to have the airfoil already correct for wing direction
                 points.append(
-                    Point(float(x)*self.chord, float(y)*self.chord))  # Convert the string to a number
+                    Point(0, float(y)*self.chord, float(z)*self.chord))  # Convert the string to a number
+                #  and make a Point of the coordinates
+        return points
+
+    @Attribute
+    def ptsY(self):
+        """ Extract y coordinate from airfoil data
+
+        :rtype: collections.Sequence
+        """
+        # ToDo: find a smarter way to do this linked to the previous points
+        with open(self.airfoilData, 'r') as datafile:  # this statement
+            # automatically closes the data file at the end of the code block.
+            points = []
+            for line in datafile:
+                x, y = line.split(' ', 1)
+                points.append(float(y)*self.chord)  # Convert the string to a number
                 #  and make a Point of the coordinates
         return points
 
@@ -66,7 +82,7 @@ class Airfoil(GeomBase):
 
         :rtype: float
         """
-        return max(self.pts)
+        return max(self.ptsY)
 
     @Attribute
     def minY(self):
@@ -75,7 +91,7 @@ class Airfoil(GeomBase):
 
         :rtype: float
         """
-        return min(self.pts)
+        return min(self.ptsY)
 
     @Part
     def crv(self):
@@ -84,7 +100,7 @@ class Airfoil(GeomBase):
 
         :rtype:
         """
-        return FittedCurve(points=self.pts)
+        return FittedCurve(points=self.pts, tolerance=1e-06)
 
 if __name__ == '__main__':
     from parapy.gui import display
