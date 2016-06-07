@@ -21,7 +21,7 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                         VariableName='fuselageLength',
-                        Default=30.0).VariableValue())
+                        Default=30.0).getValue())
 
     @Input
     def fuselageDiameter(self):
@@ -32,7 +32,7 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                         VariableName='fuselageDiameter',
-                        Default=7.0).VariableValue())
+                        Default=7.0).getValue())
 
 
     @Input
@@ -58,7 +58,7 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                         VariableName='tailSlenderness',
-                        Default=3.0).VariableValue())
+                        Default=3.0).getValue())
 
     @Input
     def tailUpAngle(self):
@@ -69,7 +69,7 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                         VariableName='tailUpAngle',
-                        Default=5.0).VariableValue())
+                        Default=5.0).getValue())
 
     @Input
     def noseSections(self):
@@ -112,7 +112,7 @@ class Fuselage(GeomBase):
     def maCruise(self):
         return float(Importer(Component='Aircraft',
                         VariableName='M cruise',
-                        Default=0.7).VariableValue())
+                        Default=0.7).getValue())
 
     # ### Attributes ####################################################################################
 

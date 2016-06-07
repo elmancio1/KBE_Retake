@@ -36,7 +36,7 @@ class Importer:
 
     ##### Importer selection based on file extension #####
 
-    def VariableValue(self):
+    def getValue(self):
         """
 
 
