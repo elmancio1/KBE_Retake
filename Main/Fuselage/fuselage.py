@@ -56,7 +56,9 @@ class Fuselage(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
-        return 3.
+        return float(Importer(Component='Fuselage',
+                        VariableName='tailSlenderness',
+                        Default=3.0).VariableValue())
 
     @Input
     def tailUpAngle(self):
@@ -65,7 +67,9 @@ class Fuselage(GeomBase):
         :Unit: [deg]
         :rtype: float
         """
-        return 5.
+        return float(Importer(Component='Fuselage',
+                        VariableName='tailUpAngle',
+                        Default=5.0).VariableValue())
 
     @Input
     def noseSections(self):
@@ -106,7 +110,9 @@ class Fuselage(GeomBase):
 
     @Input(settable=settable)
     def maCruise(self):
-        return 0.77
+        return float(Importer(Component='Aircraft',
+                        VariableName='M cruise',
+                        Default=0.7).VariableValue())
 
     # ### Attributes ####################################################################################
 

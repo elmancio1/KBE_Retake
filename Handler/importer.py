@@ -58,6 +58,6 @@ class Importer:
             airfoilPath = str(self.filePath)
 
         else:
-            showwarning("File type is not supported in this application. Please choose a different format")
+            showwarning("Warning","File type is not supported in this application. Please choose a different format")
             print ("File type is not supported in this application. Please choose a different format")
 
