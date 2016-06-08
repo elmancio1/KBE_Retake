@@ -80,8 +80,6 @@ class Fuselage(GeomBase):
         :Unit: [ ]
         :rtype: collections.Sequence[float]
         """
-        # ToDo: magari aggiugere la possibilitá di avere il nosecone semplice in modo
-        # da poterlo cambiare piú a piacimento
         return [
                     [0.00000, -0.15172, 0.00000, 0.00000],
                     [0.00952, -0.15602, 0.06590, 0.08051],
@@ -305,7 +303,7 @@ class Fuselage(GeomBase):
                        minor_radius=self.noseSections[child.index][2] * self.fuselageDiameter,
                       position=self.position.translate('z', self.noseLength * self.noseSections[child.index][0],
                                                        'y', self.fuselageDiameter * self.noseSections[child.index][1]),
-                      hidden=False)
+                      hidden=True)
     @Part
     def cylinderSectionCurves(self):
         """
@@ -317,7 +315,7 @@ class Fuselage(GeomBase):
                       radius=self.cylinderSectionRadius[child.index],
                       position=self.position.translate('z',
                                                        (child.index + 1) * self.cylinderSectionLength + self.noseLength),
-                      hidden=False)
+                      hidden=True)
 
     @Part
     def tailSectionCurves(self):
@@ -333,7 +331,7 @@ class Fuselage(GeomBase):
                                                        'z',
                                                        child.index * self.tailSectionLength + self.noseLength +
                                                        self.cylinderLength),
-                      hidden=False)
+                      hidden=True)
 
     @Part
     def loft(self):

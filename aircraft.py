@@ -7,6 +7,7 @@ from tkMessageBox import *
 from Main.Wing.wing import Wing
 from Main.Fuselage.fuselage import Fuselage
 from Main.Engine.engine import Engine
+from Handler.importer import Importer
 
 
 class Aircraft(GeomBase):
@@ -14,15 +15,28 @@ class Aircraft(GeomBase):
     Basic class Aircraft
     """
 
+    @Input
+    def maCruise(self):
+        """
+        Cruise Mach number
+        :Unit: []
+        :rtype: float
+        """
+        return float(Importer(Component='Performance',
+                              VariableName='Mach Cruise',
+                              Default=0.77).getValue())
+
     @Part
     def wingbase(self):
-        return Wing(fuselageLength=self.fuselagebase.fuselageLength,
+        return Wing(maCruise=self.maCruise,
+                    fuselageLength=self.fuselagebase.fuselageLength,
                     fuselageDiameter=self.fuselagebase.fuselageDiameter,
                     enginePos=self.enginebase.enginePos)
 
     @Part
     def fuselagebase(self):
-        return Fuselage()
+        return Fuselage(maCruise=self.maCruise,
+                        )
 
     @Part
     def enginebase(self):
