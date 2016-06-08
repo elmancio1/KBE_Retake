@@ -42,10 +42,12 @@ class Fuselage(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
-        if self.maCruise < 0.65 or self.maCruise > 0.90:
-            showwarning("Warning", "Please insert a value between 0.65 and 0.9")
-            print("Please insert a value between 0.65 and 0.9")
+        if self.maCruise < 0.0 or self.maCruise > 0.9:
+            showwarning("Warning", "Please insert a value between 0 and 0.9")
+            print("Please insert a value between 0 and 0.9")
             return 0.81
+        elif self.maCruise < 0.74:
+            return 0.0065 * exp(6.6077 * 0.77)
         else:
             return 0.0065 * exp(6.6077 * self.maDD)
 
@@ -78,6 +80,8 @@ class Fuselage(GeomBase):
         :Unit: [ ]
         :rtype: collections.Sequence[float]
         """
+        # ToDo: magari aggiugere la possibilitá di avere il nosecone semplice in modo
+        # da poterlo cambiare piú a piacimento
         return [
                     [0.00000, -0.15172, 0.00000, 0.00000],
                     [0.00952, -0.15602, 0.06590, 0.08051],
@@ -223,7 +227,7 @@ class Fuselage(GeomBase):
         """
         if self.tailSlenderness < 1.0:
             showwarning('Warning', 'Tail slenderness ratios < 1 are detrimental for profile drag.')
-        return self.cylinderLength / (len(self.cylinderSections) - 1)
+        return self.cylinderLength / (len(self.cylinderSections) + 1)
 
     @Attribute
     def tailSectionRadius(self):
@@ -300,7 +304,7 @@ class Fuselage(GeomBase):
                        major_radius=self.noseSections[child.index][2] * self.fuselageDiameter,
                        minor_radius=self.noseSections[child.index][2] * self.fuselageDiameter,
                       position=self.position.translate('z', self.noseLength * self.noseSections[child.index][0],
-                                                       'y_', self.noseLength * self.noseSections[child.index][1]),
+                                                       'y', self.fuselageDiameter * self.noseSections[child.index][1]),
                       hidden=False)
     @Part
     def cylinderSectionCurves(self):
@@ -312,7 +316,7 @@ class Fuselage(GeomBase):
         return Circle(quantify=len(self.cylinderSections),
                       radius=self.cylinderSectionRadius[child.index],
                       position=self.position.translate('z',
-                                                       child.index * self.cylinderSectionLength + self.noseLength),
+                                                       (child.index + 1) * self.cylinderSectionLength + self.noseLength),
                       hidden=False)
 
     @Part
@@ -338,7 +342,7 @@ class Fuselage(GeomBase):
         :Unit: [ ]
         :rtype:
         """
-        return LoftedSolid(profiles=self.fuselageSectionCurves, color="yellow")
+        return LoftedSolid(profiles=self.fuselageSectionCurves, color="yellow", tolerance=1e-2)
 
 
 if __name__ == '__main__':
