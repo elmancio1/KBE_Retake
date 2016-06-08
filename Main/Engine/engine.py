@@ -112,6 +112,17 @@ class Engine(GeomBase):
                               Default=.75).getValue())
 
     @Input
+    def engineStagger(self):
+        """
+        Position of the engine with regard to the wing LE.
+        :Unit: [ ]
+        :rtype: float
+        """
+        return float(Importer(Component='Engine',
+                              VariableName='cowling Stagger',
+                              Default=-0.15).getValue())
+
+    @Input
     def enginePos(self):
         """
         Engine position, could be either "wing" or "fuselage" mounted
@@ -262,6 +273,15 @@ class Engine(GeomBase):
         """
         return 21.
 
+    @Input(settable=settable)
+    def tcRatio(self):
+        """
+        Profile thickness to chord ratio.
+        :Unit: [m]
+        :rtype: float
+        """
+        return 0.15
+
     # ### Attributes ##################################################################################################
 
     @Attribute
@@ -309,15 +329,6 @@ class Engine(GeomBase):
         :rtype: float
         """
         return 1.65 * sqrt((self.massFlow / (self.rho0*self.a0) + 0.005) / (1 - self.spinnerInletRatio**2))
-
-    @Attribute
-    def spinnerDiameter(self):
-        """
-
-        :Unit: [ ]
-        :rtype: float
-        """
-        return self.spinnerInletRatio * self.inletDiameter
 
     @Attribute
     def spinnerDiameter(self):
@@ -506,26 +517,29 @@ class Engine(GeomBase):
         :Unit: [m]
         :rtype:
         """
-        if self.enginePos == 'wing' and -0.2 < self.cowlingPos < 0.18:
+        # ToDo: mettere un ulteriore if che eviti l'intersezione tra ala e nacelle
+        if self.enginePos == 'wing' and -0.2 < self.engineStagger < 0.18:
             if self.nEngine == 2 and self.enginePos == 'wing':
-                return [-1 * (0.07 + 0.03 * cos(15 * (self.cowlingPos + 0.03))) * self.chord35 +
+                return [-1 * (0.07 + 0.03 * cos(15 * (self.engineStagger + 0.03)) + self.tcRatio / 4) * self.chord35 +
                         self.wingVertPos - self.nacelleDiameter/2 + tan(radians(self.dihedral)) * self.latPos[0]]
             elif self.nEngine == 4 and self.enginePos == 'wing':
-                return [-1 * (0.07 + 0.03 * cos(15 * (self.cowlingPos + 0.03))) * self.chord40 +
+                return [-1 * (0.07 + 0.03 * cos(15 * (self.engineStagger + 0.03)) + self.tcRatio / 4) * self.chord40 +
                         self.wingVertPos - self.nacelleDiameter/2 + tan(radians(self.dihedral)) * self.latPos[0],
-                        -1 * (0.07 + 0.03 * cos(15 * (self.cowlingPos + 0.03))) * self.chord70 +
+                        -1 * (0.07 + 0.03 * cos(15 * (self.engineStagger + 0.03)) + self.tcRatio / 4) * self.chord70 +
                         self.wingVertPos - self.nacelleDiameter/2 + tan(radians(self.dihedral)) * self.latPos[1]]
-        elif self.enginePos == 'wing' and self.cowlingPos > 0.18:
+        elif self.enginePos == 'wing' and self.engineStagger > 0.18:
             if self.nEngine == 2 and self.enginePos == 'wing':
-                return [-1 * 0.04 * self.chord35 + self.wingVertPos - self.nacelleDiameter/2 +
+                return [(-1 * 0.04 - self.tcRatio / 4) * self.chord35 + self.wingVertPos - self.nacelleDiameter/2 +
                         tan(radians(self.dihedral)) * self.latPos[0]]
             elif self.nEngine == 4 and self.enginePos == 'wing':
-                return [-1 * 0.04 * self.chord40 + self.wingVertPos - self.nacelleDiameter/2 +
+                return [(-1 * 0.04 - self.tcRatio / 4) * self.chord40 + self.wingVertPos - self.nacelleDiameter/2 +
                         tan(radians(self.dihedral)) * self.latPos[0],
-                        -1 * 0.04 * self.chord70 + self.wingVertPos-self.nacelleDiameter/2 +
+                        (-1 * 0.04 - self.tcRatio / 4) * self.chord70 + self.wingVertPos-self.nacelleDiameter/2 +
                         tan(radians(self.dihedral)) * self.latPos[1]]
         elif self.enginePos == 'fuselage':
             return [0.0]
+        else:
+            print "Choose a value for engineStagger larger than -0.2"
 
     @Attribute
     def longPos(self):
@@ -535,13 +549,13 @@ class Engine(GeomBase):
         :rtype:
         """
         if self.nEngine == 2 and self.enginePos == 'wing':
-            return [self.cowlingPos * self.chord35 + tan(radians(self.sweepLE)) * self.latPos[0] +
-                    self.wingLongPos - self.nacelleLength]
+            return [self.engineStagger * self.chord35 + tan(radians(self.sweepLE)) * self.latPos[0] +
+                    self.wingLongPos - self.cowlLength]
         elif self.nEngine == 4 and self.enginePos == 'wing':
-            return [self.cowlingPos * self.chord40 + tan(radians(self.sweepLE)) * self.latPos[0] +
-                    self.wingLongPos - self.nacelleLength,
-                    self.cowlingPos * self.chord70 + tan(radians(self.sweepLE)) * self.latPos[1] +
-                    self.wingLongPos - self.nacelleLength]
+            return [self.engineStagger * self.chord40 + tan(radians(self.sweepLE)) * self.latPos[0] +
+                    self.wingLongPos - self.cowlLength,
+                    self.engineStagger * self.chord70 + tan(radians(self.sweepLE)) * self.latPos[1] +
+                    self.wingLongPos - self.cowlLength]
         elif self.nEngine == 2 and self.enginePos == 'fuselage':
             return [self.noseLength + self.cylinderLength + 0.50 * self.nacelleLength]
 

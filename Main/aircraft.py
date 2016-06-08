@@ -17,7 +17,8 @@ class Aircraft(GeomBase):
     @Part
     def wingbase(self):
         return Wing(fuselageLength=self.fuselagebase.fuselageLength,
-                    fuselageDiameter=self.fuselagebase.fuselageDiameter)
+                    fuselageDiameter=self.fuselagebase.fuselageDiameter,
+                    enginePos=self.enginebase.enginePos)
 
     @Part
     def fuselagebase(self):
@@ -36,7 +37,8 @@ class Aircraft(GeomBase):
                       wingVertPos=self.wingbase.vertPos,
                       wingLongPos=self.wingbase.longPos,
                       dihedral=self.wingbase.dihedral,
-                      sweepLE=self.wingbase.sweepLE)
+                      sweepLE=self.wingbase.sweepLE,
+                      tcRatio=self.wingbase.tcRatio)
 
 
 

@@ -21,13 +21,13 @@ class Excel:
             valueRead = None
             componentRead = str(self.sheet['A'+str(row)].value)
             if componentRead == self.component:
-                while valueRead != self.variableName and valueRead != 'EOC':
+                while valueRead != self.variableName and valueRead != 'EOC' and row < 1e3:
                     valueRead = str(self.sheet['B'+str(row)].value)
                     row += 1
                 if valueRead == self.variableName:
                     return self.sheet['C'+str(row-1)].value
                 elif valueRead == 'EOC':
-                    return self.Default
+                    return self.default
             if componentRead == 'EOF':
-                return self.Default
+                return self.default
             row += 1

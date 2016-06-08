@@ -1,5 +1,5 @@
 from __future__ import division
-from os import *
+import os, sys
 from parapy.geom import *
 from parapy.core import *
 from math import *
@@ -7,12 +7,16 @@ from Tkinter import *
 from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
+from Input import Airfoils
+
 
 
 class Wing(GeomBase):
     """
     Basic class Wing
     """
+    defaultPath = os.path.dirname(Airfoils.__file__) + '\NACA_0012.dat'  # From the Airfoil folder path add name of
+    # default File
 
     @Input
     def newAirfoil(self):
@@ -33,7 +37,7 @@ class Wing(GeomBase):
 
         if not self.newAirfoil:
 
-            return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
+            return self.defaultPath
         else:
             def callback():
                 name = askopenfilename()
@@ -55,7 +59,7 @@ class Wing(GeomBase):
 
         if not self.newAirfoil:
 
-            return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
+            return self.defaultPath
         else:
             def callback():
                 name = askopenfilename()
@@ -218,6 +222,8 @@ class Wing(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
+
+        # ToDo: Potrebbe essere meglio metterlo come input?
         return 0.2 * (2 - radians(self.sweep25))
 
     @Attribute

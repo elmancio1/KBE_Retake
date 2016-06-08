@@ -1,9 +1,11 @@
 from __future__ import division
+import os, sys
 from parapy.geom import *
 from parapy.core import *
 from math import *
 from Tkinter import *
 from tkMessageBox import *
+from Input import Airfoils
 
 
 class Airfoil(GeomBase):
@@ -13,6 +15,9 @@ class Airfoil(GeomBase):
 
     window = Tk()
     window.wm_withdraw()
+
+    defaultPath = os.path.dirname(Airfoils.__file__) + '\NACA0012.dat'  # From the Airfoil folder path add name of
+                                                                       # default File
 
     # ### Input required from wing/tail planes ###################################################################
 
@@ -28,7 +33,8 @@ class Airfoil(GeomBase):
 
         :rtype: string
         """
-        return '..\Input\Airfoils\NACA_0012.dat'
+        return self.defaultPath
+
 
     @Input(settable=settable)
     def chord(self):
