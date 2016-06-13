@@ -27,7 +27,7 @@ class Wing(GeomBase):
         """
         return False
 
-    @Attribute
+    @Attribute  # ToDo: spostare questi negli attributi
     def airfoilRoot(self):
         """
         Path to airfoil file for wing root. It can either use a default path or letting the user choose the airfoil file.
