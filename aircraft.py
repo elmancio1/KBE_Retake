@@ -11,7 +11,7 @@ from Main.Fuselage.fuselage import Fuselage
 from Main.Engine.engine import Engine
 from Main.Vtp.vtp import Vtp
 from Main.Htp.htp import Htp
-import Tkinter, Tkconstants, tkFileDialog
+import tkFileDialog
 import os
 
 
