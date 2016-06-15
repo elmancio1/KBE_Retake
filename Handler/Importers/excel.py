@@ -25,12 +25,16 @@ class Excel:
                     row += 1
                 if valueRead == self.variableName:
                     return self.sheet['C'+str(row-1)].value
-                elif valueRead == 'EOC':
+                elif valueRead == self.variableName and self.sheet['C'+str(row-1)].value == []:
+                    print 'Could not find value of ' + str(self.variableName) + '. Using the default value: ' \
+                          + str(self.default)
                     return self.default
-                    print 'Could not find variable ' + str(self.variableName) + '. Using the default value: '
-                    + str(self.default)
+                elif valueRead == 'EOC':
+                    print 'Could not find variable ' + str(self.variableName) + '. Using the default value: '\
+                          + str(self.default)
+                    return self.default
             if componentRead == 'EOF':
+                print 'Could not find variable ' + str(self.variableName) + '. Using the default value: '\
+                      + str(self.default)
                 return self.default
-                print 'Could not find variable ' + str(self.variableName) + '. Using the default value: '
-                + str(self.default)
             row += 1

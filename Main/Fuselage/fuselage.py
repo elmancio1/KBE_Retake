@@ -23,7 +23,7 @@ class Fuselage(GeomBase):
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageLength',
                               Default=30.0,
-                              Path=self.filePath))
+                              Path=self.filePath).getValue())
 
     @Input
     def fuselageDiameter(self):
