@@ -70,6 +70,7 @@ class Importer:
             return VarImporter.finder(myImporter)
 
         elif fileExt == '.txt':
+            # ToDo: fare txt e magari anche Matlab
             pass
 
         elif fileExt == '.dat':
