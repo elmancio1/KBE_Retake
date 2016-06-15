@@ -132,7 +132,9 @@ class Aircraft(GeomBase):
                    conePos=self.fuselage.tailSectionCurves[1].center.y,
                    coneRadius=self.fuselage.tailSectionCurves[1].radius,
                    tlH=self.htpbase.tl,
-                   filePath=self.filePath)
+                   filePath=self.filePath,
+                   crH=self.htpbase.chordRoot,
+                   longPosH=self.htpbase.longPos)
 
     @Part
     def htpbase(self):
