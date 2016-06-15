@@ -183,29 +183,6 @@ class Fuselage(GeomBase):
         return self.fuselageLength - (self.noseLength + self.tailLength)
 
     @Attribute
-    def noseSectionRadius(self):
-        """
-        Section radius multiplied by the radius distribution
-        through the length. Note that the numbers are percentages.
-        :Unit: [ ]
-        :rtype: collections.Sequence[float]
-        """
-        if self.noseSections[-1] / 100:
-            self.noseSections[-1] = 100
-
-        return [i * self.fuselageDiameter / 2 / 100 for i in self.noseSections]
-
-    @Attribute
-    def noseSectionLength(self):
-        """
-        Section length is determined by dividing the fuselage
-        length by the number of fuselage sections.
-        :Unit: [ ]
-        :rtype: float
-        """
-        return self.noseLength / (len(self.noseSectionRadius) - 1)
-
-    @Attribute
     def cylinderSectionRadius(self):
         """
         Section radius multiplied by the radius distribution
@@ -259,6 +236,24 @@ class Fuselage(GeomBase):
         return self.noseSectionCurves + self.cylinderSectionCurves + self.tailSectionCurves
 
     @Attribute
+    def tailUpAngleCalc(self):
+        """
+        Aircraft tail angle, positive upward
+        :Unit: [deg]
+        :rtype: float
+        """
+
+        if abs(self.tailUpAngle) > abs(degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) /
+                                   self.tailLength))):
+            val = degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) / self.tailLength))
+            newTailUp = copysign(val, self.tailUpAngle)
+            showwarning('Warning', 'The selected tail up anlge is too large. An angle of ' + repr(newTailUp) +
+                        ' will be used instead.')
+            return newTailUp
+        else:
+            return self.tailUpAngle
+
+    @Attribute
     def tailDivergenceAngle(self):
         """
         Aircraft tail divergence angle, evaluated from 4 characteristic points of the tail sections
@@ -304,6 +299,7 @@ class Fuselage(GeomBase):
                       position=self.position.translate('z', self.noseLength * self.noseSections[child.index][0],
                                                        'y', self.fuselageDiameter * self.noseSections[child.index][1]),
                       hidden=True)
+
     @Part
     def cylinderSectionCurves(self):
         """
@@ -327,7 +323,7 @@ class Fuselage(GeomBase):
         return Circle(quantify=len(self.tailSections),
                       radius=self.tailSectionRadius[child.index],
                       position=self.position.translate('y', child.index * self.tailSectionLength *
-                                                       tan(radians(self.tailUpAngle)),
+                                                       tan(radians(self.tailUpAngleCalc)),
                                                        'z',
                                                        child.index * self.tailSectionLength + self.noseLength +
                                                        self.cylinderLength),
