@@ -10,9 +10,9 @@ from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
 
 
-class Vtp(GeomBase):
+class Htp(GeomBase):
     """
-    Basic class Vertical tail plane
+    Basic class horizontal tail plane
     """
     defaultPath = os.path.dirname(Airfoils.__file__) + '\NACA_0012.dat'  # From the Airfoil folder path add name of
     # default File
@@ -71,60 +71,56 @@ class Vtp(GeomBase):
             return str(filePath)
 
     @Input
-    def rcr(self):
+    def hVertPerc(self):
         """
-        Rudder chord ratio over root chord
+        Horizontal height of htp in percentage with respect to vtp span
         :Unit: [ ]
         :rtype: float
-        source: Raymer
         """
-        return .35
+        if self.tailType == 'T tail':
+            return 1.
+        else:
+            return .75
 
     @Input
     def aspectRatio(self):
         """
-        Vertical tail plane aspect ratio, b^2 / S
+        Horizontal tail plane aspect ratio, b^2 / S
         :Unit: [ ]
         :rtype: float
         source: KBE assignment support material
         """
-        if self.tailType == 'conventional':
-            return 1.9
-        else:
-            return 1.35
+        return 5.
 
     @Input
     def taperRatio(self):
         """
-        Vertical tail plane taper ratio, tip chord / root chord
+        Horizontal tail plane taper ratio, tip chord / root chord
         :Unit: [ ]
         :rtype: float
         source: KBE assignment support material
         """
-        if self.tailType == 'conventional':
-            return 0.3
-        else:
-            return 0.7
+        return .4
 
     @Input
     def sweep25(self):
         """
-        Vertical tail plane sweep at quarter chord
+        Horizontal tail plane sweep at quarter chord
         :Unit: [deg]
         :rtype: float
         source: KBE assignment support material
         """
-        return 37.5
+        return 10 + self.sweep25Wing
 
     @Input
     def vc(self):
         """
-        Vertical tail volume coefficient
+        Horizontal tail volume coefficient
         :Unit: [ ]
         :rtype: float
         source: KBE assignment support material
         """
-        return .083
+        return 1.
 
     window = Tk()
     window.wm_withdraw()
@@ -144,6 +140,15 @@ class Vtp(GeomBase):
         :rtype: string
         """
         return 'T tail'
+
+    @Input(settable=settable)
+    def sweep25Wing(self):
+        """
+        Wing sweep angle calculated at quarter chord
+        :Unit: [deg]
+        :rtype: float
+        """
+        return 28.75
 
     @Input(settable=settable)
     def surfaceWing(self):
@@ -184,7 +189,7 @@ class Vtp(GeomBase):
     @Input(settable=settable)
     def conePos(self):
         """
-        Aircraft tail cone most upper point vertical position
+        Aircraft tail cone vertical position
         :Unit: [m]
         :rtype: float
         """
@@ -209,13 +214,58 @@ class Vtp(GeomBase):
         return .5
 
     @Input(settable=settable)
-    def tlH(self):
+    def tlV(self):
         """
-        Horizontal tail plane arm
+        Vertical tail arm
         :Unit: [m]
         :rtype: float
         """
-        return 17.58
+        return 15.96
+
+    @Input(settable=settable)
+    def spanV(self):
+        """
+        Vertical tail span
+        :Unit: [m]
+        :rtype: float
+        """
+        return 4.3
+
+    @Input(settable=settable)
+    def cMACyPosV(self):
+        """
+        Vertical tail MAC position
+        :Unit: [m]
+        :rtype: float
+        """
+        return 1.
+
+    @Input(settable=settable)
+    def sweep25V(self):
+        """
+        Vertical tail sweep, evaluated at quarter chord
+        :Unit: [deg]
+        :rtype: float
+        """
+        return 37.5
+
+    @Input(settable=settable)
+    def sweepLEV(self):
+        """
+        Vertical tail sweep, evaluated at leading edge
+        :Unit: [deg]
+        :rtype: float
+        """
+        return 42.
+
+    @Input(settable=settable)
+    def cMACV(self):
+        """
+        Vertical tail Mean Aerodynamic Chord
+        :Unit: [m]
+        :rtype: float
+        """
+        return 3.2
 
     # ### Attributes ##################################################################################################
 
@@ -240,13 +290,11 @@ class Vtp(GeomBase):
     @Attribute
     def tl(self):
         """
-        Vertical tail plane arm
+        Vertical tail arm
         :Unit: [m]
         :rtype: float
         """
         if self.tailType == 'conventional':
-            return self.tlH - 5.
-        else:
             tl = self.fuselageLength  # first guess for tail arm
             TR = self.taperRatio
             cR = self.cMACWing  # first guess for the tail root chord
@@ -254,8 +302,24 @@ class Vtp(GeomBase):
 
             while (self.fuselageLength - (self.wingAC + tl + 0.75*cR - posYMAC * tan(radians(self.sweep25)))) < 0:
                 tl = tl - self.tlDecrement
-                cR = 2/(1 + TR) * sqrt((self.vc * self.spanWing * self.surfaceWing)/(self.aspectRatio * tl))
-                posYMAC = (1+2*TR)/((1+TR)*6) * sqrt((self.aspectRatio * self.vc * self.spanWing * self.surfaceWing)/tl)
+                cR = 2/(1 + TR) * sqrt((self.vc * self.cMACWing * self.surfaceWing)/(self.aspectRatio * tl))
+                posYMAC = (1+2*TR)/((1+TR)*6) * sqrt((self.aspectRatio * self.vc * self.cMACWing * self.surfaceWing)/tl)
+            return tl
+
+        else:
+            res = 1  # first guess for residual, to start the cycle
+            TR = self.taperRatio
+            tl = self.tlV  # first guess for horizontal tail arm
+            while res > 0.001:
+
+                cR = 2 / (1 + TR) * sqrt((self.vc * self.cMACWing * self.surfaceWing) / (self.aspectRatio * tl))
+                posYMAC = (1 + 2 * TR) / ((1 + TR) * 6) * \
+                          sqrt((self.aspectRatio * self.vc * self.cMACWing * self.surfaceWing) / tl)
+                tlNew = self.tlV - .25*self.cMACV + 0.25*cR + posYMAC * tan(radians(self.sweep25)) + \
+                       (self.hVertPerc * self.spanV - self.cMACyPosV) * tan(radians(self.sweepLEV))
+                res = (tlNew - tl)**2
+                tl = tlNew
+
             return tl
 
     @Attribute
@@ -265,7 +329,7 @@ class Vtp(GeomBase):
         :Unit: [m^2]
         :rtype: float
         """
-        return self.vc * self.surfaceWing * self.spanWing / self.tl
+        return self.vc * self.surfaceWing * self.cMACWing / self.tl
 
     @Attribute
     def span(self):
@@ -361,8 +425,10 @@ class Vtp(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return self.conePos + self.coneRadius
-
+        if self.tailType == 'conventional':
+            return self.conePos
+        else:
+            return self.conePos + self.coneRadius + self.spanV * self.hVertPerc
 
     # ###### Parts ####################################################################################################
 
@@ -391,30 +457,26 @@ class Vtp(GeomBase):
     @Part
     def curveRootPos(self):
         """
-        Vertical tail root airfoil placed in the final position
+        Horizontal tail root airfoil placed in the final position
 
         :rtype:
         """
-        return TransformedCurve(curve_in=self.curveRoot.crv,
-                                from_position=XOY,
-                                to_position=translate(rotate90(XOY, 'z_'),
-                                                      'x_', self.vertPos,
-                                                      'z', self.longPos),
-                                hidden=True)
+        return TranslatedCurve(curve_in=self.curveRoot.crv,
+                               displacement=Vector(0, self.vertPos, self.longPos),
+                               hidden=True)
 
     @Part
     def curveTipPos(self):
         """
-        Vertical tail tip airfoil placed in the final position
+        Horizontal tail tip airfoil placed in the final position
 
         :rtype:
         """
-        return TransformedCurve(curve_in=self.curveTip.crv,
-                                from_position=XOY,
-                                to_position=translate(rotate90(XOY, 'z_'),
-                                                      'x_', self.vertPos + self.span,
-                                                      'z', self.longPos + self.span * tan(radians(self.sweepLE))),
-                                hidden=True)
+        return TranslatedCurve(curve_in=self.curveTip.crv,
+                               displacement=Vector(self.span / 2,
+                                                   self.vertPos,
+                                                   self.longPos + self.span / 2 * tan(radians(self.sweepLE))),
+                               hidden=True)
 
 #    @Part
 #    def curveRootPos2(self):
@@ -425,16 +487,28 @@ class Vtp(GeomBase):
 #                                                      'y', self.vertPos))
 
     @Part
-    def tail(self):
+    def rightTail(self):
         """
-        Vertical tail solid representation
+        Right horizontal tail solid representation
 
         :rtype:
         """
         return LoftedSolid([self.curveRootPos, self.curveTipPos])
 
+    @Part
+    def leftTail(self):
+        """
+        Left horizontal tail solid representation
+
+        :rtype:
+        """
+        return MirroredShape(shape_in=self.rightTail,
+                             reference_point=self.rightTail.position,
+                             vector1=self.rightTail.position.Vy,
+                             vector2=self.rightTail.position.Vz)
+
 if __name__ == '__main__':
     from parapy.gui import display
 
-    obj = Vtp()
+    obj = Htp()
     display(obj)
