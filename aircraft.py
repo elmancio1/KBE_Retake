@@ -2,6 +2,7 @@ from __future__ import division
 from parapy.geom import *
 from parapy.core import *
 from Handler.importer import Importer
+from Input import Files
 from math import *
 from Tkinter import *
 from tkMessageBox import *
@@ -77,9 +78,13 @@ class Aircraft(GeomBase):
         """Returns an opened file in read mode.
         This time the dialog just returns a filename and the file is opened by your own code.
         """
-
+        defaultPath = os.path.dirname(Files.__file__)
+        defaultFile = os.path.dirname(Files.__file__) + '\input.xlsx'
+        file_opt = options = {}
+        options['initialdir'] = defaultPath
+        options['initialfile'] = defaultFile
         # get filename
-        filename = tkFileDialog.askopenfilename()
+        filename = tkFileDialog.askopenfilename(**file_opt)
         print filename
         return str(filename)
 
