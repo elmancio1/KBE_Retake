@@ -119,7 +119,7 @@ class Aircraft(GeomBase):
                       dihedral=self.wingbase.dihedral,
                       sweepLE=self.wingbase.sweepLE,
                       tcRatio=self.wingbase.tcRatio,
-                        filePath=self.filePath)
+                      filePath=self.filePath)
 
     @Part
     def vtpbase(self):
@@ -130,9 +130,10 @@ class Aircraft(GeomBase):
                    fuselageLength=self.fuselage.fuselageLength,
                    posFraction=self.wingbase.posFraction,
                    conePos=self.fuselage.tailSectionCurves[1].center.y,
-                   coneRadius=self.fuselage.tailSectionCurves[1].radius,
                    tlH=self.htpbase.tl,
-                   filePath=self.filePath)
+                   filePath=self.filePath,
+                   crH=self.htpbase.chordRoot,
+                   longPosH=self.htpbase.longPos)
 
     @Part
     def htpbase(self):
@@ -144,7 +145,6 @@ class Aircraft(GeomBase):
                    fuselageLength=self.fuselage.fuselageLength,
                    posFraction=self.wingbase.posFraction,
                    conePos=self.fuselage.tailSectionCurves[1].center.y,
-                   coneRadius=self.fuselage.tailSectionCurves[1].radius,
                    tlV=self.vtpbase.tl,
                    spanV=self.vtpbase.span,
                    cMACyPosV=self.vtpbase.cMACyPos,
