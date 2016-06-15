@@ -265,6 +265,10 @@ class Vtp(GeomBase):
         :Unit: [m]
         :rtype: float
         """
+        # TODO: per sweep di Htp troppo grandi fa casini
+
+        # TODO: la vertical e veramente enorme... la scia si trova nella posizione corretta?
+
         if self.tailType == 'conventional':
             tl = self.tlH  # first guess for vertical tail arm
             check = 0.  # first guess for the rudder area check, to start the cycle
