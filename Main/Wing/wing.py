@@ -8,6 +8,7 @@ from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
+import Tkinter, Tkconstants, tkFileDialog
 
 
 
@@ -26,50 +27,6 @@ class Wing(GeomBase):
         :rtype: boolean
         """
         return False
-
-    @Attribute  # ToDo: spostare questi negli attributi
-    def airfoilRoot(self):
-        """
-        Path to airfoil file for wing root. It can either use a default path or letting the user choose the airfoil file.
-
-        :rtype: string
-        """
-
-        if not self.newAirfoil:
-
-            return self.defaultPath
-        else:
-            def callback():
-                name = askopenfilename()
-                return name
-
-            filePath = callback()
-            errmsg = 'Error!'
-            Button(text='File Open', command=callback).pack(fill=X)
-
-            return str(filePath)
-
-    @Attribute
-    def airfoilTip(self):
-        """
-        Path to airfoil file for wing tip. It can either use a default path or letting the user choose the airfoil file.
-
-        :rtype: string
-        """
-
-        if not self.newAirfoil:
-
-            return self.defaultPath
-        else:
-            def callback():
-                name = askopenfilename()
-                return name
-
-            filePath = callback()
-            errmsg = 'Error!'
-            Button(text='File Open', command=callback).pack(fill=X)
-
-            return str(filePath)
 
     @Input
     def aspectRatio(self):
@@ -96,8 +53,8 @@ class Wing(GeomBase):
         :Unit: [deg]
         :rtype: float
         """
-        if self.maCruise <= 0.7:
-            return acos(1.0)
+        if self.maDD <= 0.705:
+            return degrees(acos(1.0))
         else:
             return degrees(acos(0.75 * self.maTechnology / self.maDD))
 
@@ -122,6 +79,21 @@ class Wing(GeomBase):
         elif self.wingPosition == 'high wing':
             return 3 - self.sweep25 / 10 - 2
 
+    @Input
+    def posFraction(self):
+        """
+        Wing position fraction of the fuselage, due to engine position
+        :Unit: [m]
+        :rtype: float
+        """
+        if self.enginePos == 'wing':
+            return 0.5
+        elif self.enginePos == 'fuselage':
+            return 0.6
+        else:
+            showwarning("Warning", "Please choose between wing or fuselage mounted")
+            return 0.5
+
     window = Tk()
     window.wm_withdraw()
 
@@ -131,6 +103,16 @@ class Wing(GeomBase):
         settable = True
     else:
         settable = False
+
+    @Input(settable=settable)
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        return str(filename)
 
     @Input(settable=settable)
     def maCruise(self):
@@ -196,6 +178,50 @@ class Wing(GeomBase):
         return 4.
 
     # ### Attributes ##################################################################################################
+
+    @Attribute  # ToDo: spostare questi negli attributi
+    def airfoilRoot(self):
+        """
+        Path to airfoil file for wing root. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return self.defaultPath
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
+
+    @Attribute
+    def airfoilTip(self):
+        """
+        Path to airfoil file for wing tip. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return self.defaultPath
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
 
     @Attribute
     def maDD(self):
@@ -376,21 +402,6 @@ class Wing(GeomBase):
                             cos(radians(self.sweep50))**2)
 
     @Attribute
-    def posFraction(self):
-        """
-        Wing position fraction of the fuselage, due to engine position
-        :Unit: [m]
-        :rtype: float
-        """
-        if self.enginePos == 'wing':
-            return 0.5
-        elif self.enginePos == 'fuselage':
-            return 0.6
-        else:
-            showwarning("Warning", "Please choose between wing or fuselage mounted")
-            return 0.5
-
-    @Attribute
     def longPos(self):
         """
         Wing root longitudinal position, in order to have the AC in the selected fuselage fraction
@@ -414,6 +425,15 @@ class Wing(GeomBase):
         else:
             showwarning("Warning", "Please choose between high or low wing configuration")
             return 0
+
+    @Attribute
+    def xLEMAC(self):
+        """
+        Longitudinal position of leading edge of MAC. Used for positioning of other components (ie gear)
+        :Unit: [m]
+        :rtype: float
+        """
+        return (self.posFraction * self.fuselageLength) - (0.25*self.chordRoot)
 
     # ###### Parts ####################################################################################################
 

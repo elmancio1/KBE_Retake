@@ -5,6 +5,7 @@ from math import *
 from Tkinter import *
 from tkMessageBox import *
 from Handler.importer import Importer
+import Tkinter, Tkconstants, tkFileDialog
 
 
 class Fuselage(GeomBase):
@@ -21,7 +22,8 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageLength',
-                              Default=30.0).getValue())
+                              Default=30.0,
+                              Path=self.filePath).getValue())
 
     @Input
     def fuselageDiameter(self):
@@ -32,7 +34,8 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageDiameter',
-                              Default=4.0).getValue())
+                              Default=4.0,
+                              Path=self.filePath).getValue())
 
 
     @Input
@@ -60,7 +63,8 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='tailSlenderness',
-                              Default=3.0).getValue())
+                              Default=3.0,
+                              Path=self.filePath).getValue())
 
     @Input
     def tailUpAngle(self):
@@ -71,7 +75,8 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='tailUpAngle',
-                              Default=5.0).getValue())
+                              Default=5.0,
+                              Path=self.filePath).getValue())
 
     @Input
     def noseSections(self):
@@ -142,7 +147,18 @@ class Fuselage(GeomBase):
     def maCruise(self):
         return float(Importer(Component='Performance',
                               VariableName='M cruise',
-                              Default=0.7).getValue())
+                              Default=0.7,
+                              Path=self.filePath).getValue())
+
+    @Input(settable=settable)
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        return str(filename)
 
     # ### Attributes ####################################################################################
 
@@ -181,29 +197,6 @@ class Fuselage(GeomBase):
         :rtype: float
         """
         return self.fuselageLength - (self.noseLength + self.tailLength)
-
-    @Attribute
-    def noseSectionRadius(self):
-        """
-        Section radius multiplied by the radius distribution
-        through the length. Note that the numbers are percentages.
-        :Unit: [ ]
-        :rtype: collections.Sequence[float]
-        """
-        if self.noseSections[-1] / 100:
-            self.noseSections[-1] = 100
-
-        return [i * self.fuselageDiameter / 2 / 100 for i in self.noseSections]
-
-    @Attribute
-    def noseSectionLength(self):
-        """
-        Section length is determined by dividing the fuselage
-        length by the number of fuselage sections.
-        :Unit: [ ]
-        :rtype: float
-        """
-        return self.noseLength / (len(self.noseSectionRadius) - 1)
 
     @Attribute
     def cylinderSectionRadius(self):
@@ -259,6 +252,24 @@ class Fuselage(GeomBase):
         return self.noseSectionCurves + self.cylinderSectionCurves + self.tailSectionCurves
 
     @Attribute
+    def tailUpAngleCalc(self):
+        """
+        Aircraft tail angle, positive upward
+        :Unit: [deg]
+        :rtype: float
+        """
+
+        if abs(self.tailUpAngle) > abs(degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) /
+                                   self.tailLength))):
+            val = degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) / self.tailLength))
+            newTailUp = copysign(val, self.tailUpAngle)
+            showwarning('Warning', 'The selected tail up anlge is too large. An angle of ' + repr(newTailUp) +
+                        ' will be used instead.')
+            return newTailUp
+        else:
+            return self.tailUpAngle
+
+    @Attribute
     def tailDivergenceAngle(self):
         """
         Aircraft tail divergence angle, evaluated from 4 characteristic points of the tail sections
@@ -304,6 +315,7 @@ class Fuselage(GeomBase):
                       position=self.position.translate('z', self.noseLength * self.noseSections[child.index][0],
                                                        'y', self.fuselageDiameter * self.noseSections[child.index][1]),
                       hidden=True)
+
     @Part
     def cylinderSectionCurves(self):
         """
@@ -327,7 +339,7 @@ class Fuselage(GeomBase):
         return Circle(quantify=len(self.tailSections),
                       radius=self.tailSectionRadius[child.index],
                       position=self.position.translate('y', child.index * self.tailSectionLength *
-                                                       tan(radians(self.tailUpAngle)),
+                                                       tan(radians(self.tailUpAngleCalc)),
                                                        'z',
                                                        child.index * self.tailSectionLength + self.noseLength +
                                                        self.cylinderLength),
