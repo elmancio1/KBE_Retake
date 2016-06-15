@@ -4,6 +4,7 @@ from parapy.core import *
 from math import *
 from Tkinter import *
 from tkMessageBox import *
+from Handler.importer import Importer
 
 
 class Fuselage(GeomBase):
@@ -18,7 +19,9 @@ class Fuselage(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return 35.
+        return float(Importer(Component='Fuselage',
+                              VariableName='fuselageLength',
+                              Default=30.0).getValue())
 
     @Input
     def fuselageDiameter(self):
@@ -27,7 +30,10 @@ class Fuselage(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return 4.
+        return float(Importer(Component='Fuselage',
+                              VariableName='fuselageDiameter',
+                              Default=4.0).getValue())
+
 
     @Input
     def noseSlenderness(self):
@@ -36,10 +42,12 @@ class Fuselage(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
-        if self.maCruise < 0.65 or self.maCruise > 0.90:
-            showwarning("Warning", "Please insert a value between 0.65 and 0.9")
-            print("Please insert a value between 0.65 and 0.9")
+        if self.maCruise < 0.0 or self.maCruise > 0.9:
+            showwarning("Warning", "Please insert a value between 0 and 0.9")
+            print("Please insert a value between 0 and 0.9")
             return 0.81
+        elif self.maCruise < 0.74:
+            return 0.0065 * exp(6.6077 * 0.77)
         else:
             return 0.0065 * exp(6.6077 * self.maDD)
 
@@ -50,7 +58,9 @@ class Fuselage(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
-        return 3.
+        return float(Importer(Component='Fuselage',
+                              VariableName='tailSlenderness',
+                              Default=3.0).getValue())
 
     @Input
     def tailUpAngle(self):
@@ -59,7 +69,9 @@ class Fuselage(GeomBase):
         :Unit: [deg]
         :rtype: float
         """
-        return 5.
+        return float(Importer(Component='Fuselage',
+                              VariableName='tailUpAngle',
+                              Default=5.0).getValue())
 
     @Input
     def noseSections(self):
@@ -68,7 +80,35 @@ class Fuselage(GeomBase):
         :Unit: [ ]
         :rtype: collections.Sequence[float]
         """
-        return [10, 90, 100]
+        return [
+                    [0.00000, -0.15172, 0.00000, 0.00000],
+                    [0.00952, -0.15602, 0.06590, 0.08051],
+                    [0.02377, -0.15403, 0.10426, 0.12253],
+                    [0.03797, -0.15300, 0.13204, 0.14861],
+                    [0.05584, -0.15057, 0.16088, 0.17544],
+                    [0.06413, -0.14920, 0.17226, 0.18709],
+                    [0.07602, -0.14832, 0.18601, 0.20177],
+                    [0.09620, -0.14576, 0.20647, 0.22354],
+                    [0.11875, -0.14370, 0.22534, 0.24354],
+                    [0.14493, -0.14178, 0.24501, 0.26759],
+                    [0.17515, -0.13784, 0.26256, 0.29266],
+                    [0.19717, -0.12721, 0.28273, 0.30734],
+                    [0.22211, -0.11632, 0.30342, 0.32405],
+                    [0.25057, -0.09762, 0.33079, 0.34076],
+                    [0.27551, -0.08317, 0.35346, 0.35443],
+                    [0.30405, -0.06844, 0.37688, 0.36810],
+                    [0.33849, -0.05464, 0.39829, 0.38380],
+                    [0.38485, -0.04084, 0.42163, 0.40253],
+                    [0.44422, -0.02914, 0.44415, 0.42354],
+                    [0.51189, -0.01977, 0.46308, 0.44557],
+                    [0.57956, -0.01217, 0.47606, 0.46127],
+                    [0.65560, -0.00690, 0.48341, 0.47595],
+                    [0.75419, -0.00217, 0.49245, 0.48937],
+                    [0.83489, -0.00038, 0.49645, 0.49696],
+                    [0.88838, 0.000530, 0.49847, 0.50000],
+                    [0.94660, 0.000540, 0.49944, 0.50000],
+                    [1.00000, 0.000000, 0.50000, 0.50000]
+                ]
 
     @Input
     def tailSections(self):
@@ -100,7 +140,9 @@ class Fuselage(GeomBase):
 
     @Input(settable=settable)
     def maCruise(self):
-        return 0.77
+        return float(Importer(Component='Performance',
+                              VariableName='M cruise',
+                              Default=0.7).getValue())
 
     # ### Attributes ####################################################################################
 
@@ -163,30 +205,6 @@ class Fuselage(GeomBase):
         """
         return self.noseLength / (len(self.noseSectionRadius) - 1)
 
-    @Part
-    def noseSectionCurves(self):
-        """
-        Sequence of curves composing the nose section of fuselage
-        :Unit: [ ]
-        :rtype:
-        """
-        return Circle(quantify=len(self.noseSections),
-                      radius=self.noseSectionRadius[child.index],
-                      position=self.position.translate('z',
-                                                       child.index *
-                                                       self.noseSectionLength))
-
-    @Part
-    def noseCap(self):
-        """
-        Extreme point of fuselage nose, represented by a sphere
-        :Unit: [ ]
-        :rtype:
-        """
-        return Sphere(radius=self.noseSectionRadius[0],
-                      position=self.position.translate('z',
-                                                       0))
-
     @Attribute
     def cylinderSectionRadius(self):
         """
@@ -207,19 +225,7 @@ class Fuselage(GeomBase):
         """
         if self.tailSlenderness < 1.0:
             showwarning('Warning', 'Tail slenderness ratios < 1 are detrimental for profile drag.')
-        return self.cylinderLength / (len(self.cylinderSections) - 1)
-
-    @Part
-    def cylinderSectionCurves(self):
-        """
-        Sequence of curves composing the cylindrical section of fuselage
-        :Unit: [ ]
-        :rtype:
-        """
-        return Circle(quantify=len(self.cylinderSections),
-                      radius=self.cylinderSectionRadius[child.index],
-                      position=self.position.translate('z',
-                                                       child.index * self.cylinderSectionLength + self.noseLength))
+        return self.cylinderLength / (len(self.cylinderSections) + 1)
 
     @Attribute
     def tailSectionRadius(self):
@@ -243,21 +249,6 @@ class Fuselage(GeomBase):
         """
         return self.tailLength / (len(self.tailSectionRadius) - 1)
 
-    @Part
-    def tailSectionCurves(self):
-        """
-        Sequence of curves composing the tail section of fuselage
-        :Unit: [ ]
-        :rtype:
-        """
-        return Circle(quantify=len(self.tailSections),
-                      radius=self.tailSectionRadius[child.index],
-                      position=self.position.translate('y', child.index * self.tailSectionLength *
-                                                       tan(radians(self.tailUpAngle)),
-                                                       'z',
-                                                       child.index * self.tailSectionLength + self.noseLength +
-                                                       self.cylinderLength))
-
     @Attribute
     def fuselageSectionCurves(self):
         """
@@ -266,15 +257,6 @@ class Fuselage(GeomBase):
         :rtype:
         """
         return self.noseSectionCurves + self.cylinderSectionCurves + self.tailSectionCurves
-
-    @Part
-    def loft(self):
-        """
-        3D solid representation of the fuselage
-        :Unit: [ ]
-        :rtype:
-        """
-        return LoftedSolid(profiles=self.fuselageSectionCurves, color="yellow")
 
     @Attribute
     def tailDivergenceAngle(self):
@@ -306,6 +288,60 @@ class Fuselage(GeomBase):
                 return "Divergence angle is too high."
         else:
             return "No change needed"
+
+# #### part ############################################################################################
+
+    @Part
+    def noseSectionCurves(self):
+        """
+        Sequence of curves composing the nose section of fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return Ellipse(quantify=len(self.noseSections),
+                       major_radius=self.noseSections[child.index][2] * self.fuselageDiameter,
+                       minor_radius=self.noseSections[child.index][2] * self.fuselageDiameter,
+                      position=self.position.translate('z', self.noseLength * self.noseSections[child.index][0],
+                                                       'y', self.fuselageDiameter * self.noseSections[child.index][1]),
+                      hidden=True)
+    @Part
+    def cylinderSectionCurves(self):
+        """
+        Sequence of curves composing the cylindrical section of fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return Circle(quantify=len(self.cylinderSections),
+                      radius=self.cylinderSectionRadius[child.index],
+                      position=self.position.translate('z',
+                                                       (child.index + 1) * self.cylinderSectionLength + self.noseLength),
+                      hidden=True)
+
+    @Part
+    def tailSectionCurves(self):
+        """
+        Sequence of curves composing the tail section of fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return Circle(quantify=len(self.tailSections),
+                      radius=self.tailSectionRadius[child.index],
+                      position=self.position.translate('y', child.index * self.tailSectionLength *
+                                                       tan(radians(self.tailUpAngle)),
+                                                       'z',
+                                                       child.index * self.tailSectionLength + self.noseLength +
+                                                       self.cylinderLength),
+                      hidden=True)
+
+    @Part
+    def loft(self):
+        """
+        3D solid representation of the fuselage
+        :Unit: [ ]
+        :rtype:
+        """
+        return LoftedSolid(profiles=self.fuselageSectionCurves, color="yellow", tolerance=1e-2)
+
 
 if __name__ == '__main__':
     from parapy.gui import display

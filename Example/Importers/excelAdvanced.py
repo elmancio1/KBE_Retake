@@ -29,8 +29,6 @@ class ExcelAdvanced:
                 return Default
             row += 1
 
-
-
     def fuselageLength(self): return float(self.finder('Fuselage', 'fuselageLength', Default = 30.0))
 
     def fuselageRadius(self): return float(self.finder('Fuselage', 'fuselageDiameter', Default = 5.0))

@@ -1,16 +1,75 @@
 from __future__ import division
+import os, sys
 from parapy.geom import *
 from parapy.core import *
 from math import *
 from Tkinter import *
 from tkMessageBox import *
+from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
+from Input import Airfoils
+
 
 
 class Wing(GeomBase):
     """
     Basic class Wing
     """
+    defaultPath = os.path.dirname(Airfoils.__file__) + '\NACA_0012.dat'  # From the Airfoil folder path add name of
+    # default File
+
+    @Input
+    def newAirfoil(self):
+        """
+        Boolean input to choose between default path or user chosen.
+
+        :rtype: boolean
+        """
+        return False
+
+    @Attribute  # ToDo: spostare questi negli attributi
+    def airfoilRoot(self):
+        """
+        Path to airfoil file for wing root. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return self.defaultPath
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
+
+    @Attribute
+    def airfoilTip(self):
+        """
+        Path to airfoil file for wing tip. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return self.defaultPath
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
 
     @Input
     def aspectRatio(self):
@@ -60,31 +119,28 @@ class Wing(GeomBase):
         """
         if self.wingPosition == 'low wing':
             return 3 - self.sweep25 / 10 + 2
-        elif self.wing_position == 'high wing':
+        elif self.wingPosition == 'high wing':
             return 3 - self.sweep25 / 10 - 2
 
     @Input
-    def airfoilRoot(self):
+    def posFraction(self):
         """
-        Path to airfoil file for wing root
-
-        :rtype: string
+        Wing position fraction of the fuselage, due to engine position
+        :Unit: [m]
+        :rtype: float
         """
-        return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
-
-    @Input
-    def airfoilTip(self):
-        """
-        Path to airfoil file for wing tip
-
-        :rtype: string
-        """
-        return 'C:\Users\Andrea\Documents\TU Delft\III - KBE\Retake KBE\KBE_Retake\Input\Airfoils\NACA_0012.dat'
+        if self.enginePos == 'wing':
+            return 0.5
+        elif self.enginePos == 'fuselage':
+            return 0.6
+        else:
+            showwarning("Warning", "Please choose between wing or fuselage mounted")
+            return 0.5
 
     window = Tk()
     window.wm_withdraw()
 
-    # ### Input required from aircraft ###################################################################
+    # ### Input required from aircraft ################################################################################
 
     if __name__ == '__main__':  # permit the modification of the input only when running from wing
         settable = True
@@ -127,7 +183,34 @@ class Wing(GeomBase):
         """
         return 10000.
 
-    # ### Attributes ####################################################################################
+    @Input(settable=settable)
+    def enginePos(self):
+        """
+        Engine position, could be either "wing" or "fuselage" mounted
+        :Unit: []
+        :rtype: string
+        """
+        return 'wing'
+
+    @Input(settable=settable)
+    def fuselageLength(self):
+        """
+        Aircraft fuselage length
+        :Unit: [m]
+        :rtype: float
+        """
+        return 35.
+
+    @Input(settable=settable)
+    def fuselageDiameter(self):
+        """
+        Aircraft fuselage diameter
+        :Unit: [m]
+        :rtype: float
+        """
+        return 4.
+
+    # ### Attributes ##################################################################################################
 
     @Attribute
     def maDD(self):
@@ -154,6 +237,8 @@ class Wing(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
+
+        # ToDo: Potrebbe essere meglio metterlo come input?
         return 0.2 * (2 - radians(self.sweep25))
 
     @Attribute
@@ -217,6 +302,33 @@ class Wing(GeomBase):
         return self.taperRatio * self.chordRoot
 
     @Attribute
+    def chord35(self):
+        """
+        Wing chord at 35% of span, used in engines positioning
+        :Unit: [m]
+        :rtype: float
+        """
+        return self.chordRoot + 0.35 * self.span/2 * (tan(radians(self.sweepTE))-tan(radians(self.sweepLE)))
+
+    @Attribute
+    def chord40(self):
+        """
+        Wing chord at 40% of span, used in engines positioning
+        :Unit: [m]
+        :rtype: float
+        """
+        return self.chordRoot + 0.4 * self.span/2 * (tan(radians(self.sweepTE))-tan(radians(self.sweepLE)))
+
+    @Attribute
+    def chord70(self):
+        """
+        Wing chord at 70% of span, used in engines positioning
+        :Unit: [m]
+        :rtype: float
+        """
+        return self.chordRoot + 0.7 * self.span/2 * (tan(radians(self.sweepTE))-tan(radians(self.sweepLE)))
+
+    @Attribute
     def cMAC(self):
         """
         Wing Mean aerodynamic Chord
@@ -278,27 +390,116 @@ class Wing(GeomBase):
                             cos(radians(self.sweep50)))) - 0.115 * self.clCruise**1.5) /
                             cos(radians(self.sweep50))**2)
 
+    @Attribute
+    def longPos(self):
+        """
+        Wing root longitudinal position, in order to have the AC in the selected fuselage fraction
+        :Unit: [m]
+        :rtype: float
+        """
+        return (self.posFraction * self.fuselageLength) - (0.25*self.chordRoot) - \
+               (self.cMACyPos * tan(radians(self.sweep25)))
+
+    @Attribute
+    def vertPos(self):
+        """
+        Wing root vertical position, depending on the selected aircraft configuration
+        :Unit: [m]
+        :rtype: float
+        """
+        if self.wingPosition == 'high wing':
+            return self.fuselageDiameter/2 - self.curveRoot.maxY
+        elif self.wingPosition == 'low wing':
+            return -self.fuselageDiameter/2 - self.curveRoot.minY
+        else:
+            showwarning("Warning", "Please choose between high or low wing configuration")
+            return 0
+
+    @Attribute
+    def xLEMAC(self):
+        """
+        Longitudinal position of leading edge of MAC. Used for positioning of other components (ie gear)
+        :Unit: [m]
+        :rtype: float
+        """
+        return (self.posFraction * self.fuselageLength) - (0.25*self.chordRoot)
+
+    # ###### Parts ####################################################################################################
+
     @Part
     def curveRoot(self):
         """
         Root airfoil curve
-        :Unit: [ ]
+
         :rtype:
         """
         return Airfoil(airfoilData=self.airfoilRoot,
                        chord=self.chordRoot,
-                       position=self.location.translate('x',
-                                                        self.cMAC))
+                       hidden=True)
 
     @Part
     def curveTip(self):
         """
         Tip airfoil curve
-        :Unit: [ ]
+
         :rtype:
         """
         return Airfoil(airfoilData=self.airfoilTip,
-                       chord=self.chordTip)
+                       chord=self.chordTip,
+                       hidden=True)
+
+    @Part
+    def curveRootPos(self):
+        """
+        Wing root airfoil placed in the final wing position
+
+        :rtype:
+        """
+        return TranslatedCurve(curve_in=self.curveRoot.crv,
+                               displacement=Vector(0, self.vertPos, self.longPos),
+                               hidden=True)
+
+    @Part
+    def curveTipPos(self):
+        """
+        Wing tip airfoil placed in the final wing position
+
+        :rtype:
+        """
+        return TranslatedCurve(curve_in=self.curveTip.crv,
+                               displacement=Vector(self.span/2,
+                                                   self.vertPos + self.span/2 * tan(radians(self.dihedral)),
+                                                   self.longPos + self.span/2 * tan(radians(self.sweepLE))),
+                               hidden=True)
+
+#    @Part
+#    def curveRootPos2(self):
+#        return TransformedCurve(curve_in=self.curveRoot.crv,
+#                                from_position=self.curveRoot.position,
+#                                to_position=translate(self.curveTip.position,
+#                                                      'z', self.longPos,
+#                                                      'y', self.vertPos))
+
+    @Part
+    def rightWing(self):
+        """
+        Right wing solid representation
+
+        :rtype:
+        """
+        return LoftedSolid([self.curveRootPos, self.curveTipPos])
+
+    @Part
+    def leftWing(self):
+        """
+        Right wing solid representation
+
+        :rtype:
+        """
+        return MirroredShape(shape_in=self.rightWing,
+                             reference_point=self.rightWing.position,
+                             vector1=self.rightWing.position.Vy,
+                             vector2=self.rightWing.position.Vz)
 
 if __name__ == '__main__':
     from parapy.gui import display
