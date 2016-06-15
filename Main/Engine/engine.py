@@ -276,7 +276,7 @@ class Engine(GeomBase):
     @Input(settable=settable)
     def tcRatio(self):
         """
-        Profile thickness to chord ratio.
+        Airfoil profile thickness to chord ratio.
         :Unit: [m]
         :rtype: float
         """
@@ -296,8 +296,8 @@ class Engine(GeomBase):
     @Attribute
     def specificGenPower(self):
         """
-
-        :Unit: [ ]
+        Specific gas generator power
+        :Unit: [W]
         :rtype: float
         """
         return (self.TIT / 600) - 1.25
@@ -305,8 +305,8 @@ class Engine(GeomBase):
     @Attribute
     def massFlow(self):
         """
-
-        :Unit: [ ]
+        Engine mass flow
+        :Unit: [kg/s]
         :rtype: float
         """
         return self.thrustTO / (self.nEngine * self.a0) * (1 + self.bypassRatio) /\
@@ -315,7 +315,7 @@ class Engine(GeomBase):
     @Attribute
     def spinnerInletRatio(self):
         """
-
+        Ratio between spinner and inlet diameter
         :Unit: [ ]
         :rtype: float
         """
@@ -324,8 +324,8 @@ class Engine(GeomBase):
     @Attribute
     def inletDiameter(self):
         """
-
-        :Unit: [ ]
+        Inlet diameter
+        :Unit: [m]
         :rtype: float
         """
         return 1.65 * sqrt((self.massFlow / (self.rho0*self.a0) + 0.005) / (1 - self.spinnerInletRatio**2))
@@ -333,8 +333,8 @@ class Engine(GeomBase):
     @Attribute
     def spinnerDiameter(self):
         """
-
-        :Unit: [ ]
+        Spinner diameter
+        :Unit: [m]
         :rtype: float
         """
         return self.spinnerInletRatio * self.inletDiameter

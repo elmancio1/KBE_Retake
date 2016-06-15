@@ -122,6 +122,21 @@ class Wing(GeomBase):
         elif self.wingPosition == 'high wing':
             return 3 - self.sweep25 / 10 - 2
 
+    @Input
+    def posFraction(self):
+        """
+        Wing position fraction of the fuselage, due to engine position
+        :Unit: [m]
+        :rtype: float
+        """
+        if self.enginePos == 'wing':
+            return 0.5
+        elif self.enginePos == 'fuselage':
+            return 0.6
+        else:
+            showwarning("Warning", "Please choose between wing or fuselage mounted")
+            return 0.5
+
     window = Tk()
     window.wm_withdraw()
 
@@ -376,21 +391,6 @@ class Wing(GeomBase):
                             cos(radians(self.sweep50))**2)
 
     @Attribute
-    def posFraction(self):
-        """
-        Wing position fraction of the fuselage, due to engine position
-        :Unit: [m]
-        :rtype: float
-        """
-        if self.enginePos == 'wing':
-            return 0.5
-        elif self.enginePos == 'fuselage':
-            return 0.6
-        else:
-            showwarning("Warning", "Please choose between wing or fuselage mounted")
-            return 0.5
-
-    @Attribute
     def longPos(self):
         """
         Wing root longitudinal position, in order to have the AC in the selected fuselage fraction
@@ -414,6 +414,15 @@ class Wing(GeomBase):
         else:
             showwarning("Warning", "Please choose between high or low wing configuration")
             return 0
+
+    @Attribute
+    def xLEMAC(self):
+        """
+        Longitudinal position of leading edge of MAC. Used for positioning of other components (ie gear)
+        :Unit: [m]
+        :rtype: float
+        """
+        return (self.posFraction * self.fuselageLength) - (0.25*self.chordRoot)
 
     # ###### Parts ####################################################################################################
 
