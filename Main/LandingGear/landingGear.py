@@ -5,7 +5,7 @@ from math import *
 from Tkinter import *
 from tkMessageBox import *
 from Handler.importer import Importer
-
+import Tkinter, Tkconstants, tkFileDialog
 
 class LandingGear(GeomBase):
     """
@@ -95,6 +95,16 @@ class LandingGear(GeomBase):
         settable = False
 
     @Input(settable=settable)
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        return str(filename)
+
+    @Input(settable=settable)
     def wingPosition(self):
         """
         Wing position, could be either "low" or "high" wing
@@ -148,6 +158,6 @@ class LandingGear(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return self.xLEMAC +
+        return self.xLEMAC
 
 

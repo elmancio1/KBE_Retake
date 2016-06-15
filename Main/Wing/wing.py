@@ -8,6 +8,7 @@ from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
+import Tkinter, Tkconstants, tkFileDialog
 
 
 
@@ -26,50 +27,6 @@ class Wing(GeomBase):
         :rtype: boolean
         """
         return False
-
-    @Attribute  # ToDo: spostare questi negli attributi
-    def airfoilRoot(self):
-        """
-        Path to airfoil file for wing root. It can either use a default path or letting the user choose the airfoil file.
-
-        :rtype: string
-        """
-
-        if not self.newAirfoil:
-
-            return self.defaultPath
-        else:
-            def callback():
-                name = askopenfilename()
-                return name
-
-            filePath = callback()
-            errmsg = 'Error!'
-            Button(text='File Open', command=callback).pack(fill=X)
-
-            return str(filePath)
-
-    @Attribute
-    def airfoilTip(self):
-        """
-        Path to airfoil file for wing tip. It can either use a default path or letting the user choose the airfoil file.
-
-        :rtype: string
-        """
-
-        if not self.newAirfoil:
-
-            return self.defaultPath
-        else:
-            def callback():
-                name = askopenfilename()
-                return name
-
-            filePath = callback()
-            errmsg = 'Error!'
-            Button(text='File Open', command=callback).pack(fill=X)
-
-            return str(filePath)
 
     @Input
     def aspectRatio(self):
@@ -148,6 +105,16 @@ class Wing(GeomBase):
         settable = False
 
     @Input(settable=settable)
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        return str(filename)
+
+    @Input(settable=settable)
     def maCruise(self):
         """
         Aircraft Mach cruise number
@@ -211,6 +178,50 @@ class Wing(GeomBase):
         return 4.
 
     # ### Attributes ##################################################################################################
+
+    @Attribute  # ToDo: spostare questi negli attributi
+    def airfoilRoot(self):
+        """
+        Path to airfoil file for wing root. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return self.defaultPath
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
+
+    @Attribute
+    def airfoilTip(self):
+        """
+        Path to airfoil file for wing tip. It can either use a default path or letting the user choose the airfoil file.
+
+        :rtype: string
+        """
+
+        if not self.newAirfoil:
+
+            return self.defaultPath
+        else:
+            def callback():
+                name = askopenfilename()
+                return name
+
+            filePath = callback()
+            errmsg = 'Error!'
+            Button(text='File Open', command=callback).pack(fill=X)
+
+            return str(filePath)
 
     @Attribute
     def maDD(self):

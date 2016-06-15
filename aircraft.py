@@ -1,6 +1,7 @@
 from __future__ import division
 from parapy.geom import *
 from parapy.core import *
+from Handler.importer import Importer
 from math import *
 from Tkinter import *
 from tkMessageBox import *
@@ -9,7 +10,8 @@ from Main.Fuselage.fuselage import Fuselage
 from Main.Engine.engine import Engine
 from Main.Vtp.vtp import Vtp
 from Main.Htp.htp import Htp
-from Handler.importer import Importer
+import Tkinter, Tkconstants, tkFileDialog
+import os
 
 
 class Aircraft(GeomBase):
@@ -25,8 +27,9 @@ class Aircraft(GeomBase):
         :rtype: float
         """
         return float(Importer(Component='Performance',
-                              VariableName='Mach Cruise',
-                              Default=0.77).getValue())
+                              VariableName='M cruise',
+                              Default=0.77,
+                              Path=self.filePath).getValue())
 
     @Input
     def wingLoading(self):
@@ -35,7 +38,10 @@ class Aircraft(GeomBase):
         :Unit: [kg / m^2]
         :rtype: float
         """
-        return 4496.946809
+        return float(Importer(Component='Performance',
+                              VariableName='wingLoading',
+                              Default=5000.,
+                              Path=self.filePath).getValue())
 
     @Input
     def mTOW(self):
@@ -64,6 +70,19 @@ class Aircraft(GeomBase):
         """
         return 'T tail'
 
+    #### Attributes ###
+
+    @Attribute
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        print filename
+        return str(filename)
+
     @Part
     def wingbase(self):
         return Wing(maCruise=self.maCruise,
@@ -72,11 +91,13 @@ class Aircraft(GeomBase):
                     enginePos=self.enginebase.enginePos,
                     wingLoading=self.wingLoading,
                     mTOW=self.mTOW,
-                    hCruise=self.hCruise)
+                    hCruise=self.hCruise,
+                    filePath=self.filePath)
 
     @Part
     def fuselage(self):
-        return Fuselage(maCruise=self.maCruise)
+        return Fuselage(maCruise=self.maCruise,
+                        filePath=self.filePath)
 
     @Part
     def enginebase(self):
@@ -92,7 +113,8 @@ class Aircraft(GeomBase):
                       wingLongPos=self.wingbase.longPos,
                       dihedral=self.wingbase.dihedral,
                       sweepLE=self.wingbase.sweepLE,
-                      tcRatio=self.wingbase.tcRatio)
+                      tcRatio=self.wingbase.tcRatio,
+                        filePath=self.filePath)
 
     @Part
     def vtpbase(self):
@@ -104,7 +126,8 @@ class Aircraft(GeomBase):
                    posFraction=self.wingbase.posFraction,
                    conePos=self.fuselage.tailSectionCurves[1].center.y,
                    coneRadius=self.fuselage.tailSectionCurves[1].radius,
-                   tlH=self.htpbase.tl)
+                   tlH=self.htpbase.tl,
+                   filePath=self.filePath)
 
     @Part
     def htpbase(self):
@@ -122,7 +145,8 @@ class Aircraft(GeomBase):
                    cMACyPosV=self.vtpbase.cMACyPos,
                    sweep25V=self.vtpbase.sweep25,
                    sweepLEV=self.vtpbase.sweepLE,
-                   cMACV=self.vtpbase.cMAC)
+                   cMACV=self.vtpbase.cMAC,
+                   filePath=self.filePath)
 
 
 if __name__ == '__main__':
@@ -130,4 +154,3 @@ if __name__ == '__main__':
 
     obj = Aircraft()
     display(obj)
-

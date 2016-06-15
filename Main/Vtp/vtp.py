@@ -8,6 +8,7 @@ from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
+import Tkinter, Tkconstants, tkFileDialog
 
 
 class Vtp(GeomBase):
@@ -135,6 +136,16 @@ class Vtp(GeomBase):
         settable = True
     else:
         settable = False
+
+    @Input(settable=settable)
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        return str(filename)
 
     @Input(settable=settable)
     def tailType(self):

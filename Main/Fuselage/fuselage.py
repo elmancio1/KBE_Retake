@@ -5,6 +5,7 @@ from math import *
 from Tkinter import *
 from tkMessageBox import *
 from Handler.importer import Importer
+import Tkinter, Tkconstants, tkFileDialog
 
 
 class Fuselage(GeomBase):
@@ -21,7 +22,8 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageLength',
-                              Default=30.0).getValue())
+                              Default=30.0,
+                              Path=self.filePath))
 
     @Input
     def fuselageDiameter(self):
@@ -32,7 +34,8 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageDiameter',
-                              Default=4.0).getValue())
+                              Default=4.0,
+                              Path=self.filePath).getValue())
 
 
     @Input
@@ -60,7 +63,8 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='tailSlenderness',
-                              Default=3.0).getValue())
+                              Default=3.0,
+                              Path=self.filePath).getValue())
 
     @Input
     def tailUpAngle(self):
@@ -71,7 +75,8 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='tailUpAngle',
-                              Default=5.0).getValue())
+                              Default=5.0,
+                              Path=self.filePath).getValue())
 
     @Input
     def noseSections(self):
@@ -142,7 +147,18 @@ class Fuselage(GeomBase):
     def maCruise(self):
         return float(Importer(Component='Performance',
                               VariableName='M cruise',
-                              Default=0.7).getValue())
+                              Default=0.7,
+                              Path=self.filePath).getValue())
+
+    @Input(settable=settable)
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        return str(filename)
 
     # ### Attributes ####################################################################################
 

@@ -5,6 +5,7 @@ from math import *
 from Tkinter import *
 from tkMessageBox import *
 from Handler.importer import Importer
+import Tkinter, Tkconstants, tkFileDialog
 
 
 class Engine(GeomBase):
@@ -142,6 +143,16 @@ class Engine(GeomBase):
         settable = True
     else:
         settable = False
+
+    @Input(settable=settable)
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        return str(filename)
 
     @Input(settable=settable)
     def mTOW(self):

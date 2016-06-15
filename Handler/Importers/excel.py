@@ -3,8 +3,7 @@ from openpyxl import load_workbook
 
 class Excel:
 
-    def __init__(self, Component, VariableName, Default,
-                 filePath = 'C:\Users\Jacopo\Desktop\Academic\GitHub\KBE_Retake\Input\Files\input.xlsx'):
+    def __init__(self, Component, VariableName, Default, filePath):
         self.excelFile = load_workbook(filePath)
         self.sheet = self.excelFile['Sheet1']
         self.component = Component
@@ -28,6 +27,10 @@ class Excel:
                     return self.sheet['C'+str(row-1)].value
                 elif valueRead == 'EOC':
                     return self.default
+                    print 'Could not find variable ' + str(self.variableName) + '. Using the default value: '
+                    + str(self.default)
             if componentRead == 'EOF':
                 return self.default
+                print 'Could not find variable ' + str(self.variableName) + '. Using the default value: '
+                + str(self.default)
             row += 1
