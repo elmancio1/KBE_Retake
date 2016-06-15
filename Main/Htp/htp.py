@@ -196,15 +196,6 @@ class Htp(GeomBase):
         return 2.
 
     @Input(settable=settable)
-    def coneRadius(self):
-        """
-        Aircraft tail cone last radius
-        :Unit: [m]
-        :rtype: float
-        """
-        return 1.
-
-    @Input(settable=settable)
     def posFraction(self):
         """
         Wing position fraction of the fuselage, due to engine position
@@ -428,7 +419,7 @@ class Htp(GeomBase):
         if self.tailType == 'conventional':
             return self.conePos
         else:
-            return self.conePos + self.coneRadius + self.spanV * self.hVertPerc
+            return self.conePos + self.spanV * self.hVertPerc
 
     # ###### Parts ####################################################################################################
 

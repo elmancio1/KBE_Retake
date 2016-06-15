@@ -7,69 +7,13 @@ from Tkinter import *
 from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
-from Handler.vtpCalc import VtpCalc
 from Input import Airfoils
 
 
-class Vtp(GeomBase):
+class VtpCalc(GeomBase):
     """
-    Basic class Vertical tail plane
+    Basic class Vertical tail plane to perform all calculations
     """
-    defaultPath = os.path.dirname(Airfoils.__file__) + '\NACA_0012.dat'  # From the Airfoil folder path add name of
-    # default File
-
-    @Input
-    def newAirfoil(self):
-        """
-        Boolean input to choose between default path or user chosen.
-
-        :rtype: boolean
-        """
-        return False
-
-    @Attribute
-    def airfoilRoot(self):
-        """
-        Path to airfoil file for wing root. It can either use a default path or letting the user choose the airfoil file
-
-        :rtype: string
-        """
-
-        if not self.newAirfoil:
-
-            return self.defaultPath
-        else:
-            def callback():
-                name = askopenfilename()
-                return name
-
-            filePath = callback()
-            errmsg = 'Error!'
-            Button(text='File Open', command=callback).pack(fill=X)
-
-            return str(filePath)
-
-    @Attribute
-    def airfoilTip(self):
-        """
-        Path to airfoil file for wing tip. It can either use a default path or letting the user choose the airfoil file.
-
-        :rtype: string
-        """
-
-        if not self.newAirfoil:
-
-            return self.defaultPath
-        else:
-            def callback():
-                name = askopenfilename()
-                return name
-
-            filePath = callback()
-            errmsg = 'Error!'
-            Button(text='File Open', command=callback).pack(fill=X)
-
-            return str(filePath)
 
     @Input
     def rcr(self):
@@ -127,17 +71,16 @@ class Vtp(GeomBase):
         """
         return .083
 
-    window = Tk()
-    window.wm_withdraw()
+    @Input
+    def tl(self):
+        """
+        Vertical tail plane arm
+        :Unit: [m]
+        :rtype: float
+        """
+        return 15.96
 
-    # ### Input required from aircraft ################################################################################
-
-    if __name__ == '__main__':  # permit the modification of the input only when running from wing
-        settable = True
-    else:
-        settable = False
-
-    @Input(settable=settable)
+    @Input
     def tailType(self):
         """
         Tail type, could be "conventional", "cruciform" or "T tail"
@@ -146,7 +89,7 @@ class Vtp(GeomBase):
         """
         return 'T tail'
 
-    @Input(settable=settable)
+    @Input
     def surfaceWing(self):
         """
         Wing reference area
@@ -155,7 +98,7 @@ class Vtp(GeomBase):
         """
         return 94.
 
-    @Input(settable=settable)
+    @Input
     def cMACWing(self):
         """
         Wing Mean aerodynamic Chord
@@ -164,7 +107,7 @@ class Vtp(GeomBase):
         """
         return 3.67
 
-    @Input(settable=settable)
+    @Input
     def spanWing(self):
         """
         Wing span, b
@@ -173,7 +116,7 @@ class Vtp(GeomBase):
         """
         return 28.
 
-    @Input(settable=settable)
+    @Input
     def fuselageLength(self):
         """
         Aircraft fuselage length
@@ -182,7 +125,7 @@ class Vtp(GeomBase):
         """
         return 36.
 
-    @Input(settable=settable)
+    @Input
     def conePos(self):
         """
         Aircraft tail cone most upper point vertical position
@@ -191,7 +134,7 @@ class Vtp(GeomBase):
         """
         return 2.
 
-    @Input(settable=settable)
+    @Input
     def posFraction(self):
         """
         Wing position fraction of the fuselage, due to engine position
@@ -200,7 +143,7 @@ class Vtp(GeomBase):
         """
         return .5
 
-    @Input(settable=settable)
+    @Input
     def tlH(self):
         """
         Horizontal tail plane arm
@@ -209,7 +152,7 @@ class Vtp(GeomBase):
         """
         return 17.58
 
-    @Input(settable=settable)
+    @Input
     def crH(self):
         """
         Horizontal tail plane root chord
@@ -218,7 +161,7 @@ class Vtp(GeomBase):
         """
         return 2.6
 
-    @Input(settable=settable)
+    @Input
     def longPosH(self):
         """
         Horizontal tail plane longitudinal position
@@ -226,6 +169,10 @@ class Vtp(GeomBase):
         :rtype: float
         """
         return 33.16
+
+
+    window = Tk()
+    window.wm_withdraw()
 
     # ### Attributes ##################################################################################################
 
@@ -237,52 +184,6 @@ class Vtp(GeomBase):
         :rtype: float
         """
         return self.posFraction * self.fuselageLength
-
-    @Attribute
-    def tlDecrement(self):
-        """
-        Tail arm decrement
-        :Unit: [m]
-        :rtype: float
-        """
-        return .0001 * self.fuselageLength
-
-    @Attribute
-    def tl(self):
-        """
-        Vertical tail plane arm
-        :Unit: [m]
-        :rtype: float
-        """
-        if self.tailType == 'conventional':
-            tl = self.tlH  # first guess for vertical tail arm
-            check = 0.  # first guess for the rudder area check, to start the cycle
-            while check < 1/3:
-                tl = tl - self.tlDecrement
-                calctail = VtpCalc(tl=tl,
-                                   tailType=self.tailType,
-                                   surfaceWing=self.surfaceWing,
-                                   cMACWing=self.cMACWing,
-                                   spanWing=self.spanWing,
-                                   fuselageLength=self.fuselageLength,
-                                   posFraction=self.posFraction,
-                                   conePos=self.conePos,
-                                   tlH=self.tlH,
-                                   crH=self.crH,
-                                   longPosH=self.longPosH)
-                check = calctail.rudderFree
-            return tl
-        else:
-            tl = self.fuselageLength  # first guess for tail arm
-            TR = self.taperRatio
-            cR = self.cMACWing  # first guess for the tail root chord
-            posYMAC = 10.  # first guess for the tail MAC position
-
-            while (self.fuselageLength - (self.wingAC + tl + 0.75*cR - posYMAC * tan(radians(self.sweep25)))) < 0:
-                tl = tl - self.tlDecrement
-                cR = 2/(1 + TR) * sqrt((self.vc * self.spanWing * self.surfaceWing)/(self.aspectRatio * tl))
-                posYMAC = (1+2*TR)/((1+TR)*6) * sqrt((self.aspectRatio * self.vc * self.spanWing * self.surfaceWing)/tl)
-            return tl
 
     @Attribute
     def surface(self):
@@ -390,19 +291,6 @@ class Vtp(GeomBase):
         return self.conePos
 
     @Attribute
-    def prova(self):
-        """
-        Vertical tail root vertical position
-        :Unit: [m]
-        :rtype: float
-        """
-        if self.tailType == 'conventional':
-            rudder1 = Subtracted(shape_in=self.rudder, tool=self.htpWake)
-            return rudder1.faces[0].area
-        else:
-            return 17.
-
-    @Attribute
     def pointsWakeHtp(self):
         """
         List of points representing the horizontal tail plane wake after separation flow on it
@@ -423,71 +311,24 @@ class Vtp(GeomBase):
         :rtype: Points
         """
         return [Point(0, self.vertPos, self.longPos + (1-self.rcr)*self.chordRoot),
-                Point(0, self.curveTipPos.position.location.y, self.curveTipPos.position.location.z + (1-self.rcr)*self.chordTip),
-                Point(0, self.curveTipPos.position.location.y, self.curveTipPos.position.location.z + self.chordTip),
+                Point(0, self.vertPos + self.span, self.longPos + self.span * tan(radians(self.sweepLE)) + (1-self.rcr)*self.chordTip),
+                Point(0, self.vertPos + self.span, self.longPos + self.span * tan(radians(self.sweepLE)) + self.chordTip),
                 Point(0, self.vertPos, self.longPos + self.chordRoot),
                 Point(0, self.vertPos, self.longPos + (1-self.rcr)*self.chordRoot)]
 
+    @Attribute
+    def rudderFree(self):
+        """
+        Rudder area portion free of htp wake, with respect to the total rudder area
+        :Unit: [ ]
+        :rtype: float
+        """
+        if self.check.faces == []:
+            return 0
+        else:
+            return self.check.faces[0].area / self.rudder.area
+
     # ###### Parts ####################################################################################################
-
-    @Part
-    def curveRoot(self):
-        """
-        Root airfoil curve
-
-        :rtype:
-        """
-        return Airfoil(airfoilData=self.airfoilRoot,
-                       chord=self.chordRoot,
-                       hidden=True)
-
-    @Part
-    def curveTip(self):
-        """
-        Tip airfoil curve
-
-        :rtype:
-        """
-        return Airfoil(airfoilData=self.airfoilTip,
-                       chord=self.chordTip,
-                       hidden=True)
-
-    @Part
-    def curveRootPos(self):
-        """
-        Vertical tail root airfoil placed in the final position
-
-        :rtype:
-        """
-        return TransformedCurve(curve_in=self.curveRoot.crv,
-                                from_position=XOY,
-                                to_position=translate(rotate90(XOY, 'z_'),
-                                                      'x_', self.vertPos,
-                                                      'z', self.longPos),
-                                hidden=True)
-
-    @Part
-    def curveTipPos(self):
-        """
-        Vertical tail tip airfoil placed in the final position
-
-        :rtype:
-        """
-        return TransformedCurve(curve_in=self.curveTip.crv,
-                                from_position=XOY,
-                                to_position=translate(rotate90(XOY, 'z_'),
-                                                      'x_', self.vertPos + self.span,
-                                                      'z', self.longPos + self.span * tan(radians(self.sweepLE))),
-                                hidden=True)
-
-    @Part
-    def tail(self):
-        """
-        Vertical tail solid representation
-
-        :rtype:
-        """
-        return LoftedSolid([self.curveRootPos, self.curveTipPos])
 
     @Part
     def htpWake(self):
@@ -525,5 +366,5 @@ class Vtp(GeomBase):
 if __name__ == '__main__':
     from parapy.gui import display
 
-    obj = Vtp()
+    obj = VtpCalc()
     display(obj)

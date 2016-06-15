@@ -103,8 +103,9 @@ class Aircraft(GeomBase):
                    fuselageLength=self.fuselage.fuselageLength,
                    posFraction=self.wingbase.posFraction,
                    conePos=self.fuselage.tailSectionCurves[1].center.y,
-                   coneRadius=self.fuselage.tailSectionCurves[1].radius,
-                   tlH=self.htpbase.tl)
+                   tlH=self.htpbase.tl,
+                   crH=self.htpbase.chordRoot,
+                   longPosH=self.htpbase.longPos)
 
     @Part
     def htpbase(self):
@@ -116,7 +117,6 @@ class Aircraft(GeomBase):
                    fuselageLength=self.fuselage.fuselageLength,
                    posFraction=self.wingbase.posFraction,
                    conePos=self.fuselage.tailSectionCurves[1].center.y,
-                   coneRadius=self.fuselage.tailSectionCurves[1].radius,
                    tlV=self.vtpbase.tl,
                    spanV=self.vtpbase.span,
                    cMACyPosV=self.vtpbase.cMACyPos,
