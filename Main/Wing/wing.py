@@ -53,8 +53,8 @@ class Wing(GeomBase):
         :Unit: [deg]
         :rtype: float
         """
-        if self.maCruise <= 0.7:
-            return acos(1.0)
+        if self.maDD <= 0.705:
+            return degrees(acos(1.0))
         else:
             return degrees(acos(0.75 * self.maTechnology / self.maDD))
 

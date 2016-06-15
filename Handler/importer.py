@@ -44,6 +44,7 @@ class Importer:
         return str(name)
 
     def fileExtension(self, filePath):
+        # type: (object) -> object
         """
 
         :return:
@@ -58,8 +59,9 @@ class Importer:
 
         :return:
         """
-        instance = self.fileExtension(self.filePath)
-        if instance == ".xlsx":
+        fileExt = self.fileExtension(self.filePath)
+
+        if fileExt == ".xlsx":
             from Importers.excel import Excel as VarImporter
             myImporter = VarImporter(Component=self.component,
                               VariableName=self.variableName,
@@ -67,16 +69,16 @@ class Importer:
                               filePath=self.filePath)
             return VarImporter.finder(myImporter)
 
-        elif instance == '.txt':
+        elif fileExt == '.txt':
             pass
 
-        elif instance == '.dat':
+        elif fileExt == '.dat':
 
             airfoilPath = str(self.filePath)
 
         else:
             #showwarning("Warning","File type is not supported in this application. Please choose a different format")
-            print ("File type " + str(instance) + " is not supported in this application."
-                                                            "Please choose a different format")
+            print ('File type ' + repr(fileExt) + ' is not supported in this application. Variable '
+                   + repr(self.variableName) + ' will set to the default value: ' + repr(self.default))
             return self.default
 

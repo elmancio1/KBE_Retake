@@ -23,18 +23,18 @@ class Excel:
                 while valueRead != self.variableName and valueRead != 'EOC' and row < 1e3:
                     valueRead = str(self.sheet['B'+str(row)].value)
                     row += 1
-                if valueRead == self.variableName:
+                if valueRead == self.variableName and self.sheet['C'+str(row-1)].value is not None:
                     return self.sheet['C'+str(row-1)].value
-                elif valueRead == self.variableName and self.sheet['C'+str(row-1)].value == []:
-                    print 'Could not find value of ' + str(self.variableName) + '. Using the default value: ' \
-                          + str(self.default)
+                elif valueRead == self.variableName and self.sheet['C'+str(row-1)].value is None:
+                    print 'Could not find value of ' + repr(self.variableName) + '. Using the default value: ' \
+                          + repr(self.default)
                     return self.default
                 elif valueRead == 'EOC':
-                    print 'Could not find variable ' + str(self.variableName) + '. Using the default value: '\
-                          + str(self.default)
+                    print 'Could not find variable ' + repr(self.variableName) + '. Using the default value: '\
+                          + repr(self.default)
                     return self.default
             if componentRead == 'EOF':
-                print 'Could not find variable ' + str(self.variableName) + '. Using the default value: '\
-                      + str(self.default)
+                print 'Could not find variable ' + repr(self.variableName) + '. Using the default value: '\
+                      + repr(self.default)
                 return self.default
             row += 1
