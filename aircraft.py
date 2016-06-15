@@ -18,10 +18,6 @@ class Aircraft(GeomBase):
     """
 
     @Input
-    def variabile(self):
-        return 1.0
-
-    @Input
     def maCruise(self):
         """
         Cruise Mach number
