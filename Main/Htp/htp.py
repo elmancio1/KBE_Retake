@@ -8,6 +8,7 @@ from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
+import Tkinter, Tkconstants, tkFileDialog
 
 
 class Htp(GeomBase):
@@ -133,6 +134,16 @@ class Htp(GeomBase):
         settable = False
 
     @Input(settable=settable)
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        return str(filename)
+
+    @Input(settable=settable)
     def tailType(self):
         """
         Tail type, could be "conventional", "cruciform" or "T tail"
@@ -194,15 +205,6 @@ class Htp(GeomBase):
         :rtype: float
         """
         return 2.
-
-    @Input(settable=settable)
-    def coneRadius(self):
-        """
-        Aircraft tail cone last radius
-        :Unit: [m]
-        :rtype: float
-        """
-        return 1.
 
     @Input(settable=settable)
     def posFraction(self):
@@ -428,7 +430,7 @@ class Htp(GeomBase):
         if self.tailType == 'conventional':
             return self.conePos
         else:
-            return self.conePos + self.coneRadius + self.spanV * self.hVertPerc
+            return self.conePos + self.spanV * self.hVertPerc
 
     # ###### Parts ####################################################################################################
 

@@ -17,3 +17,4 @@ class AircaftCoG(GeomBase):
         Coefficent for estimating wing mass
         :return:
         """
+
