@@ -67,6 +67,42 @@ class Fuselage(GeomBase):
                               Default=3.0,
                               Path=self.filePath).getValue())
 
+    @Input(settable=False)
+    def tailSlendernessCalc(self):
+
+        tSlend = self.tailSlenderness
+        R = self.tailSectionCurves[0].radius
+        r = self.tailSectionCurves[1].radius
+        tailUp = radians(self.tailUpAngle)
+        h = tSlend * 2 * R
+        divAngle = degrees(atan((R - r) / (h) - tan(tailUp)) + \
+                           atan((R - r) / (h) + tan(tailUp)))
+        yesOrNo = False
+
+        if divAngle > 24.:
+            yesOrNo = askyesno("Warning",
+                               "The tailcone divergence angle is " + repr(divAngle) +
+                               " deg. This is detrimental for form drag. "
+                               "Would you like to search for the minimum tail slenderness ratio? ")
+
+        while divAngle > 24. and yesOrNo:
+
+            tSlend += exp(-(123 - divAngle) * 0.0697753)
+            h = tSlend * 2 * R
+
+            if abs(radians(self.tailUpAngle)) > abs(atan((R - r) / h)):
+
+                val = atan((R - r) / h)
+                tailUp = copysign(val, self.tailUpAngle)
+
+            else:
+                tailUp = radians(self.tailUpAngle)
+
+            divAngle = degrees(atan((R - r) / h - tan(tailUp)) + atan((R - r) / h + tan(tailUp)))
+
+        return tSlend
+
+
     @Input
     def tailUpAngle(self):
         """
@@ -189,25 +225,13 @@ class Fuselage(GeomBase):
         :Unit: [deg]
         :rtype: float
         """
-        divAngle= degrees(atan(((self.tailSectionCurves[1].center.y - self.tailSectionCurves[1].radius) -
-                             (self.tailSectionCurves[0].center.y - self.tailSectionCurves[0].radius)) /
-                            (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)) -
-                       atan(((self.tailSectionCurves[1].center.y + self.tailSectionCurves[1].radius) -
-                             (self.tailSectionCurves[0].center.y + self.tailSectionCurves[0].radius)) /
-                            (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)))
-        if divAngle > 24:
-            if askyesno("Warning",
-                        "The tail-cone divergence angle is greater than 24 deg. This is detrimental for form drag. "
-                        "Would you like to search for the minimum feasible slenderness ratio? "):
 
-                while divAngle > 24:
-                    self.tailSlenderness += exp(-(123-divAngle)*0.0697753)
-
-                return "The new value for tail slenderness is " + repr(self.tailSlenderness)
-            else:
-                return "Divergence angle is too high. The divergence angle is: " + repr(divAngle)
-        else:
-            return "The divergence angle is: " + repr(divAngle) + ". No change needed"
+        tSlend = self.tailSlendernessCalc
+        R = self.tailSectionCurves[0].radius
+        r = self.tailSectionCurves[1].radius
+        tailUp = radians(self.maxTailUp)
+        h = tSlend * 2 * R
+        return degrees(atan((R - r) / (h) - tan(tailUp)) + atan((R - r) / (h) + tan(tailUp)))
 
     @Attribute
     def maDD(self):
@@ -234,7 +258,7 @@ class Fuselage(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return self.tailSlenderness * self.fuselageDiameter
+        return self.tailSlendernessCalc * self.fuselageDiameter
 
     @Attribute
     def cylinderLength(self):
@@ -263,7 +287,7 @@ class Fuselage(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
-        if self.tailSlenderness < 1.0:
+        if self.tailSlendernessCalc < 1.0:
             showwarning('Warning', 'Tail slenderness ratios < 1 are detrimental for profile drag.')
         return self.cylinderLength / (len(self.cylinderSections) + 1)
 
