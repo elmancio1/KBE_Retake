@@ -69,8 +69,8 @@ class Aircraft(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        return 'T tail'
 
+        return 'T tail'
     #### Attributes ###
 
     @Attribute
