@@ -133,7 +133,8 @@ class Aircraft(GeomBase):
                    tlH=self.htpbase.tl,
                    filePath=self.filePath,
                    crH=self.htpbase.chordRoot,
-                   longPosH=self.htpbase.longPos)
+                   longPosH=self.htpbase.longPos,
+                   vertPosH=self.htpbase.vertPos)
 
     @Part
     def htpbase(self):

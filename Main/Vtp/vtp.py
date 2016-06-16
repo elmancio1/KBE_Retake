@@ -238,6 +238,15 @@ class Vtp(GeomBase):
         """
         return 33.16
 
+    @Input(settable=settable)
+    def vertPosH(self):
+        """
+        Horizontal tail plane vertical position
+        :Unit: [m]
+        :rtype: float
+        """
+        return 1.05
+
     # ### Attributes ##################################################################################################
 
     @Attribute
@@ -265,15 +274,14 @@ class Vtp(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        # TODO: per sweep di Htp troppo grandi fa casini
 
         # TODO: la vertical e veramente enorme... la scia si trova nella posizione corretta?
 
         if self.tailType == 'conventional':
-            tl = self.tlH  # first guess for vertical tail arm
+            tl = self.tlH / 2.  # first guess for vertical tail arm
             check = 0.  # first guess for the rudder area check, to start the cycle
-            while check < 1/3:
-                tl = tl - self.tlDecrement
+            while check < 2/3:
+                tl = tl + self.tlDecrement
                 calctail = VtpCalc(tl=tl,
                                    tailType=self.tailType,
                                    surfaceWing=self.surfaceWing,
@@ -282,10 +290,10 @@ class Vtp(GeomBase):
                                    fuselageLength=self.fuselageLength,
                                    posFraction=self.posFraction,
                                    conePos=self.conePos,
-                                   tlH=self.tlH,
                                    crH=self.crH,
-                                   longPosH=self.longPosH)
-                check = calctail.rudderFree
+                                   longPosH=self.longPosH,
+                                   vertPosH=self.vertPosH)
+                check = calctail.rudderBlanketed  # portion of the rudder blanketed
             return tl
         else:
             tl = self.fuselageLength  # first guess for tail arm
@@ -405,17 +413,16 @@ class Vtp(GeomBase):
         return self.conePos
 
     @Attribute
-    def prova(self):
+    def rudderFree(self):
         """
-        Vertical tail root vertical position
-        :Unit: [m]
+        Percentage of rudder area free of Htp wake
+        :Unit: [ ]
         :rtype: float
         """
-        if self.tailType == 'conventional':
-            rudder1 = Subtracted(shape_in=self.rudder, tool=self.htpWake)
-            return rudder1.faces[0].area
+        if self.check.faces == []:
+            return 0
         else:
-            return 17.
+            return self.check.faces[0].area / self.rudder.area
 
     @Attribute
     def pointsWakeHtp(self):
@@ -424,11 +431,11 @@ class Vtp(GeomBase):
         :Unit: []
         :rtype: Points
         """
-        return [Point(0, self.vertPos, self.longPosH),
-                Point(0, self.vertPos + self.span, self.longPosH + self.span * tan(pi/6)),
-                Point(0, self.vertPos + self.span, self.longPosH + self.crH + self.span * tan(pi/3)),
-                Point(0, self.vertPos, self.longPosH + self.crH),
-                Point(0, self.vertPos, self.longPosH)]
+        return [Point(0, self.vertPosH, self.longPosH),
+                Point(0, self.vertPosH + self.span, self.longPosH + self.span * tan(pi/6)),
+                Point(0, self.vertPosH + self.span, self.longPosH + self.crH + self.span * tan(pi/3)),
+                Point(0, self.vertPosH, self.longPosH + self.crH),
+                Point(0, self.vertPosH, self.longPosH)]
 
     @Attribute
     def pointsRudder(self):
