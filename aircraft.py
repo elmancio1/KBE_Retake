@@ -71,11 +71,6 @@ class Aircraft(GeomBase):
         """
 
         return 'T tail'
-
-    options["icon"] = "T tail"
-    askquestion("Title", "Message", **options)
-    askyesnocancel("Spam", "Want it?")
-
     #### Attributes ###
 
     @Attribute
