@@ -9,6 +9,7 @@ from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Handler.vtpCalc import VtpCalc
 from Input import Airfoils
+import Tkinter, Tkconstants, tkFileDialog
 
 
 class Vtp(GeomBase):
@@ -138,6 +139,16 @@ class Vtp(GeomBase):
         settable = False
 
     @Input(settable=settable)
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+
+        # get filename
+        filename = tkFileDialog.askopenfilename()
+        return str(filename)
+
+    @Input(settable=settable)
     def tailType(self):
         """
         Tail type, could be "conventional", "cruciform" or "T tail"
@@ -254,6 +265,10 @@ class Vtp(GeomBase):
         :Unit: [m]
         :rtype: float
         """
+        # TODO: per sweep di Htp troppo grandi fa casini
+
+        # TODO: la vertical e veramente enorme... la scia si trova nella posizione corretta?
+
         if self.tailType == 'conventional':
             tl = self.tlH  # first guess for vertical tail arm
             check = 0.  # first guess for the rudder area check, to start the cycle
