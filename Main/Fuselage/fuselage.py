@@ -79,6 +79,25 @@ class Fuselage(GeomBase):
                               Default=5.0,
                               Path=self.filePath).getValue())
 
+    @Input(settable=False)
+    def maxTailUp(self):
+        """
+        Aircraft tail angle, positive upward
+        :Unit: [deg]
+        :rtype: float
+        """
+
+        if abs(self.tailUpAngle) > abs(degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) /
+                                   self.tailLength))):
+
+            val = degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) / self.tailLength))
+            newTailUp = copysign(val, self.tailUpAngle)
+            showwarning('Warning', 'The selected tail up anlge is too large. An angle of ' + repr(newTailUp) +
+                        ' will be used instead.')
+            return newTailUp
+        else:
+            return self.tailUpAngle
+
     @Input
     def noseSections(self):
         """
@@ -162,6 +181,33 @@ class Fuselage(GeomBase):
         return str(filename)
 
     # ### Attributes ####################################################################################
+
+    @Attribute
+    def tailDivergenceAngle(self):
+        """
+        Aircraft tail divergence angle, evaluated from 4 characteristic points of the tail sections
+        :Unit: [deg]
+        :rtype: float
+        """
+        divAngle= degrees(atan(((self.tailSectionCurves[1].center.y - self.tailSectionCurves[1].radius) -
+                             (self.tailSectionCurves[0].center.y - self.tailSectionCurves[0].radius)) /
+                            (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)) -
+                       atan(((self.tailSectionCurves[1].center.y + self.tailSectionCurves[1].radius) -
+                             (self.tailSectionCurves[0].center.y + self.tailSectionCurves[0].radius)) /
+                            (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)))
+        if divAngle > 24:
+            if askyesno("Warning",
+                        "The tail-cone divergence angle is greater than 24 deg. This is detrimental for form drag. "
+                        "Would you like to search for the minimum feasible slenderness ratio? "):
+
+                while divAngle > 24:
+                    self.tailSlenderness += exp(-(123-divAngle)*0.0697753)
+
+                return "The new value for tail slenderness is " + repr(self.tailSlenderness)
+            else:
+                return "Divergence angle is too high. The divergence angle is: " + repr(divAngle)
+        else:
+            return "The divergence angle is: " + repr(divAngle) + ". No change needed"
 
     @Attribute
     def maDD(self):
@@ -252,55 +298,6 @@ class Fuselage(GeomBase):
         """
         return self.noseSectionCurves + self.cylinderSectionCurves + self.tailSectionCurves
 
-    @Attribute
-    def tailUpAngleCalc(self):
-        """
-        Aircraft tail angle, positive upward
-        :Unit: [deg]
-        :rtype: float
-        """
-
-        if abs(self.tailUpAngle) > abs(degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) /
-                                   self.tailLength))):
-            val = degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) / self.tailLength))
-            newTailUp = copysign(val, self.tailUpAngle)
-            showwarning('Warning', 'The selected tail up anlge is too large. An angle of ' + repr(newTailUp) +
-                        ' will be used instead.')
-            return newTailUp
-        else:
-            return self.tailUpAngle
-
-    @Attribute
-    def tailDivergenceAngle(self):
-        """
-        Aircraft tail divergence angle, evaluated from 4 characteristic points of the tail sections
-        :Unit: [deg]
-        :rtype: float
-        """
-        return degrees(atan(((self.tailSectionCurves[1].center.y - self.tailSectionCurves[1].radius) -
-                             (self.tailSectionCurves[0].center.y - self.tailSectionCurves[0].radius)) /
-                            (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)) -
-                       atan(((self.tailSectionCurves[1].center.y + self.tailSectionCurves[1].radius) -
-                             (self.tailSectionCurves[0].center.y + self.tailSectionCurves[0].radius)) /
-                            (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)))
-
-    @Attribute
-    def newTailSlenderness(self):
-        if self.tailDivergenceAngle > 24:
-            if askyesno("Warning",
-                        "The tail-cone divergence angle is greater than 24 deg. This is detrimental for form drag. "
-                        "Would you like to search for the minimum feasible slenderness ratio? "):
-
-                slendernessIncrement = 0.01
-                while self.tailDivergenceAngle > 24:
-                    self.tailSlenderness += slendernessIncrement
-
-                return "The new value for tail slenderness is " + repr(self.tailSlenderness)
-            else:
-                return "Divergence angle is too high."
-        else:
-            return "No change needed"
-
 # #### part ############################################################################################
 
     @Part
@@ -340,7 +337,7 @@ class Fuselage(GeomBase):
         return Circle(quantify=len(self.tailSections),
                       radius=self.tailSectionRadius[child.index],
                       position=self.position.translate('y', child.index * self.tailSectionLength *
-                                                       tan(radians(self.tailUpAngleCalc)),
+                                                       tan(radians(self.maxTailUp)),
                                                        'z',
                                                        child.index * self.tailSectionLength + self.noseLength +
                                                        self.cylinderLength),
