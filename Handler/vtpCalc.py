@@ -144,15 +144,6 @@ class VtpCalc(GeomBase):
         return .5
 
     @Input
-    def tlH(self):
-        """
-        Horizontal tail plane arm
-        :Unit: [m]
-        :rtype: float
-        """
-        return 17.58
-
-    @Input
     def crH(self):
         """
         Horizontal tail plane root chord
@@ -169,6 +160,15 @@ class VtpCalc(GeomBase):
         :rtype: float
         """
         return 33.16
+
+    @Input
+    def vertPosH(self):
+        """
+        Horizontal tail plane vertical position
+        :Unit: [m]
+        :rtype: float
+        """
+        return 1.05
 
 
     window = Tk()
@@ -297,11 +297,11 @@ class VtpCalc(GeomBase):
         :Unit: []
         :rtype: Points
         """
-        return [Point(0, self.vertPos, self.longPosH),
-                Point(0, self.vertPos + self.span, self.longPosH + self.span * tan(pi/6)),
-                Point(0, self.vertPos + self.span, self.longPosH + self.crH + self.span * tan(pi/3)),
-                Point(0, self.vertPos, self.longPosH + self.crH),
-                Point(0, self.vertPos, self.longPosH)]
+        return [Point(0, self.vertPosH, self.longPosH),
+                Point(0, self.vertPosH + self.span, self.longPosH + self.span * tan(pi/6)),
+                Point(0, self.vertPosH + self.span, self.longPosH + self.crH + self.span * tan(pi/3)),
+                Point(0, self.vertPosH, self.longPosH + self.crH),
+                Point(0, self.vertPosH, self.longPosH)]
 
     @Attribute
     def pointsRudder(self):
@@ -327,6 +327,16 @@ class VtpCalc(GeomBase):
             return 0
         else:
             return self.check.faces[0].area / self.rudder.area
+
+    @Attribute
+    def rudderBlanketed(self):
+        """
+        Rudder area portion blanketed by htp wake, with respect to the total rudder area
+        :Unit: [ ]
+        :rtype: float
+        """
+        return 1. - self.rudderFree
+
 
     # ###### Parts ####################################################################################################
 
