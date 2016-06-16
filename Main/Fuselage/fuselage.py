@@ -87,7 +87,7 @@ class Fuselage(GeomBase):
 
         while divAngle > 24. and yesOrNo:
 
-            tSlend += exp(-(123 - divAngle) * 0.0697753)
+            tSlend += exp(-(48. - divAngle) * 0.287823)
             h = tSlend * 2 * R
 
             if abs(radians(self.tailUpAngle)) > abs(atan((R - r) / h)):
