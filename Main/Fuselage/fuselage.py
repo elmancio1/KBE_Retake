@@ -89,6 +89,7 @@ class Fuselage(GeomBase):
 
         if abs(self.tailUpAngle) > abs(degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) /
                                    self.tailLength))):
+
             val = degrees(atan((self.tailSectionCurves[0].radius - self.tailSectionCurves[1].radius) / self.tailLength))
             newTailUp = copysign(val, self.tailUpAngle)
             showwarning('Warning', 'The selected tail up anlge is too large. An angle of ' + repr(newTailUp) +
@@ -188,29 +189,25 @@ class Fuselage(GeomBase):
         :Unit: [deg]
         :rtype: float
         """
-        return degrees(atan(((self.tailSectionCurves[1].center.y - self.tailSectionCurves[1].radius) -
+        divAngle= degrees(atan(((self.tailSectionCurves[1].center.y - self.tailSectionCurves[1].radius) -
                              (self.tailSectionCurves[0].center.y - self.tailSectionCurves[0].radius)) /
                             (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)) -
                        atan(((self.tailSectionCurves[1].center.y + self.tailSectionCurves[1].radius) -
                              (self.tailSectionCurves[0].center.y + self.tailSectionCurves[0].radius)) /
                             (self.tailSectionCurves[1].center.z - self.tailSectionCurves[0].center.z)))
-
-    @Attribute
-    def newTailSlenderness(self):
-        if self.tailDivergenceAngle > 24:
+        if divAngle > 24:
             if askyesno("Warning",
                         "The tail-cone divergence angle is greater than 24 deg. This is detrimental for form drag. "
                         "Would you like to search for the minimum feasible slenderness ratio? "):
 
-                slendernessIncrement = 0.01
-                while self.tailDivergenceAngle > 24:
-                    self.tailSlenderness += slendernessIncrement
+                while divAngle > 24:
+                    self.tailSlenderness += exp(-(123-divAngle)*0.0697753)
 
                 return "The new value for tail slenderness is " + repr(self.tailSlenderness)
             else:
-                return "Divergence angle is too high."
+                return "Divergence angle is too high. The divergence angle is: " + repr(divAngle)
         else:
-            return "No change needed"
+            return "The divergence angle is: " + repr(divAngle) + ". No change needed"
 
     @Attribute
     def maDD(self):
