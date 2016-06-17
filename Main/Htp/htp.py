@@ -7,6 +7,7 @@ from Tkinter import *
 from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
+from Handler.htpCalc import HtpCalc
 from Input import Airfoils
 import Tkinter, Tkconstants, tkFileDialog
 
@@ -83,15 +84,50 @@ class Htp(GeomBase):
         else:
             return .75
 
-    @Input
+    @Input(settable=False)
     def hVertPercCalc(self):
         """
         Check on horizontal height of htp in percentage with respect to vtp span, to have at least 1/3 of rudder free
         :Unit: [ ]
         :rtype: float
         """
-        pass
+        hvPerc = self.hVertPerc
+        check = 0.  # first guess of free portion of the rudder, in order to enter anyway the cycle
+        iter = 0.
+        if hvPerc < 1/3:
+            while check < 1/3:
+                calctail = HtpCalc(hVertPerc=hvPerc,
+                                   aspectRatio=self.aspectRatio,
+                                   taperRatio=self.taperRatio,
+                                   sweep25=self.sweep25,
+                                   vc=self.vc,
+                                   tailType=self.tailType,
+                                   sweep25Wing=self.sweep25Wing,
+                                   surfaceWing=self.surfaceWing,
+                                   cMACWing=self.cMACWing,
+                                   fuselageLength=self.fuselageLength,
+                                   conePos=self.conePos,
+                                   posFraction=self.posFraction,
+                                   spanV=self.spanV,
+                                   sweepLEV=self.sweepLEV,
+                                   cMACyPosV=self.cMACyPosV,
+                                   cMACV=self.cMACV,
+                                   chordRootV=self.chordRootV,
+                                   chordTipV=self.chordTipV,
+                                   tlV=self.tlV,
+                                   longPosV=self.longPosV,
+                                   vertPosV=self.vertPosV,
+                                   rcr=self.rcr)
 
+                check = calctail.rudderFree
+                if check < 1/3:
+                    iter += 1.
+                    hvPerc += 0.01  # increment of horizontal height of htp of 1 percent
+            if iter > 0:
+                showwarning('Warning', 'The selected height of htp is too low, blanketing more than 2/3 of rudder. '
+                                       'This is detrimental for spin control. A percentage of ' + repr(hvPerc) +
+                            ' will be used instead.')
+        return hvPerc
 
     @Input
     def aspectRatio(self):
@@ -279,6 +315,52 @@ class Htp(GeomBase):
         """
         return 3.2
 
+    @Input(settable=settable)
+    def chordRootV(self):
+        """
+        Vertical tail root chord
+        :Unit: [m]
+        :rtype: float
+        """
+        return 3.85
+
+    @Input(settable=settable)
+    def chordTipV(self):
+        """
+        Vertical tail tip chord
+        :Unit: [m]
+        :rtype: float
+        """
+        return 2.69
+
+    @Input(settable=settable)
+    def longPosV(self):
+        """
+        Vertical tail plane longitudinal position
+        :Unit: [m]
+        :rtype: float
+        """
+        return 26.14
+
+    @Input(settable=settable)
+    def vertPosV(self):
+        """
+        Vertical tail plane vertical position
+        :Unit: [m]
+        :rtype: float
+        """
+        return 1.05
+
+    @Input(settable=settable)
+    def rcr(self):
+        """
+        Rudder chord ratio over root chord
+        :Unit: [ ]
+        :rtype: float
+        source: Raymer
+        """
+        return .35
+
     # ### Attributes ##################################################################################################
 
     @Attribute
@@ -302,7 +384,7 @@ class Htp(GeomBase):
     @Attribute
     def tl(self):
         """
-        Vertical tail arm
+        Horizontal tail arm
         :Unit: [m]
         :rtype: float
         """
@@ -328,7 +410,7 @@ class Htp(GeomBase):
                 posYMAC = (1 + 2 * TR) / ((1 + TR) * 6) * \
                           sqrt((self.aspectRatio * self.vc * self.cMACWing * self.surfaceWing) / tl)
                 tlNew = self.tlV - .25*self.cMACV + 0.25*cR + posYMAC * tan(radians(self.sweep25)) + \
-                       (self.hVertPerc * self.spanV - self.cMACyPosV) * tan(radians(self.sweepLEV))
+                       (self.hVertPercCalc * self.spanV - self.cMACyPosV) * tan(radians(self.sweepLEV))
                 res = (tlNew - tl)**2
                 tl = tlNew
 
@@ -337,7 +419,7 @@ class Htp(GeomBase):
     @Attribute
     def surface(self):
         """
-        Vertical tail reference surface
+        Horizontal tail reference surface
         :Unit: [m^2]
         :rtype: float
         """
@@ -346,7 +428,7 @@ class Htp(GeomBase):
     @Attribute
     def span(self):
         """
-        Vertical tail span, b
+        Horizontal tail span, b
         :Unit: [m]
         :rtype: float
         """
@@ -355,7 +437,7 @@ class Htp(GeomBase):
     @Attribute
     def chordRoot(self):
         """
-        Vertical tail root chord
+        Horizontal tail root chord
         :Unit: [m]
         :rtype: float
         """
@@ -364,7 +446,7 @@ class Htp(GeomBase):
     @Attribute
     def chordTip(self):
         """
-        Vertical tail tip chord
+        Horizontal tail tip chord
         :Unit: [m]
         :rtype: float
         """
@@ -373,7 +455,7 @@ class Htp(GeomBase):
     @Attribute
     def cMAC(self):
         """
-        Vertical tail Mean Aerodynamic Chord
+        Horizontal tail Mean Aerodynamic Chord
         :Unit: [m]
         :rtype: float
         """
@@ -382,7 +464,7 @@ class Htp(GeomBase):
     @Attribute
     def cMACyPos(self):
         """
-        Vertical tail Mean Aerodynamic Chord position
+        Horizontal tail Mean Aerodynamic Chord position
         :Unit: [m]
         :rtype: float
         """
@@ -391,7 +473,7 @@ class Htp(GeomBase):
     @Attribute
     def sweep50(self):
         """
-        Vertical tail sweep angle calculated at half chord
+        Horizontal tail sweep angle calculated at half chord
         :Unit: [deg]
         :rtype: float
         """
@@ -402,7 +484,7 @@ class Htp(GeomBase):
     @Attribute
     def sweepLE(self):
         """
-        Vertical tail sweep angle calculated at Leading Edge
+        Horizontal tail sweep angle calculated at Leading Edge
         :Unit: [deg]
         :rtype: float
         """
@@ -413,7 +495,7 @@ class Htp(GeomBase):
     @Attribute
     def sweepTE(self):
         """
-        Vertical tail sweep angle calculated at Trailing Edge
+        Horizontal tail sweep angle calculated at Trailing Edge
         :Unit: [deg]
         :rtype: float
         """
@@ -424,7 +506,7 @@ class Htp(GeomBase):
     @Attribute
     def longPos(self):
         """
-        Vertical tail root longitudinal position, in order to have the calculated tail arm
+        Horizontal tail root longitudinal position, in order to have the calculated tail arm
         :Unit: [m]
         :rtype: float
         """
@@ -433,14 +515,14 @@ class Htp(GeomBase):
     @Attribute
     def vertPos(self):
         """
-        Vertical tail root vertical position
+        Horizontal tail root vertical position
         :Unit: [m]
         :rtype: float
         """
         if self.tailType == 'conventional':
             return self.conePos
         else:
-            return self.conePos + self.spanV * self.hVertPerc
+            return self.conePos + self.spanV * self.hVertPercCalc
 
     # ###### Parts ####################################################################################################
 

@@ -154,7 +154,12 @@ class Aircraft(GeomBase):
                    sweep25V=self.vtpbase.sweep25,
                    sweepLEV=self.vtpbase.sweepLE,
                    cMACV=self.vtpbase.cMAC,
-                   filePath=self.filePath)
+                   filePath=self.filePath,
+                   chordRootV=self.vtpbase.chordRoot,
+                   chordTipV=self.vtpbase.chordTip,
+                   longPosV=self.vtpbase.longPos,
+                   vertPosV=self.vtpbase.vertPos,
+                   rcr=self.vtpbase.rcr)
 
 
 if __name__ == '__main__':
