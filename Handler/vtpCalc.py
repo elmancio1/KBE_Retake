@@ -168,7 +168,7 @@ class VtpCalc(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return 1.05
+        return 2.
 
 
     window = Tk()

@@ -84,6 +84,16 @@ class Htp(GeomBase):
             return .75
 
     @Input
+    def hVertPercCalc(self):
+        """
+        Check on horizontal height of htp in percentage with respect to vtp span, to have at least 1/3 of rudder free
+        :Unit: [ ]
+        :rtype: float
+        """
+        pass
+
+
+    @Input
     def aspectRatio(self):
         """
         Horizontal tail plane aspect ratio, b^2 / S
