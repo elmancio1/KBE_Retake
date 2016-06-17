@@ -4,7 +4,8 @@ from parapy.core import *
 from Handler.importer import Importer
 from Input import Files
 from math import *
-from Tkinter import *
+import Tkinter
+import tkMessageBox
 from tkMessageBox import *
 from Main.Wing.wing import Wing
 from Main.Fuselage.fuselage import Fuselage
@@ -69,8 +70,10 @@ class Aircraft(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
+        type = askyesnocancel(title="Title", message="Message")
 
-        return 'T tail'
+
+        return B
     #### Attributes ###
 
     @Attribute
@@ -85,7 +88,6 @@ class Aircraft(GeomBase):
         options['initialfile'] = defaultFile
         # get filename
         filename = tkFileDialog.askopenfilename(**file_opt)
-        print filename
         return str(filename)
 
     @Part
