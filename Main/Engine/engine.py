@@ -145,6 +145,15 @@ class Engine(GeomBase):
                             Default='wing',
                               Path=self.filePath).getValue())
 
+    @Input
+    def visual(self):
+        """
+        Define the visualization of the visual checks, it could be either True or False
+        :Unit: [ ]
+        :rtype: string
+        """
+        return True
+
     window = Tk()
     window.wm_withdraw()
 
@@ -723,7 +732,8 @@ class Engine(GeomBase):
                                                       'x_', self.latPos[child.index],
                                                       'y', self.vertPos[child.index],
                                                       'z', self.longPos[child.index]),
-                                color='cyan', transparency=0.75)
+                                color='cyan', transparency=0.75,
+                                hidden=self.visual)
 
     @Part
     def coreExhaustLeft(self):
@@ -738,7 +748,8 @@ class Engine(GeomBase):
                                                       'x_', self.latPos[child.index],
                                                       'y', self.vertPos[child.index],
                                                       'z', self.longPos[child.index]),
-                                color='red', transparency=0.7)
+                                color='red', transparency=0.7,
+                                hidden=self.visual)
 
     @Part
     def bypassExhaustRight(self):
@@ -753,7 +764,8 @@ class Engine(GeomBase):
                                                       'x', self.latPos[child.index],
                                                       'y', self.vertPos[child.index],
                                                       'z', self.longPos[child.index]),
-                                color='cyan', transparency=0.75)
+                                color='cyan', transparency=0.75,
+                                hidden=self.visual)
 
     @Part
     def coreExhaustRight(self):
@@ -768,10 +780,8 @@ class Engine(GeomBase):
                                                       'x', self.latPos[child.index],
                                                       'y', self.vertPos[child.index],
                                                       'z', self.longPos[child.index]),
-                                color='red', transparency=0.7)
-
-
-
+                                color='red', transparency=0.7,
+                                hidden=self.visual)
 
 if __name__ == '__main__':
     from parapy.gui import display
