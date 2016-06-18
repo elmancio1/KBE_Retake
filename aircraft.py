@@ -70,10 +70,15 @@ class Aircraft(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        tailType = askyesnocancel(title="Title", message="Message")
+        tailType = askyesnocancel(title="Tail type selection", message="Yes = T tail, No = cruciform, Cancel = conventional")
 
+        if tailType:
+            return 'T tail'
+        elif tailType is None:
+            return 'conventional'
+        else:
+            return 'cruciform'
 
-        return tailType
     #### Attributes ###
 
     @Attribute
