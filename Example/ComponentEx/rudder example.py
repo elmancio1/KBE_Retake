@@ -63,6 +63,18 @@ class RudderEx(Base):
                 Point(0, self.vertPos, self.longPos + self.chordRoot),
                 Point(0, self.vertPos, self.longPos + (1-self.rcr)*self.chordRoot)]
 
+    @Part
+    def cube1(self):
+        return Cube(2)
+
+    @Part
+    def cube2(self):
+        return Cube(1)
+
+    @Part
+    def sottrazione(self):
+        return Subtracted(shape_in=self.cube1, tool=self.cube2)
+
 
 if __name__ == '__main__':
     from parapy.gui import display

@@ -8,77 +8,61 @@ from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
+import Tkinter, Tkconstants, tkFileDialog
 
 
-class VtpCalc(GeomBase):
+class HtpCalc(GeomBase):
     """
-    Support class Vertical tail plane to perform all calculations
+    Support class horizontal tail plane to perform all calculations
     """
 
     @Input
-    def rcr(self):
+    def hVertPerc(self):
         """
-        Rudder chord ratio over root chord
+        Horizontal height of htp in percentage with respect to vtp span
         :Unit: [ ]
         :rtype: float
-        source: Raymer
         """
-        return .35
-
+        return .75
     @Input
     def aspectRatio(self):
         """
-        Vertical tail plane aspect ratio, b^2 / S
+        Horizontal tail plane aspect ratio, b^2 / S
         :Unit: [ ]
         :rtype: float
         source: KBE assignment support material
         """
-        if self.tailType == 'conventional':
-            return 1.9
-        else:
-            return 1.35
+        return 5.
 
     @Input
     def taperRatio(self):
         """
-        Vertical tail plane taper ratio, tip chord / root chord
+        Horizontal tail plane taper ratio, tip chord / root chord
         :Unit: [ ]
         :rtype: float
         source: KBE assignment support material
         """
-        if self.tailType == 'conventional':
-            return 0.3
-        else:
-            return 0.7
+        return .4
 
     @Input
     def sweep25(self):
         """
-        Vertical tail plane sweep at quarter chord
+        Horizontal tail plane sweep at quarter chord
         :Unit: [deg]
         :rtype: float
         source: KBE assignment support material
         """
-        return 37.5
+        return 10 + self.sweep25Wing
 
     @Input
     def vc(self):
         """
-        Vertical tail volume coefficient
+        Horizontal tail volume coefficient
         :Unit: [ ]
         :rtype: float
         source: KBE assignment support material
         """
-        return .083
-
-    @Input
-    def tl(self):
-        """
-        Vertical tail plane arm
-        :Unit: [m]
-        :rtype: float
-        """
-        return 15.96
+        return 1.
 
     @Input
     def tailType(self):
@@ -87,7 +71,16 @@ class VtpCalc(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        return 'T tail'
+        return 'cruciform'
+
+    @Input
+    def sweep25Wing(self):
+        """
+        Wing sweep angle calculated at quarter chord
+        :Unit: [deg]
+        :rtype: float
+        """
+        return 28.75
 
     @Input
     def surfaceWing(self):
@@ -96,7 +89,7 @@ class VtpCalc(GeomBase):
         :Unit: [m^2]
         :rtype: float
         """
-        return 94.
+        return 84.54
 
     @Input
     def cMACWing(self):
@@ -105,16 +98,7 @@ class VtpCalc(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return 3.67
-
-    @Input
-    def spanWing(self):
-        """
-        Wing span, b
-        :Unit: [m]
-        :rtype: float
-        """
-        return 28.
+        return 3.48
 
     @Input
     def fuselageLength(self):
@@ -123,16 +107,16 @@ class VtpCalc(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return 36.
+        return 30.
 
     @Input
     def conePos(self):
         """
-        Aircraft tail cone most upper point vertical position
+        Aircraft tail cone vertical position
         :Unit: [m]
         :rtype: float
         """
-        return 2.
+        return 1.05
 
     @Input
     def posFraction(self):
@@ -144,32 +128,95 @@ class VtpCalc(GeomBase):
         return .5
 
     @Input
-    def crH(self):
+    def spanV(self):
         """
-        Horizontal tail plane root chord
+        Vertical tail span
         :Unit: [m]
         :rtype: float
         """
-        return 2.6
+        return 4.42
 
     @Input
-    def longPosH(self):
+    def sweepLEV(self):
         """
-        Horizontal tail plane longitudinal position
-        :Unit: [m]
+        Vertical tail sweep, evaluated at leading edge
+        :Unit: [deg]
         :rtype: float
         """
-        return 33.16
+        return 42.
 
     @Input
-    def vertPosH(self):
+    def cMACyPosV(self):
         """
-        Horizontal tail plane vertical position
+        Vertical tail MAC position
         :Unit: [m]
         :rtype: float
         """
-        return 2.
+        return 1.04
 
+    @Input
+    def cMACV(self):
+        """
+        Vertical tail Mean Aerodynamic Chord
+        :Unit: [m]
+        :rtype: float
+        """
+        return 3.31
+
+    @Input
+    def chordRootV(self):
+        """
+        Vertical tail root chord
+        :Unit: [m]
+        :rtype: float
+        """
+        return 3.85
+
+    @Input
+    def chordTipV(self):
+        """
+        Vertical tail tip chord
+        :Unit: [m]
+        :rtype: float
+        """
+        return 2.69
+
+    @Input
+    def tlV(self):
+        """
+        Vertical tail tip chord
+        :Unit: [m]
+        :rtype: float
+        """
+        return 12.9
+
+    @Input
+    def longPosV(self):
+        """
+        Vertical tail plane longitudinal position
+        :Unit: [m]
+        :rtype: float
+        """
+        return 26.14
+
+    @Input
+    def vertPosV(self):
+        """
+        Vertical tail plane vertical position
+        :Unit: [m]
+        :rtype: float
+        """
+        return 1.05
+
+    @Input
+    def rcr(self):
+        """
+        Rudder chord ratio over root chord
+        :Unit: [ ]
+        :rtype: float
+        source: Raymer
+        """
+        return .35
 
     window = Tk()
     window.wm_withdraw()
@@ -186,13 +233,57 @@ class VtpCalc(GeomBase):
         return self.posFraction * self.fuselageLength
 
     @Attribute
+    def tlDecrement(self):
+        """
+        Tail arm decrement
+        :Unit: [m]
+        :rtype: float
+        """
+        return .0001 * self.fuselageLength
+
+    @Attribute
+    def tl(self):
+        """
+        Horizontal tail arm
+        :Unit: [m]
+        :rtype: float
+        """
+        if self.tailType == 'conventional':
+            tl = self.fuselageLength  # first guess for tail arm
+            TR = self.taperRatio
+            cR = self.cMACWing  # first guess for the tail root chord
+            posYMAC = 10.  # first guess for the tail MAC position
+
+            while (self.fuselageLength - (self.wingAC + tl + 0.75*cR - posYMAC * tan(radians(self.sweep25)))) < 0:
+                tl = tl - self.tlDecrement
+                cR = 2/(1 + TR) * sqrt((self.vc * self.cMACWing * self.surfaceWing)/(self.aspectRatio * tl))
+                posYMAC = (1+2*TR)/((1+TR)*6) * sqrt((self.aspectRatio * self.vc * self.cMACWing * self.surfaceWing)/tl)
+            return tl
+
+        else:
+            res = 1  # first guess for residual, to start the cycle
+            TR = self.taperRatio
+            tl = self.tlV  # first guess for horizontal tail arm
+            while res > 0.001:
+
+                cR = 2 / (1 + TR) * sqrt((self.vc * self.cMACWing * self.surfaceWing) / (self.aspectRatio * tl))
+                posYMAC = (1 + 2 * TR) / ((1 + TR) * 6) * \
+                          sqrt((self.aspectRatio * self.vc * self.cMACWing * self.surfaceWing) / tl)
+                tlNew = self.tlV - .25*self.cMACV + 0.25*cR + posYMAC * tan(radians(self.sweep25)) + \
+                       (self.hVertPerc * self.spanV - self.cMACyPosV) * tan(radians(self.sweepLEV))
+                res = (tlNew - tl)**2
+                tl = tlNew
+
+            return tl
+
+    @Attribute
     def surface(self):
         """
         Vertical tail reference surface
         :Unit: [m^2]
         :rtype: float
         """
-        return self.vc * self.surfaceWing * self.spanWing / self.tl
+        return self.vc * self.surfaceWing * self.cMACWing / self.tl
 
     @Attribute
     def span(self):
@@ -288,7 +379,10 @@ class VtpCalc(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return self.conePos
+        if self.tailType == 'conventional':
+            return self.conePos
+        else:
+            return self.conePos + self.spanV * self.hVertPerc
 
     @Attribute
     def pointsWakeHtp(self):
@@ -297,11 +391,11 @@ class VtpCalc(GeomBase):
         :Unit: []
         :rtype: Points
         """
-        return [Point(0, self.vertPosH, self.longPosH),
-                Point(0, self.vertPosH + self.span, self.longPosH + self.span * tan(pi/6)),
-                Point(0, self.vertPosH + self.span, self.longPosH + self.crH + self.span * tan(pi/3)),
-                Point(0, self.vertPosH, self.longPosH + self.crH),
-                Point(0, self.vertPosH, self.longPosH)]
+        return [Point(0, self.vertPos, self.longPos),
+                Point(0, self.vertPos + self.spanV, self.longPos + self.spanV * tan(pi/6)),
+                Point(0, self.vertPos + self.spanV, self.longPos + self.chordRoot + self.spanV * tan(pi/3)),
+                Point(0, self.vertPos, self.longPos + self.chordRoot),
+                Point(0, self.vertPos, self.longPos)]
 
     @Attribute
     def pointsRudder(self):
@@ -310,11 +404,11 @@ class VtpCalc(GeomBase):
         :Unit: []
         :rtype: Points
         """
-        return [Point(0, self.vertPos, self.longPos + (1-self.rcr)*self.chordRoot),
-                Point(0, self.vertPos + self.span, self.longPos + self.span * tan(radians(self.sweepLE)) + (1-self.rcr)*self.chordTip),
-                Point(0, self.vertPos + self.span, self.longPos + self.span * tan(radians(self.sweepLE)) + self.chordTip),
-                Point(0, self.vertPos, self.longPos + self.chordRoot),
-                Point(0, self.vertPos, self.longPos + (1-self.rcr)*self.chordRoot)]
+        return [Point(0, self.vertPosV, self.longPosV + (1-self.rcr)*self.chordRootV),
+                Point(0, self.vertPosV + self.spanV, self.longPosV + self.spanV * tan(radians(self.sweepLEV)) + (1-self.rcr)*self.chordTipV),
+                Point(0, self.vertPosV + self.spanV, self.longPosV + self.spanV * tan(radians(self.sweepLEV)) + self.chordTipV),
+                Point(0, self.vertPosV, self.longPosV + self.chordRootV),
+                Point(0, self.vertPosV, self.longPosV + (1-self.rcr)*self.chordRootV)]
 
     @Attribute
     def rudderFree(self):
@@ -336,7 +430,6 @@ class VtpCalc(GeomBase):
         :rtype: float
         """
         return 1. - self.rudderFree
-
 
     # ###### Parts ####################################################################################################
 
@@ -376,5 +469,5 @@ class VtpCalc(GeomBase):
 if __name__ == '__main__':
     from parapy.gui import display
 
-    obj = VtpCalc()
+    obj = HtpCalc()
     display(obj)

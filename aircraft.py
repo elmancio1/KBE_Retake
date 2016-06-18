@@ -70,10 +70,15 @@ class Aircraft(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        type = askyesnocancel(title="Title", message="Message")
+        tailType = askyesnocancel(title="Tail type selection", message="Yes = T tail, No = cruciform, Cancel = conventional")
 
+        if tailType:
+            return 'T tail'
+        elif tailType is None:
+            return 'conventional'
+        else:
+            return 'cruciform'
 
-        return B
     #### Attributes ###
 
     @Attribute
@@ -154,7 +159,12 @@ class Aircraft(GeomBase):
                    sweep25V=self.vtpbase.sweep25,
                    sweepLEV=self.vtpbase.sweepLE,
                    cMACV=self.vtpbase.cMAC,
-                   filePath=self.filePath)
+                   filePath=self.filePath,
+                   chordRootV=self.vtpbase.chordRoot,
+                   chordTipV=self.vtpbase.chordTip,
+                   longPosV=self.vtpbase.longPos,
+                   vertPosV=self.vtpbase.vertPos,
+                   rcr=self.vtpbase.rcr)
 
 
 if __name__ == '__main__':

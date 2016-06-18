@@ -118,7 +118,7 @@ class Fuselage(GeomBase):
     @Input(settable=False)
     def maxTailUp(self):
         """
-        Aircraft tail angle, positive upward
+        Aircraft tail angle check, to not exceed maximum fuselage height
         :Unit: [deg]
         :rtype: float
         """
