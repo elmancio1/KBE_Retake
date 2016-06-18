@@ -70,10 +70,10 @@ class Aircraft(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        type = askyesnocancel(title="Title", message="Message")
+        tailType = askyesnocancel(title="Title", message="Message")
 
 
-        return B
+        return tailType
     #### Attributes ###
 
     @Attribute
