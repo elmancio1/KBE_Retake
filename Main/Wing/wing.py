@@ -433,6 +433,7 @@ class Wing(GeomBase):
         :Unit: [m]
         :rtype: float
         """
+        #TODO: sei sicurodi questa formula? cmq avendo creato la rappresentazione della MAC ora la sua posizione ce l'hai autonomamente
         return (self.posFraction * self.fuselageLength) - (0.25*self.chordRoot)
 
     # ###### Parts ####################################################################################################
@@ -511,6 +512,73 @@ class Wing(GeomBase):
                              reference_point=self.rightWing.position,
                              vector1=self.rightWing.position.Vy,
                              vector2=self.rightWing.position.Vz)
+
+    @Part
+    def planeMACr(self):
+        """
+        Intersecting plane at MAC position on right wing
+
+        :rtype:
+        """
+        return Plane(Point(self.cMACyPos, 0, 0), Vector(1, 0, 0),
+                     hidden=True)
+
+    @Part
+    def MACr(self):
+        """
+        MAC representation on right wing
+
+        :rtype:
+        """
+        return IntersectedShapes(shape_in=self.rightWing,
+                                 tool=self.planeMACr,
+                                 color='red')
+
+    @Part
+    def ACr(self):
+        """
+        Aerodynamic center representation at quarter of MAC in right wing
+
+        :rtype:
+        """
+        return Sphere(radius=abs(self.curveRoot.maxY),
+                      position=Point(self.MACr.edges[0].midpoint.x,
+                                     self.MACr.edges[0].midpoint.y,
+                                     self.MACr.edges[0].midpoint.z + 0.25*self.cMAC),
+                      color='Red')
+    @Part
+    def planeMACl(self):
+        """
+        Intersecting plane at MAC position on left wing
+
+        :rtype:
+        """
+        return Plane(Point(-self.cMACyPos, 0, 0), Vector(1, 0, 0),
+                     hidden=True)
+
+    @Part
+    def MACl(self):
+        """
+        MAC representation on left wing
+
+        :rtype:
+        """
+        return IntersectedShapes(shape_in=self.leftWing,
+                                 tool=self.planeMACl,
+                                 color='red')
+
+    @Part
+    def ACl(self):
+        """
+        Aerodynamic center representation at quarter of MAC on left wing
+
+        :rtype:
+        """
+        return Sphere(radius=abs(self.curveRoot.maxY),
+                      position=Point(self.MACl.edges[0].midpoint.x,
+                                     self.MACl.edges[0].midpoint.y,
+                                     self.MACl.edges[0].midpoint.z + 0.25*self.cMAC),
+                      color='Red')
 
 if __name__ == '__main__':
     from parapy.gui import display
