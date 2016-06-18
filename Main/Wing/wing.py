@@ -94,6 +94,15 @@ class Wing(GeomBase):
             showwarning("Warning", "Please choose between wing or fuselage mounted")
             return 0.5
 
+    @Input
+    def visual(self):
+        """
+        Define the visualization of the visual checks, it could be either True or False
+        :Unit: [ ]
+        :rtype: string
+        """
+        return False
+
     window = Tk()
     window.wm_withdraw()
 
@@ -419,9 +428,9 @@ class Wing(GeomBase):
         :rtype: float
         """
         if self.wingPosition == 'high wing':
-            return self.fuselageDiameter/2 - self.curveRoot.maxY
+            return self.fuselageDiameter/2 - 1.05*self.curveRoot.maxY
         elif self.wingPosition == 'low wing':
-            return -self.fuselageDiameter/2 - self.curveRoot.minY
+            return -self.fuselageDiameter/2 - 1.05*self.curveRoot.minY
         else:
             showwarning("Warning", "Please choose between high or low wing configuration")
             return 0
@@ -532,7 +541,8 @@ class Wing(GeomBase):
         """
         return IntersectedShapes(shape_in=self.rightWing,
                                  tool=self.planeMACr,
-                                 color='red')
+                                 color='red',
+                                 hidden=self.visual)
 
     @Part
     def ACr(self):
@@ -542,10 +552,11 @@ class Wing(GeomBase):
         :rtype:
         """
         return Sphere(radius=abs(self.curveRoot.maxY),
-                      position=Point(self.MACr.edges[0].midpoint.x,
-                                     self.MACr.edges[0].midpoint.y,
-                                     self.MACr.edges[0].midpoint.z + 0.25*self.cMAC),
-                      color='Red')
+                      position=Point(self.MACr.edges[0].point1.x,
+                                     self.MACr.edges[0].point1.y,
+                                     self.MACr.edges[0].point1.z - 0.75*self.cMAC),
+                      color='Red',
+                      hidden=self.visual)
     @Part
     def planeMACl(self):
         """
@@ -565,7 +576,8 @@ class Wing(GeomBase):
         """
         return IntersectedShapes(shape_in=self.leftWing,
                                  tool=self.planeMACl,
-                                 color='red')
+                                 color='red',
+                                 hidden=self.visual)
 
     @Part
     def ACl(self):
@@ -575,10 +587,11 @@ class Wing(GeomBase):
         :rtype:
         """
         return Sphere(radius=abs(self.curveRoot.maxY),
-                      position=Point(self.MACl.edges[0].midpoint.x,
-                                     self.MACl.edges[0].midpoint.y,
-                                     self.MACl.edges[0].midpoint.z + 0.25*self.cMAC),
-                      color='Red')
+                      position=Point(self.MACl.edges[0].point1.x,
+                                     self.MACl.edges[0].point1.y,
+                                     self.MACl.edges[0].point1.z - 0.75*self.cMAC),
+                      color='Red',
+                      hidden=self.visual)
 
 if __name__ == '__main__':
     from parapy.gui import display

@@ -169,6 +169,15 @@ class Htp(GeomBase):
         """
         return 1.
 
+    @Input
+    def visual(self):
+        """
+        Define the visualization of the visual checks, it could be either True or False
+        :Unit: [ ]
+        :rtype: string
+        """
+        return False
+
     window = Tk()
     window.wm_withdraw()
 
@@ -600,6 +609,77 @@ class Htp(GeomBase):
                              reference_point=self.rightTail.position,
                              vector1=self.rightTail.position.Vy,
                              vector2=self.rightTail.position.Vz)
+
+    @Part
+    def planeMACr(self):
+        """
+        Intersecting plane at MAC position on right tail plane
+
+        :rtype:
+        """
+        return Plane(Point(self.cMACyPos, 0, 0), Vector(1, 0, 0),
+                     hidden=True)
+
+    @Part
+    def MACr(self):
+        """
+        MAC representation on right tail plane
+
+        :rtype:
+        """
+        return IntersectedShapes(shape_in=self.rightTail,
+                                 tool=self.planeMACr,
+                                 color='red',
+                                 hidden=self.visual)
+
+    @Part
+    def ACr(self):
+        """
+        Aerodynamic center representation at quarter of MAC in right tail plane
+
+        :rtype:
+        """
+        return Sphere(radius=abs(self.curveRoot.maxY),
+                      position=Point(self.MACr.edges[0].point1.x,
+                                     self.MACr.edges[0].point1.y,
+                                     self.MACr.edges[0].point1.z - 0.75*self.cMAC),
+                      color='Red',
+                      hidden=self.visual)
+    @Part
+    def planeMACl(self):
+        """
+        Intersecting plane at MAC position on left tail plane
+
+        :rtype:
+        """
+        return Plane(Point(-self.cMACyPos, 0, 0), Vector(1, 0, 0),
+                     hidden=True)
+
+    @Part
+    def MACl(self):
+        """
+        MAC representation on left tail plane
+
+        :rtype:
+        """
+        return IntersectedShapes(shape_in=self.leftTail,
+                                 tool=self.planeMACl,
+                                 color='red',
+                                 hidden=self.visual)
+
+    @Part
+    def ACl(self):
+        """
+        Aerodynamic center representation at quarter of MAC on left tail plane
+
+        :rtype:
+        """
+        return Sphere(radius=abs(self.curveRoot.maxY),
+                      position=Point(self.MACl.edges[0].point1.x,
+                                     self.MACl.edges[0].point1.y,
+                                     self.MACl.edges[0].point1.z - 0.75*self.cMAC),
+                      color='Red',
+                      hidden=self.visual)
 
 if __name__ == '__main__':
     from parapy.gui import display

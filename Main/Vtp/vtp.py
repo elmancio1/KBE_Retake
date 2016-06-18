@@ -128,6 +128,24 @@ class Vtp(GeomBase):
         """
         return .083
 
+    @Input
+    def visual(self):
+        """
+        Define the visualization of the visual checks, it could be either True or False
+        :Unit: [ ]
+        :rtype: string
+        """
+        return False
+
+    @Input
+    def rudderCheck(self):
+        """
+        Hidden the visualization of check for rudder blanketing
+        :Unit: [ ]
+        :rtype: string
+        """
+        return True
+
     window = Tk()
     window.wm_withdraw()
 
@@ -425,6 +443,18 @@ class Vtp(GeomBase):
             return self.check.faces[0].area / self.rudder.area
 
     @Attribute
+    def transparency(self):
+        """
+        Enable transparent tail to see the check on the rudder
+        :Unit: [ ]
+        :rtype: string
+        """
+        if not self.rudderCheck:
+            return 0.6
+        else:
+            return 0
+
+    @Attribute
     def pointsWakeHtp(self):
         """
         List of points representing the horizontal tail plane wake after separation flow on it
@@ -509,7 +539,8 @@ class Vtp(GeomBase):
 
         :rtype:
         """
-        return LoftedSolid([self.curveRootPos, self.curveTipPos])
+        return LoftedSolid([self.curveRootPos, self.curveTipPos],
+                           transparency=self.transparency)
 
     @Part
     def htpWake(self):
@@ -520,7 +551,8 @@ class Vtp(GeomBase):
         """
         return PolygonalFace(self.pointsWakeHtp,
                              color='red',
-                             transparency=.7)
+                             transparency=.4,
+                             hidden=self.rudderCheck)
 
     @Part
     def rudder(self):
@@ -531,7 +563,8 @@ class Vtp(GeomBase):
         """
         return PolygonalFace(self.pointsRudder,
                              color='blue',
-                             transparency=.7)
+                             transparency=.5,
+                             hidden=self.rudderCheck)
 
     @Part
     def check(self):
@@ -541,8 +574,45 @@ class Vtp(GeomBase):
         :rtype:
         """
         return Subtracted(shape_in=self.rudder, tool=self.htpWake,
-                          color='black',
-                          transparency=.7)
+                          color='green',
+                          transparency=.2,
+                          hidden=self.rudderCheck)
+
+    @Part
+    def planeMAC(self):
+        """
+        Intersecting plane at MAC position on tail plane
+
+        :rtype:
+        """
+        return Plane(Point(0, self.vertPos + self.cMACyPos, 0), Vector(0, 1, 0),
+                     hidden=True)
+
+    @Part
+    def MAC(self):
+        """
+        MAC representation on tail plane
+
+        :rtype:
+        """
+        return IntersectedShapes(shape_in=self.tail,
+                                 tool=self.planeMAC,
+                                 color='red',
+                                 hidden=self.visual)
+
+    @Part
+    def AC(self):
+        """
+        Aerodynamic center representation at quarter of MAC on tail plane
+
+        :rtype:
+        """
+        return Sphere(radius=abs(self.curveRoot.maxY),
+                      position=Point(self.MAC.edges[0].point1.x,
+                                     self.MAC.edges[0].point1.y,
+                                     self.MAC.edges[0].point1.z - 0.75*self.cMAC),
+                      color='Red',
+                      hidden=self.visual)
 
 if __name__ == '__main__':
     from parapy.gui import display
