@@ -179,7 +179,8 @@ class Aircraft(GeomBase):
                            posFraction=self.wingbase.posFraction,
                            cMAC=self.wingbase.cMAC,
                            cg=self.evaluations.cg,
-                           fuselage=self.fuselage.loft)
+                           fuselage=self.fuselage.loft,
+                           wing=self.wingbase.rightWing)
 
     @Part
     def evaluations(self):

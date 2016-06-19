@@ -162,6 +162,15 @@ class LandingGear(GeomBase):
         """
         return
 
+    @Input(settable=settable)
+    def wing(self):
+        """
+        Wing 3D representation
+        :Unit: [ ]
+        :rtype: lofted solid
+        """
+        return
+
 
     # ### Attributes ##################################################################################################
 
@@ -248,6 +257,28 @@ class LandingGear(GeomBase):
             tipback += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
         return tipback
 
+    @Attribute
+    def lateralAngle(self):
+        """
+
+
+        :return:
+        """
+        lateral = 0
+        x = self.hubLatPos
+        y = -1 * self.hubHeightPos
+        z = self.hubLongPos
+        R = self.wheelRadius
+        int = []
+        while int == []:
+            rotationPoint = Point(x, y - R, z)
+
+            piano = Plane(reference=rotationPoint, normal=Vector(-sin(radians(lateral)), cos(radians(lateral)), 0))
+            int_shape = IntersectedShapes(shape_in=self.wing, tool=piano)
+            int = int_shape.edges
+            lateral += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
+        return lateral
+
 
 ################
 
@@ -260,24 +291,47 @@ class LandingGear(GeomBase):
                       hidden=not self.visualChecks)
 
     @Part
-    def Piano(self):
+    def tipbackPlane(self):
         return Plane(reference=Point(self.hubLatPos, -1 * self.hubHeightPos - self.wheelRadius * cos(radians(self.tipbackAngle)),
                      self.hubLongPos + self.wheelRadius * sin(radians(self.tipbackAngle))),
                      normal=Vector(0, cos(radians(self.tipbackAngle)), -sin(radians(self.tipbackAngle))),
                      hidden=not self.visualChecks)
 
     @Part
-    def intersection(self):
+    def tailStrikeArea(self):
         return IntersectedShapes(shape_in=self.fuselage,
-                                 tool=self.Piano,
+                                 tool=self.tipbackPlane,
                                  color='red',
                                  hidden=not self.visualChecks)
 
+    @Part
+    def lateralPoint(self):
+        return Sphere(radius=0.04,
+                      position=Point(self.hubLatPos, -1 * self.hubHeightPos - self.wheelRadius,
+                     self.hubLongPos),
+                      color='blue',
+                      hidden=not self.visualChecks)
+
+    @Part
+    def lateralPlane(self):
+        return Plane(reference=Point(self.hubLatPos, -1 * self.hubHeightPos - self.wheelRadius,
+                     self.hubLongPos),
+                     normal=Vector(-sin(radians(self.lateralAngle)), cos(radians(self.lateralAngle)), 0),
+                     hidden=not self.visualChecks)
+
+    @Part
+    def lateralStrikeArea(self):
+        return IntersectedShapes(shape_in=self.wing,
+                                 tool=self.lateralPlane,
+                                 color='red',
+                                 hidden=not self.visualChecks) #ToDO: al momento si interseca con la win, ma deve farlo anche con i motori
+
     @Attribute
     def tipbackControl(self):
-        if self.tipbackAngle < 14:
-            showwarning("Warning", "Tip back angle is smaller than 14 deg. Please increase the gear height.")
-            return "Please increase heigth"
+        if self.tipbackAngle < self.maxTipbackAngle:
+            showwarning("Warning", "Tip back angle is smaller than the angle between the CG anf wheel hub."
+                                   " Please increase the gear height or increase the longitudinal position.")
+            return "Please increase height"
         else:
             return "No changes needed"
 
