@@ -543,7 +543,7 @@ class Htp(GeomBase):
         :rtype:
         """
         return Airfoil(airfoilData=self.airfoilRoot,
-                       chord=self.chordRoot,
+                       chord=.99*self.chordRoot,
                        hidden=True)
 
     @Part

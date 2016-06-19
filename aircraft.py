@@ -12,6 +12,7 @@ from Main.Fuselage.fuselage import Fuselage
 from Main.Engine.engine import Engine
 from Main.Vtp.vtp import Vtp
 from Main.Htp.htp import Htp
+from Main.Analysis.evaluations import Evaluations
 import tkFileDialog
 import os
 
@@ -165,6 +166,30 @@ class Aircraft(GeomBase):
                    longPosV=self.vtpbase.longPos,
                    vertPosV=self.vtpbase.vertPos,
                    rcr=self.vtpbase.rcr)
+
+    @Part
+    def evaluations(self):
+        return Evaluations(maCruise=self.maCruise,
+                           tailType=self.tailType,
+                           vertPosW=self.wingbase.vertPos,
+                           aspectRatioW=self.wingbase.aspectRatio,
+                           sweep50W=self.wingbase.sweep50,
+                           sweep25W=self.wingbase.sweep25,
+                           spanW=self.wingbase.span,
+                           surfaceW=self.wingbase.surface,
+                           taperRatioW=self.wingbase.taperRatio,
+                           cMACW=self.wingbase.cMAC,
+                           posFraction=self.wingbase.posFraction,
+                           vertPosT=self.htpbase.vertPos,
+                           sweep50T=self.htpbase.sweep50,
+                           aspectRatioT=self.htpbase.aspectRatio,
+                           surfaceT=self.htpbase.surface,
+                           tlH=self.htpbase.tl,
+                           fuselageDiameter=self.fuselage.fuselageDiameter,
+                           fuselageLength=self.fuselage.fuselageLength,
+                           longPosE=self.enginebase.longPos,
+                           nacelleDiameter=self.enginebase.nacelleDiameter,
+                           nacelleLength=self.enginebase.nacelleLength)
 
 
 if __name__ == '__main__':

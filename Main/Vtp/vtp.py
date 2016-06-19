@@ -301,6 +301,8 @@ class Vtp(GeomBase):
             while check < 2/3:
                 tl = tl + self.tlDecrement
                 calctail = VtpCalc(tl=tl,
+                                   rcr=self.rcr,
+                                   vc=self.vc,
                                    tailType=self.tailType,
                                    surfaceWing=self.surfaceWing,
                                    cMACWing=self.cMACWing,
@@ -490,7 +492,7 @@ class Vtp(GeomBase):
         :rtype:
         """
         return Airfoil(airfoilData=self.airfoilRoot,
-                       chord=self.chordRoot,
+                       chord=0.99*self.chordRoot,
                        hidden=True)
 
     @Part
