@@ -128,6 +128,24 @@ class Vtp(GeomBase):
         """
         return .083
 
+    @Input
+    def visual(self):
+        """
+        Define the visualization of the visual checks, it could be either True or False
+        :Unit: [ ]
+        :rtype: string
+        """
+        return False
+
+    @Input
+    def rudderCheck(self):
+        """
+        Hidden the visualization of check for rudder blanketing
+        :Unit: [ ]
+        :rtype: string
+        """
+        return True
+
     window = Tk()
     window.wm_withdraw()
 
@@ -238,6 +256,15 @@ class Vtp(GeomBase):
         """
         return 33.16
 
+    @Input(settable=settable)
+    def vertPosH(self):
+        """
+        Horizontal tail plane vertical position
+        :Unit: [m]
+        :rtype: float
+        """
+        return 1.05
+
     # ### Attributes ##################################################################################################
 
     @Attribute
@@ -265,16 +292,17 @@ class Vtp(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        # TODO: per sweep di Htp troppo grandi fa casini
 
         # TODO: la vertical e veramente enorme... la scia si trova nella posizione corretta?
 
         if self.tailType == 'conventional':
-            tl = self.tlH  # first guess for vertical tail arm
+            tl = self.tlH / 2.  # first guess for vertical tail arm
             check = 0.  # first guess for the rudder area check, to start the cycle
-            while check < 1/3:
-                tl = tl - self.tlDecrement
+            while check < 2/3:
+                tl = tl + self.tlDecrement
                 calctail = VtpCalc(tl=tl,
+                                   rcr=self.rcr,
+                                   vc=self.vc,
                                    tailType=self.tailType,
                                    surfaceWing=self.surfaceWing,
                                    cMACWing=self.cMACWing,
@@ -282,10 +310,10 @@ class Vtp(GeomBase):
                                    fuselageLength=self.fuselageLength,
                                    posFraction=self.posFraction,
                                    conePos=self.conePos,
-                                   tlH=self.tlH,
                                    crH=self.crH,
-                                   longPosH=self.longPosH)
-                check = calctail.rudderFree
+                                   longPosH=self.longPosH,
+                                   vertPosH=self.vertPosH)
+                check = calctail.rudderBlanketed  # portion of the rudder blanketed
             return tl
         else:
             tl = self.fuselageLength  # first guess for tail arm
@@ -405,17 +433,28 @@ class Vtp(GeomBase):
         return self.conePos
 
     @Attribute
-    def prova(self):
+    def rudderFree(self):
         """
-        Vertical tail root vertical position
-        :Unit: [m]
+        Percentage of rudder area free of Htp wake
+        :Unit: [ ]
         :rtype: float
         """
-        if self.tailType == 'conventional':
-            rudder1 = Subtracted(shape_in=self.rudder, tool=self.htpWake)
-            return rudder1.faces[0].area
+        if self.check.faces == []:
+            return 0
         else:
-            return 17.
+            return self.check.faces[0].area / self.rudder.area
+
+    @Attribute
+    def transparency(self):
+        """
+        Enable transparent tail to see the check on the rudder
+        :Unit: [ ]
+        :rtype: string
+        """
+        if not self.rudderCheck:
+            return 0.6
+        else:
+            return 0
 
     @Attribute
     def pointsWakeHtp(self):
@@ -424,11 +463,11 @@ class Vtp(GeomBase):
         :Unit: []
         :rtype: Points
         """
-        return [Point(0, self.vertPos, self.longPosH),
-                Point(0, self.vertPos + self.span, self.longPosH + self.span * tan(pi/6)),
-                Point(0, self.vertPos + self.span, self.longPosH + self.crH + self.span * tan(pi/3)),
-                Point(0, self.vertPos, self.longPosH + self.crH),
-                Point(0, self.vertPos, self.longPosH)]
+        return [Point(0, self.vertPosH, self.longPosH),
+                Point(0, self.vertPosH + self.span, self.longPosH + self.span * tan(pi/6)),
+                Point(0, self.vertPosH + self.span, self.longPosH + self.crH + self.span * tan(pi/3)),
+                Point(0, self.vertPosH, self.longPosH + self.crH),
+                Point(0, self.vertPosH, self.longPosH)]
 
     @Attribute
     def pointsRudder(self):
@@ -453,7 +492,7 @@ class Vtp(GeomBase):
         :rtype:
         """
         return Airfoil(airfoilData=self.airfoilRoot,
-                       chord=self.chordRoot,
+                       chord=0.99*self.chordRoot,
                        hidden=True)
 
     @Part
@@ -502,7 +541,8 @@ class Vtp(GeomBase):
 
         :rtype:
         """
-        return LoftedSolid([self.curveRootPos, self.curveTipPos])
+        return LoftedSolid([self.curveRootPos, self.curveTipPos],
+                           transparency=self.transparency)
 
     @Part
     def htpWake(self):
@@ -513,7 +553,8 @@ class Vtp(GeomBase):
         """
         return PolygonalFace(self.pointsWakeHtp,
                              color='red',
-                             transparency=.7)
+                             transparency=.4,
+                             hidden=self.rudderCheck)
 
     @Part
     def rudder(self):
@@ -524,7 +565,8 @@ class Vtp(GeomBase):
         """
         return PolygonalFace(self.pointsRudder,
                              color='blue',
-                             transparency=.7)
+                             transparency=.5,
+                             hidden=self.rudderCheck)
 
     @Part
     def check(self):
@@ -534,8 +576,45 @@ class Vtp(GeomBase):
         :rtype:
         """
         return Subtracted(shape_in=self.rudder, tool=self.htpWake,
-                          color='black',
-                          transparency=.7)
+                          color='green',
+                          transparency=.2,
+                          hidden=self.rudderCheck)
+
+    @Part
+    def planeMAC(self):
+        """
+        Intersecting plane at MAC position on tail plane
+
+        :rtype:
+        """
+        return Plane(Point(0, self.vertPos + self.cMACyPos, 0), Vector(0, 1, 0),
+                     hidden=True)
+
+    @Part
+    def MAC(self):
+        """
+        MAC representation on tail plane
+
+        :rtype:
+        """
+        return IntersectedShapes(shape_in=self.tail,
+                                 tool=self.planeMAC,
+                                 color='red',
+                                 hidden=self.visual)
+
+    @Part
+    def AC(self):
+        """
+        Aerodynamic center representation at quarter of MAC on tail plane
+
+        :rtype:
+        """
+        return Sphere(radius=abs(self.curveRoot.maxY),
+                      position=Point(self.MAC.edges[0].point1.x,
+                                     self.MAC.edges[0].point1.y,
+                                     self.MAC.edges[0].point1.z - 0.75*self.cMAC),
+                      color='Red',
+                      hidden=self.visual)
 
 if __name__ == '__main__':
     from parapy.gui import display

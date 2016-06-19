@@ -8,7 +8,7 @@ from Handler.importer import Importer
 import Tkinter, Tkconstants, tkFileDialog
 
 
-class Fuselage(GeomBase):
+class FuselageEX(GeomBase):
     """
     Basic class Fuselage
     """
@@ -380,5 +380,5 @@ class Fuselage(GeomBase):
 if __name__ == '__main__':
     from parapy.gui import display
 
-    obj = Fuselage()
+    obj = FuselageEX()
     display(obj)

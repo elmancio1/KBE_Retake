@@ -4,13 +4,15 @@ from parapy.core import *
 from Handler.importer import Importer
 from Input import Files
 from math import *
-from Tkinter import *
+import Tkinter
+import tkMessageBox
 from tkMessageBox import *
 from Main.Wing.wing import Wing
 from Main.Fuselage.fuselage import Fuselage
 from Main.Engine.engine import Engine
 from Main.Vtp.vtp import Vtp
 from Main.Htp.htp import Htp
+from Main.Analysis.evaluations import Evaluations
 import tkFileDialog
 import os
 
@@ -69,7 +71,14 @@ class Aircraft(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        return 'T tail'
+        tailType = askyesnocancel(title="Tail type selection", message="Yes = T tail, No = cruciform, Cancel = conventional")
+
+        if tailType:
+            return 'T tail'
+        elif tailType is None:
+            return 'conventional'
+        else:
+            return 'cruciform'
 
     #### Attributes ###
 
@@ -85,7 +94,6 @@ class Aircraft(GeomBase):
         options['initialfile'] = defaultFile
         # get filename
         filename = tkFileDialog.askopenfilename(**file_opt)
-        print filename
         return str(filename)
 
     @Part
@@ -97,7 +105,9 @@ class Aircraft(GeomBase):
                     wingLoading=self.wingLoading,
                     mTOW=self.mTOW,
                     hCruise=self.hCruise,
-                    filePath=self.filePath)
+                    filePath=self.filePath,
+                    cg=self.evaluations.cg,
+                    ac=self.evaluations.ac)
 
     @Part
     def fuselage(self):
@@ -133,7 +143,8 @@ class Aircraft(GeomBase):
                    tlH=self.htpbase.tl,
                    filePath=self.filePath,
                    crH=self.htpbase.chordRoot,
-                   longPosH=self.htpbase.longPos)
+                   longPosH=self.htpbase.longPos,
+                   vertPosH=self.htpbase.vertPos)
 
     @Part
     def htpbase(self):
@@ -151,7 +162,40 @@ class Aircraft(GeomBase):
                    sweep25V=self.vtpbase.sweep25,
                    sweepLEV=self.vtpbase.sweepLE,
                    cMACV=self.vtpbase.cMAC,
-                   filePath=self.filePath)
+                   filePath=self.filePath,
+                   chordRootV=self.vtpbase.chordRoot,
+                   chordTipV=self.vtpbase.chordTip,
+                   longPosV=self.vtpbase.longPos,
+                   vertPosV=self.vtpbase.vertPos,
+                   rcr=self.vtpbase.rcr)
+
+    @Part
+    def evaluations(self):
+        return Evaluations(maCruise=self.maCruise,
+                           tailType=self.tailType,
+                           vertPosW=self.wingbase.vertPos,
+                           aspectRatioW=self.wingbase.aspectRatio,
+                           sweep50W=self.wingbase.sweep50,
+                           sweep25W=self.wingbase.sweep25,
+                           spanW=self.wingbase.span,
+                           surfaceW=self.wingbase.surface,
+                           taperRatioW=self.wingbase.taperRatio,
+                           cMACW=self.wingbase.cMAC,
+                           chordRootW=self.wingbase.chordRoot,
+                           longPosW=self.wingbase.longPos,
+                           posFraction=self.wingbase.posFraction,
+                           vertPosT=self.htpbase.vertPos,
+                           sweep50T=self.htpbase.sweep50,
+                           aspectRatioT=self.htpbase.aspectRatio,
+                           surfaceT=self.htpbase.surface,
+                           tlH=self.htpbase.tl,
+                           fuselageDiameter=self.fuselage.fuselageDiameter,
+                           fuselageLength=self.fuselage.fuselageLength,
+                           longPosE=self.enginebase.longPos,
+                           nacelleDiameter=self.enginebase.nacelleDiameter,
+                           nacelleLength=self.enginebase.nacelleLength,
+                           fuselage=self.fuselage.loft,
+                           wing=self.wingbase.rightWing)
 
 
 if __name__ == '__main__':
