@@ -11,7 +11,6 @@ from Input import Airfoils
 import Tkinter, Tkconstants, tkFileDialog
 
 
-
 class Wing(GeomBase):
     """
     Basic class Wing
