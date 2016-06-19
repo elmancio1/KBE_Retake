@@ -105,7 +105,9 @@ class Aircraft(GeomBase):
                     wingLoading=self.wingLoading,
                     mTOW=self.mTOW,
                     hCruise=self.hCruise,
-                    filePath=self.filePath)
+                    filePath=self.filePath,
+                    cg=self.evaluations.cg,
+                    ac=self.evaluations.ac)
 
     @Part
     def fuselage(self):
@@ -179,6 +181,8 @@ class Aircraft(GeomBase):
                            surfaceW=self.wingbase.surface,
                            taperRatioW=self.wingbase.taperRatio,
                            cMACW=self.wingbase.cMAC,
+                           chordRootW=self.wingbase.chordRoot,
+                           longPosW=self.wingbase.longPos,
                            posFraction=self.wingbase.posFraction,
                            vertPosT=self.htpbase.vertPos,
                            sweep50T=self.htpbase.sweep50,
@@ -189,7 +193,9 @@ class Aircraft(GeomBase):
                            fuselageLength=self.fuselage.fuselageLength,
                            longPosE=self.enginebase.longPos,
                            nacelleDiameter=self.enginebase.nacelleDiameter,
-                           nacelleLength=self.enginebase.nacelleLength)
+                           nacelleLength=self.enginebase.nacelleLength,
+                           fuselage=self.fuselage.loft,
+                           wing=self.wingbase.rightWing)
 
 
 if __name__ == '__main__':
