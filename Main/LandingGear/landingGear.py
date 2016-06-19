@@ -30,8 +30,8 @@ class LandingGear(GeomBase):
         """
         return float(Importer(Component='Landing Gear',
                               VariableName='height',
-                              Default=1.5,
-                              Path=self.filePath).getValue())
+                              Default=1.,
+                              Path=self.filePath).getValue()) #ToDo: per value = 0 la ruota interseca il corpo dell'aereo
 
     @Input
     def longPos(self):
@@ -328,12 +328,13 @@ class LandingGear(GeomBase):
 
     @Attribute
     def tipbackControl(self):
-        if self.tipbackAngle < self.maxTipbackAngle:
-            showwarning("Warning", "Tip back angle is smaller than the angle between the CG anf wheel hub."
+        if self.tipbackAngle > self.maxTipbackAngle:
+            showwarning("Warning", "Tip back angle is bigger than the angle between the CG anf wheel hub."
                                    " Please increase the gear height or increase the longitudinal position.")
             return "Please increase height"
         else:
-            return "No changes needed"
+            return "No changes needed" #ToDo: non va bene il controllo cosi. ci deve essere una value inferiore di controllo (14 deg)
+
 
     #######################
 
@@ -352,6 +353,16 @@ class LandingGear(GeomBase):
                                       Vector(0, 1, 0), radians(90)),
                       hidden=False)
 
+    @Part
+    def wheel(self):
+        return Torus(major_radius=self.wheelRadius - self.wheelRadius / 3,
+                     minor_radius=self.wheelRadius / 3,
+                     position=rotate(translate(self.position,
+                                               'x', self.hubLatPos,
+                                               'y', -1 * self.hubHeightPos,
+                                               'z', self.hubLongPos),
+                                     Vector(0, 1, 0), radians(90)),
+                     hidden=False)
 
 
 if __name__ == '__main__':
