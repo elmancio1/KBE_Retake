@@ -12,6 +12,7 @@ from Main.Fuselage.fuselage import Fuselage
 from Main.Engine.engine import Engine
 from Main.Vtp.vtp import Vtp
 from Main.Htp.htp import Htp
+from Main.LandingGear.landingGear import LandingGear
 from Main.Analysis.evaluations import Evaluations
 import tkFileDialog
 import os
@@ -168,6 +169,17 @@ class Aircraft(GeomBase):
                    longPosV=self.vtpbase.longPos,
                    vertPosV=self.vtpbase.vertPos,
                    rcr=self.vtpbase.rcr)
+
+    @Part
+    def landingGear(self):
+        return LandingGear(filePath=self.filePath,
+                           wingPosition=self.wingbase.wingPosition,
+                           fuselageDiameter=self.fuselage.fuselageDiameter,
+                           fuselageLength=self.fuselage.fuselageLength,
+                           posFraction=self.wingbase.posFraction,
+                           cMAC=self.wingbase.cMAC,
+                           cg=self.evaluations.cg,
+                           fuselage=self.fuselage.loft)
 
     @Part
     def evaluations(self):

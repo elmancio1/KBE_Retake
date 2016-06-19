@@ -13,76 +13,71 @@ class LandingGear(GeomBase):
     """
 
     @Input
-    def gearHeight(self):
+    def visualChecks(self):
         """
-        Height of the main landing gear
+        Visualize checks for positioning.
+        :type: boolean
+        :return:
+        """
+        return False
+
+    @Input
+    def height(self):
+        """
+        Height of the main landing gear wrt to the belly of the aircraft
         :Unit: [m]
         :rtype: float
         """
         return float(Importer(Component='Landing Gear',
                               VariableName='height',
-                              Default=3.0).getValue())
+                              Default=1.5,
+                              Path=self.filePath).getValue())
 
     @Input
-    def mainGearPos(self):
+    def longPos(self):
         """
-        Gear position with regard to the fuselage or wing
-        depending on high or low wing configuration
+        Gear position with regard to the MAC
         :Unit: []
         :rtype: float
         """
-        if self.wingPosition == 'low wing':
-            return float(Importer(Component='Landing Gear',
-                                  VariableName='gear wing position',
-                                  Default=0.5).getValue())
-        elif self.wingPosition == 'high wing':
-            return float(Importer(Component='Landing Gear',
-                                  VariableName='gear fuselage position',
-                                  Default=0.6).getValue())
+
+        return float(Importer(Component='Landing Gear',
+                              VariableName='gearLongPos',
+                              Default=0.4,
+                              Path=self.filePath).getValue())
+
 
     @Input
-    def mainGearLat(self):
+    def latPos(self):
         """
         Lateral gear position with regard to the fuselage diameter
         :Unit: []
         :rtype: float
         """
         return float(Importer(Component='Landing Gear',
-                              VariableName='lateral gear position',
-                              Default=2.5).getValue())
+                              VariableName='gearLatPos',
+                              Default=1.3,
+                              Path=self.filePath).getValue())
 
     @Input
-    def noseGearPos(self):
+    def wheelRadius(self):
         """
-        Gear position with regard to the fuselage
-        :Unit: []
-        :rtype: float
-        """
-        return float(Importer(Component='Landing Gear',
-                              VariableName='nose gear position',
-                              Default=0.1).getValue())
-
-    @Input
-    def mainWheelDiameter(self):
-        """
-        Height of the main landing gear
+        Diameter of the main wheel.
         :Unit: [m]
         :rtype: float
         """
         return float(Importer(Component='Landing Gear',
                               VariableName='main wheel diameter',
-                              Default=1.5).getValue())
+                              Default=0.5,
+                              Path=self.filePath).getValue())
 
     @Input
-    def noseWheelDiameter(self):
+    def tipbackPrecision(self):
         """
-        Height of the main landing gear
-        :Unit: [m]
-        :rtype: float
+        Precision of tipback angle.
+        :return:
         """
-        return float(Importer(Component='Landing Gear',
-                              VariableName='nose wheel diameter',
-                              Default=0.5).getValue())
+        return 0.1
 
     window = Tk()
     window.wm_withdraw()
@@ -131,33 +126,182 @@ class LandingGear(GeomBase):
         """
         return 30.
 
-    @Input
-    def xLEMAC(self):
+    @Input(settable=settable)
+    def posFraction(self):
         """
-
-        :return:
+        Wing position fraction of the fuselage, due to engine position
+        :Unit: [m]
+        :rtype: float
         """
-        return 18.0
+        return 0.5
 
     @Input(settable=settable)
     def cMAC(self):
         """
-        Wing position, could be either "low" or "high" wing
-        :Unit: [ ]
+        MAC length
+        :Unit: [m]
         :rtype: string
         """
         return 3.0
+
+    @Input(settable=settable)
+    def cg(self):
+        """
+        Center of gravity longitudinal position
+        :Unit: [m]
+        :rtype: float
+        """
+        return 14.97
+
+    @Input(settable=settable)
+    def fuselage(self):
+        """
+        Fuselage 3D representation
+        :Unit: [ ]
+        :rtype: lofted solid
+        """
+        return
 
 
     # ### Attributes ##################################################################################################
 
     @Attribute
-    def mainLongPos(self):
+    def hubLongPos(self):
         """
-        main landing gear longitudinal position.
+        Longitudinal position of the wheel hub
         :Unit: [m]
-        :rtype: float
+        :return:
         """
-        return self.xLEMAC
+        longPos = self.fuselageLength * self.posFraction + self.longPos * self.cMAC
+
+        if longPos < self.cg:
+            print("Warning: the longitudinal position of the gear is less than the cg longitudinal location.")
+            showwarning('Warning', 'The main gear is in front of the center of gravity. Please increase the value '
+                                   'of the longitudinal gear position.')
+            longPos = self.cg + 0.5 * self.cMAC #the position is changed to something possible.
+
+        return longPos
+
+    @Attribute
+    def hubHeightPos(self):
+        """
+        Length of the main landing gear length.
+        :Unit: [m]
+        :type: float
+        :return:
+        """
+        return self.height + self.fuselageDiameter / 2
+
+    @Attribute
+    def hubLatPos(self):
+        """
+        Lateral position of the wheel hub.
+        :Unit: [m]
+        :type: float
+        :return:
+        """
+        lat = self.latPos
+        if self.latPos < 1.0:
+            print("Warning: The lateral distance between the wheels is less than the fuselage diameter.")
+            showwarning('Warning', 'The lateral distance between the wheels is less than the fuselage diameter.'
+                                   ' Please increase the value of the lateral gear position.')
+            lat = 1.1 #ToDo: Harcoded o troviamo qualcosa id meglio?
+
+        return lat * self.fuselageDiameter / 2
+
+    @Attribute
+    def maxTipbackAngle(self):
+        """
+        Angle between cg and wheel hub.
+        :return:
+        """
+        o = self.hubLongPos - self.cg
+        a = self.hubHeightPos
+        angle = degrees(atan(o / a))
+
+        if angle < 14.0:
+            print("Warning: the angle between CG and wheel hub is smaller than 14 deg.")
+            showwarning('Warning', 'The angle between CG and wheel hub is smaller than 14 deg.'
+                                   'Please increase longitudinal position or decrease the leg length')
+
+        return angle
+
+    @Attribute
+    def tipbackAngle(self):
+        """
 
 
+        :return:
+        """
+        tipback = 0
+        x = self.hubLatPos
+        y = -1 * self.hubHeightPos
+        z = self.hubLongPos
+        R = self.wheelRadius
+        int = []
+        while int == []:
+            rotationPoint = Point(x, y - R * cos(radians(tipback)), z + R * sin(radians(tipback)))
+
+            piano = Plane(reference=rotationPoint, normal=Vector(0, cos(radians(tipback)), -sin(radians(tipback))))
+            int_shape = IntersectedShapes(shape_in=self.fuselage, tool=piano)
+            int = int_shape.edges
+            tipback += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
+        return tipback
+
+
+################
+
+    @Part
+    def rotationPoint(self):
+        return Sphere(radius=0.04,
+                      position=Point(self.hubLatPos, -1 * self.hubHeightPos - self.wheelRadius * cos(radians(self.tipbackAngle)),
+                     self.hubLongPos + self.wheelRadius * sin(radians(self.tipbackAngle))),
+                      color='red',
+                      hidden=not self.visualChecks)
+
+    @Part
+    def Piano(self):
+        return Plane(reference=Point(self.hubLatPos, -1 * self.hubHeightPos - self.wheelRadius * cos(radians(self.tipbackAngle)),
+                     self.hubLongPos + self.wheelRadius * sin(radians(self.tipbackAngle))),
+                     normal=Vector(0, cos(radians(self.tipbackAngle)), -sin(radians(self.tipbackAngle))),
+                     hidden=not self.visualChecks)
+
+    @Part
+    def intersection(self):
+        return IntersectedShapes(shape_in=self.fuselage,
+                                 tool=self.Piano,
+                                 color='red',
+                                 hidden=not self.visualChecks)
+
+    @Attribute
+    def tipbackControl(self):
+        if self.tipbackAngle < 14:
+            showwarning("Warning", "Tip back angle is smaller than 14 deg. Please increase the gear height.")
+            return "Please increase heigth"
+        else:
+            return "No changes needed"
+
+    #######################
+
+    @Part
+    def wheelCircle(self):
+        """
+        Wheel part.
+        :return:
+        """
+
+        return Circle(radius=self.wheelRadius,
+                      position=rotate(translate(self.position,
+                                                'x', self.hubLatPos,
+                                                'y', -1 * self.hubHeightPos,
+                                                'z', self.hubLongPos),
+                                      Vector(0, 1, 0), radians(90)),
+                      hidden=False)
+
+
+
+if __name__ == '__main__':
+    from parapy.gui import display
+
+    obj = LandingGear()
+    display(obj)
