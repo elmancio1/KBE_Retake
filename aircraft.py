@@ -109,6 +109,7 @@ class Aircraft(GeomBase):
         lst = []
         lst.extend(self.fuselage.outputList)
         lst.extend(self.wingbase.outputList)
+        lst.extend([["EOF"]])
         return lst
 
 

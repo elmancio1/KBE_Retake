@@ -469,6 +469,7 @@ class Wing(GeomBase):
         lst.append([None])
         lst.append(["Wing"])
         lst.append([None, "Wing Span", self.span, "m"])
+        lst.append([None, "EOC"])
 
         return lst
 
