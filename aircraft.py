@@ -181,7 +181,7 @@ class Aircraft(GeomBase):
                            cg=self.evaluations.cg,
                            fuselage=self.fuselage.loft,
                            wing=self.wingbase.rightWing,
-                           engine=self.enginebase.engineRight)
+                           engines=self.enginebase.engineSolid)
 
     @Part
     def evaluations(self):

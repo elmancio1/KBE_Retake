@@ -172,12 +172,13 @@ class LandingGear(GeomBase):
         return
 
     @Input(settable=settable)
-    def engine(self):
+    def engines(self):
         """
         Enigne 3D representation
         :return:
         """
         return
+
 
 
     # ### Attributes ##################################################################################################
@@ -291,8 +292,8 @@ class LandingGear(GeomBase):
             rotationPoint = Point(x, y - R, z)
 
             piano = Plane(reference=rotationPoint, normal=Vector(-sin(radians(lateral)), cos(radians(lateral)), 0))
-            int_shape = IntersectedShapes(shape_in=self.wing, tool=piano)
-            int = int_shape.edges
+            intShape = IntersectedShapes(shape_in=self.fusedWE, tool=piano)
+            int = intShape.edges
             lateral += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
         return lateral
 
@@ -338,11 +339,16 @@ class LandingGear(GeomBase):
 
     @Part
     def lateralStrikeArea(self):
-        return IntersectedShapes(shape_in=FusedSolid(shape_in=self.wing, tool=self.engine.first),
+        return IntersectedShapes(shape_in=self.fusedWE,
                                  tool=self.lateralPlane,
                                  color='red',
                                  hidden=not self.visualChecks) #ToDO: al momento si interseca con la win, ma deve farlo anche con i motori
 
+    @Part
+    def fusedWE(self):
+        return Fused(shape_in=self.wing,
+                     tool=self.engines,
+                     hidden=True)
     #######################
 
     @Part
