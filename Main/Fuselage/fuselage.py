@@ -322,6 +322,16 @@ class Fuselage(GeomBase):
         """
         return self.noseSectionCurves + self.cylinderSectionCurves + self.tailSectionCurves
 
+    @Attribute
+    def outputList(self):
+        lst = []
+        lst.append([None])
+        lst.append(["Fuselage"])
+        lst.append([None, "Fuselage Lenght", self.fuselageLength, "m"])
+
+        return lst
+
+
 # #### part ############################################################################################
 
     @Part

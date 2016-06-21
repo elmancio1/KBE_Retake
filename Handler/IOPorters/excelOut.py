@@ -4,8 +4,7 @@ from openpyxl import load_workbook
 class ExcelOut:
 
     def __init__(self, Component, ListValues, outputPath):
-        self.excelFile = load_workbook(outputPath)
-        self.sheet = self.excelFile['Sheet']
+        self.path = outputPath
         self.component = Component
         self.listValues = ListValues
 
@@ -13,16 +12,26 @@ class ExcelOut:
 
 
     def writer(self):
-        row = 0
-        column = 0
+        wb = Workbook()
+        ws = wb.active
+
+        row = 1
+        col = 1
+
         for line in self.listValues:
 
             for value in line:
-                self.sheet(row=row, column=column, value=value)
-                column+=1
+                if value is None:
+                    pass
+                elif value is float:
+                    _ = ws.cell(column=col, row=row, value="%f" % value)
+                else:
+                    _ = ws.cell(column=col, row=row, value="%s" % value)
+                col+=1
 
             row += 1
+            col = 1
 
-        wb.save()
+            wb.save(filename=self.path)
 
         return "Output file correctly generated"

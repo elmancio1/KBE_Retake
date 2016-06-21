@@ -463,6 +463,15 @@ class Wing(GeomBase):
         #TODO: sei sicurodi questa formula? cmq avendo creato la rappresentazione della MAC ora la sua posizione ce l'hai autonomamente
         return (self.posFraction * self.fuselageLength) - (0.25*self.chordRoot)
 
+    @Attribute
+    def outputList(self):
+        lst = []
+        lst.append([None])
+        lst.append(["Wing"])
+        lst.append([None, "Wing Span", self.span, "m"])
+
+        return lst
+
     # ###### Parts ####################################################################################################
 
     @Part

@@ -106,8 +106,10 @@ class Aircraft(GeomBase):
 
     @Attribute
     def listValues(self):
-        return [['ciao', 10, 'm'],
-                ['seconda value', 50.15, 'deg']]
+        lst = []
+        lst.extend(self.fuselage.outputList)
+        lst.extend(self.wingbase.outputList)
+        return lst
 
 
     #### Parts ####

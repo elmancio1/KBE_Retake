@@ -11,7 +11,7 @@ class Excel:
         self.default = Default
 
 
-    wb = Workbook()
+
 
     def finder(self):
         componentRead = None
