@@ -1,6 +1,7 @@
 import os
 import Output
 from time import gmtime, strftime
+import openpyxl
 class Outporter:
 
 
@@ -47,9 +48,13 @@ class Outporter:
 
         if fileExt == ".xlsx":
 
-            finalString = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            finalString = strftime("%d-%m-%Y %H"+"h %M"+"m %S"+"s", gmtime())
 
             outputPath = os.path.dirname(Output.__file__) + '\output ' + finalString + '.xlsx'
+
+            wb = openpyxl.Workbook()
+
+            wb.save(outputPath)
 
             from IOPorters.excelOut import ExcelOut as VarOutporter
             myOutporter = VarOutporter(Component=self.component,

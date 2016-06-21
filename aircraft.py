@@ -101,8 +101,14 @@ class Aircraft(GeomBase):
     @Attribute
     def outputResult(self):
         return Outporter(Component='Performance',
-                         ListValues=[],
+                         ListValues=self.listValues,
                          Path=self.filePath).writeValues()
+
+    @Attribute
+    def listValues(self):
+        return [['ciao', 10, 'm'],
+                ['seconda value', 50.15, 'deg']]
+
 
     #### Parts ####
 

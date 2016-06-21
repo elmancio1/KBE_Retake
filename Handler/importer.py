@@ -45,7 +45,7 @@ class Importer:
         fileExt = self.fileExtension(self.filePath)
 
         if fileExt == ".xlsx":
-            from IOPorters.excel import Excel as VarImporter
+            from IOPorters.excelIn import Excel as VarImporter
             myImporter = VarImporter(Component=self.component,
                               VariableName=self.variableName,
                               Default=self.default,
