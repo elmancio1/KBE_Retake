@@ -11,7 +11,7 @@ from Input import Airfoils
 import Tkinter, Tkconstants, tkFileDialog
 
 
-class Evaluations(GeomBase):
+class EvaluationsEX(GeomBase):
     """
     Class to perform te evaluations of lift gradient, downwash gradient, aerodynamic center, center of gravity
     """
@@ -143,26 +143,6 @@ class Evaluations(GeomBase):
         """
         return 3.5
 
-
-    @Input(settable=settable)
-    def chordRootW(self):
-        """
-        Wing root chord
-        :Unit: [m]
-        :rtype: float
-        """
-        return 3.5
-
-
-    @Input(settable=settable)
-    def longPosW(self):
-        """
-        Wing longitudinal position
-        :Unit: [m]
-        :rtype: float
-        """
-        return 3.5
-
     @Input(settable=settable)
     def posFraction(self):
         """
@@ -265,51 +245,22 @@ class Evaluations(GeomBase):
     @Input(settable=settable)
     def fuselage(self):
         """
-        Fuselage 3D representation
-        :Unit: [ ]
-        :rtype: lofted solid
+        Engine nacelle Length
+        :Unit: [m]
+        :rtype: float
         """
         return
 
     @Input(settable=settable)
     def wing(self):
         """
-        Right wing 3D representation
-        :Unit: [ ]
-        :rtype: lofted solid
+        Engine nacelle Length
+        :Unit: [m]
+        :rtype: float
         """
         return
 
     # ### Evaluations #################################################################################################
-
-    # ### Surfaces ####################################################################################################
-
-    @Attribute
-    def exposedSurf(self):
-        """
-        Wing exposed surface, for a more precise but slower calculation set "precision" to True
-        :Unit: [m^2]
-        :rtype: float
-        source: KBE support material
-        """
-        if self.precision:
-            h = self.evaluations.exposedWing.edges[1].point1.x  # height of trapezoid
-            B = self.chordRootW  # major base of trapezoid
-            b = self.evaluations.chordIntersected.edges[1].length  # minor base of trapezoid
-            internalS = 2 * (0.5 * (b + B) * h)  # wing surface internal at fuselage
-            return self.surfaceW - internalS
-        else:
-            return self.surfaceW - self.fuselageDiameter * self.cMACW  # first guess for a faster evaluation
-
-    @Attribute
-    def wettedSurf(self):
-        """
-        Wing wetted surface
-        :Unit: [m^2]
-        :rtype: float
-        source: KBE support material
-        """
-        return self.evaluations.exposedWing.faces[0].area + self.evaluations.exposedWing.faces[1].area
 
     # ### Lift gradients ##############################################################################################
 
@@ -460,6 +411,19 @@ class Evaluations(GeomBase):
             return sqrt(1 - self.maTail**2)
 
     @Attribute
+    def exposedSurf(self):
+        """
+        Wing exposed surface, for a more precise but slower calculation set "precision" to True
+        :Unit: [m^2]
+        :rtype: float
+        source: KBE support material
+        """
+        if self.precision:
+            pass
+        else:
+            return self.surfaceW - self.fuselageDiameter * self.cMACW
+
+    @Attribute
     def r(self):
         """
         Parameter linear dependent on horizontal tail arm
@@ -495,19 +459,6 @@ class Evaluations(GeomBase):
         return kE / kE0
 
     @Attribute
-    def lfn(self):
-        """
-        position of wing root exiting the fuselage, for a more precise but slower calculation set "precision" to True
-        :Unit: [m]
-        :rtype: float
-        source: KBE support material
-        """
-        if self.precision:
-            return self.evaluations.exposedWing.edges[1].point1.z - self.evaluations.chordIntersected.edges[1].length
-        else:
-            return (self.acW + self.longPosW) / 2  # first guess for a faster evaluation
-
-    @Attribute
     def acWF(self):
         """
         Aerodynamic center position of wing plus fuselage
@@ -516,8 +467,9 @@ class Evaluations(GeomBase):
         source: KBE support material
         """
         cg = self.surfaceW / self.spanW  # mean geometric chord
+        lfn = self.acW  # position of wing root exiting the fuselage
         A = self.acW / self.cMACW
-        B = 1.8 * self.fuselageDiameter * self.fuselageDiameter * self.lfn / (self.clAlphaWF * self.surfaceW * self.cMACW)
+        B = 1.8 * self.fuselageDiameter * self.fuselageDiameter * lfn / (self.clAlphaWF * self.surfaceW * self.cMACW)
         C = 0.273 * self.fuselageDiameter * cg * (self.spanW - self.fuselageDiameter) * tan(radians(self.sweep25W))
         D = ((1 + self.taperRatioW) * (self.spanW + 2.15 * self.fuselageDiameter) * self.cMACW**2)
         return (A - B + C / D) * self.cMACW
@@ -577,40 +529,46 @@ class Evaluations(GeomBase):
                       color='Red')
 
     @Part
-    def exposedWing(self):
-        """
-        Solid representation of part of the wing outside the fuselage
-
-        :rtype:
-        """
-        return SubtractedSolid(shape_in=self.wing, tool=self.fuselage,
-                               hidden=True)
+    def sottrazione(self):
+        return SubtractedSolid(shape_in=self.wing, tool=self.fuselage)
 
     @Part
     def plane(self):
         """
-        Intersecting plane at wing-fuselage intersection
+        Intersecting plane at MAC position on right wing
 
         :rtype:
         """
-        return Plane(Point(0, self.evaluations.exposedWing.edges[2].point1.y, 0), Vector(0, 1, 0),
-                     hidden=True)
+        return Plane(Point(0, self.evaluations.sottrazione.edges[2].point1.y, 0), Vector(0, 1, 0),
+                     hidden=False)
 
     @Part
-    def chordIntersected(self):
+    def MACr(self):
         """
-        Chord at intersection between wing and fuselage
+        MAC representation on right wing
 
         :rtype:
         """
-        return IntersectedShapes(shape_in=self.exposedWing,
+        return IntersectedShapes(shape_in=self.sottrazione,
                                  tool=self.plane,
-                                 color='red',
-                                 hidden=True)
+                                 color='red')
+
+    @Part
+    def point(self):
+        """
+        Aerodynamic center representation at quarter of MAC in right wing
+
+        :rtype:
+        """
+        return Sphere(radius=0.25,
+                      position=Point(self.evaluations.sottrazione.edges[2].point1.x,
+                                     self.evaluations.sottrazione.edges[2].point1.y,
+                                     self.evaluations.sottrazione.edges[2].point1.z - self.evaluations.MACr.edges[1].length),
+                      color='Red')
 
 
 if __name__ == '__main__':
     from parapy.gui import display
 
-    obj = Evaluations()
+    obj = EvaluationsEX()
     display(obj)

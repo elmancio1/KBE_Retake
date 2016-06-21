@@ -8,11 +8,10 @@ from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
-from Main.Wing.wake import Wake
 import Tkinter, Tkconstants, tkFileDialog
 
 
-class Wing(GeomBase):
+class WingEX(GeomBase):
     """
     Basic class Wing
     """
@@ -101,7 +100,7 @@ class Wing(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        return True
+        return False
 
     window = Tk()
     window.wm_withdraw()
@@ -185,24 +184,6 @@ class Wing(GeomBase):
         :rtype: float
         """
         return 4.
-
-    @Input(settable=settable)
-    def cg(self):
-        """
-        Center of gravity longitudinal position
-        :Unit: [m]
-        :rtype: float
-        """
-        return 14.97
-
-    @Input(settable=settable)
-    def ac(self):
-        """
-        Aircraft-less-tail aerodynamic center longitudinal position
-        :Unit: [m]
-        :rtype: float
-        """
-        return 14.67
 
     # ### Attributes ##################################################################################################
 
@@ -531,7 +512,7 @@ class Wing(GeomBase):
     @Part
     def leftWing(self):
         """
-        Left wing solid representation
+        Right wing solid representation
 
         :rtype:
         """
@@ -560,12 +541,12 @@ class Wing(GeomBase):
         return IntersectedShapes(shape_in=self.rightWing,
                                  tool=self.planeMACr,
                                  color='red',
-                                 hidden=False)
+                                 hidden=self.visual)
 
     @Part
-    def ACwr(self):
+    def ACr(self):
         """
-        Wing aerodynamic center representation at quarter of MAC in right wing
+        Aerodynamic center representation at quarter of MAC in right wing
 
         :rtype:
         """
@@ -574,7 +555,7 @@ class Wing(GeomBase):
                                      self.MACr.edges[0].point1.y,
                                      self.MACr.edges[0].point1.z - 0.75*self.cMAC),
                       color='Red',
-                      hidden=False)
+                      hidden=self.visual)
     @Part
     def planeMACl(self):
         """
@@ -595,12 +576,12 @@ class Wing(GeomBase):
         return IntersectedShapes(shape_in=self.leftWing,
                                  tool=self.planeMACl,
                                  color='red',
-                                 hidden=False)
+                                 hidden=self.visual)
 
     @Part
-    def ACwl(self):
+    def ACl(self):
         """
-        Wing aerodynamic center representation at quarter of MAC on left wing
+        Aerodynamic center representation at quarter of MAC on left wing
 
         :rtype:
         """
@@ -609,74 +590,10 @@ class Wing(GeomBase):
                                      self.MACl.edges[0].point1.y,
                                      self.MACl.edges[0].point1.z - 0.75*self.cMAC),
                       color='Red',
-                      hidden=False)
-
-    @Part
-    def CGr(self):
-        """
-        Center of gravity representation on MAC in right wing
-
-        :rtype:
-        """
-        return Sphere(radius=abs(self.curveRoot.maxY),
-                      position=Point(self.MACr.edges[0].point1.x,
-                                     self.MACr.edges[0].point1.y,
-                                     self.cg),
-                      color='Blue',
                       hidden=self.visual)
-
-    @Part
-    def CGl(self):
-        """
-        Center of gravity representation on MAC in left wing
-
-        :rtype:
-        """
-        return Sphere(radius=abs(self.curveRoot.maxY),
-                      position=Point(self.MACl.edges[0].point1.x,
-                                     self.MACl.edges[0].point1.y,
-                                     self.cg),
-                      color='Blue',
-                      hidden=self.visual)
-
-    @Part
-    def ACr(self):
-        """
-        Aircraft-less-tail aerodynamic center representation at quarter of MAC on right wing
-
-        :rtype:
-        """
-        return Sphere(radius=abs(self.curveRoot.maxY),
-                      position=Point(self.MACr.edges[0].point1.x,
-                                     self.MACr.edges[0].point1.y,
-                                     self.ac),
-                      color='Green',
-                      hidden=self.visual)
-
-    @Part
-    def ACl(self):
-        """
-        Aircraft-less-tail aerodynamic center representation at quarter of MAC on left wing
-
-        :rtype:
-        """
-        return Sphere(radius=abs(self.curveRoot.maxY),
-                      position=Point(self.MACl.edges[0].point1.x,
-                                     self.MACl.edges[0].point1.y,
-                                     self.ac),
-                      color='Green',
-                      hidden=self.visual)
-
-    # ###### Parts ####################################################################################################
-
-    @Part
-    def wake(self):
-        return Wake(cMACWing=self.cMAC,
-                    pointMAC=self.ACwr.position)
-
 
 if __name__ == '__main__':
     from parapy.gui import display
 
-    obj = Wing()
+    obj = WingEX()
     display(obj)
