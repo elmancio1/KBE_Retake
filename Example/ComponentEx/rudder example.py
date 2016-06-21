@@ -72,6 +72,21 @@ class RudderEx(Base):
         return Cube(1)
 
     @Part
+    def cube3(self):
+        return TranslatedShape(shape_in=self.cube2,
+                               displacement=Vector(0, 0, 3))
+
+    @Part
+    def fused1(self):
+        return FusedSolid(shape_in=self.cube1,
+                          tool=self.cube2)
+
+    @Part
+    def fused2(self):
+        return Fused(shape_in=self.cube1,
+                          tool=self.cube3)
+
+    @Part
     def sottrazione(self):
         return Subtracted(shape_in=self.cube1, tool=self.cube2)
 

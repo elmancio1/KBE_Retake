@@ -615,6 +615,15 @@ class Engine(GeomBase):
         """
         return LoftedSurface(self.nacelleSections, hidden=True)
 
+    @Part
+    def solidEngine(self):
+        """
+        Solid 3D representation of engine nacelle
+        :Unit: [ ]
+        :rtype:
+        """
+        return LoftedSolid(self.nacelleSections, hidden=True)
+
 
     @Part
     def coreSections(self):
@@ -718,6 +727,22 @@ class Engine(GeomBase):
                                                       'y', self.vertPos[child.index],
                                                       'z', self.longPos[child.index]),
                                 color='blue')
+
+    @Part
+    def engineSolid(self):
+        """
+        Solid 3D representation of left engine, in its correct position
+        :Unit: [ ]
+        :rtype:
+        """
+        return TransformedShape(shape_in=self.solidEngine, quantify=int(self.nEngine/2),
+                                from_position=XOY,
+                                to_position=translate(rotate(XOY, 'z', 0.0),
+                                                      'x', self.latPos[child.index],
+                                                      'y', self.vertPos[child.index],
+                                                      'z', self.longPos[child.index]),
+                                color='yellow',
+                                hidden=True)
 
     @Part
     def bypassExhaustLeft(self):
