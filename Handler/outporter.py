@@ -1,5 +1,6 @@
 import os
-
+import Output
+from time import gmtime, strftime
 class Outporter:
 
 
@@ -37,7 +38,7 @@ class Outporter:
 
     ##### Importer selection based on file extension #####
 
-    def writeValue(self):
+    def writeValues(self):
         """
 
         :return:
@@ -45,23 +46,21 @@ class Outporter:
         fileExt = self.fileExtension(self.filePath)
 
         if fileExt == ".xlsx":
+
+            finalString = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+            outputPath = os.path.dirname(Output.__file__) + '\output ' + finalString + '.xlsx'
+
             from IOPorters.excelOut import ExcelOut as VarOutporter
-            myImporter = VarImporter(Component=self.component,
-                              VariableName=self.variableName,
-                              Default=self.default,
-                              filePath=self.filePath)
-            return VarOutporter.finder(myImporter)
+            myOutporter = VarOutporter(Component=self.component,
+                                       ListValues=self.listValues,
+                                       outputPath=outputPath)
+            return VarOutporter.writer(myOutporter)
 
         elif fileExt == '.txt':
             # ToDo: fare txt e magari anche Matlab
             pass
 
-        elif fileExt == '.dat':
-
-            airfoilPath = str(self.filePath)
-
         else:
             #showwarning("Warning","File type is not supported in this application. Please choose a different format")
-            print ('LOG:    File type ' + repr(fileExt) + ' is not supported in this application. Variable '
-                   + repr(self.variableName) + ' will set to the default value: ' + repr(self.default))
-            return self.default
+            print ('LOG:    File type ' + repr(fileExt) + ' is not supported in this application.')
