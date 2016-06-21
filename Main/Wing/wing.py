@@ -530,7 +530,7 @@ class Wing(GeomBase):
     @Part
     def leftWing(self):
         """
-        Right wing solid representation
+        Left wing solid representation
 
         :rtype:
         """
