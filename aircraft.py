@@ -182,7 +182,8 @@ class Aircraft(GeomBase):
                            cMAC=self.wingbase.cMAC,
                            cg=self.evaluations.cg,
                            fuselage=self.fuselage.loft,
-                           wing=self.wingbase.rightWing)
+                           wing=self.wingbase.rightWing,
+                           engines=self.enginebase.engineSolid)
 
     @Part
     def evaluations(self):
