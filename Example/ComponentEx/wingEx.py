@@ -528,6 +528,16 @@ class Wing(GeomBase):
         return Sphere(radius=self.tcRatio * self.cMAC,
                       position=Point(self.MAC.edges[0].position1.x, self.MAC.edges[0].position1.y, self.MAC.edges[0].position1.z))
 
+    @Part
+    def tippunto(self):
+        return Sphere(radius=0.25,
+                      position=Point(self.rightWing.vertices[1].point.x, self.rightWing.vertices[1].point.y, self.rightWing.vertices[1].point.z))
+
+    @Part
+    def tippunto2(self):
+        return Sphere(radius=0.25,
+                      position=Point(self.rightWing.edges[2].midpoint.x, self.rightWing.edges[2].midpoint.y, self.rightWing.edges[2].midpoint.z))
+
 if __name__ == '__main__':
     from parapy.gui import display
 
