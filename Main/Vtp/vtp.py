@@ -121,12 +121,12 @@ class Vtp(GeomBase):
     @Input
     def vc(self):
         """
-        Vertical tail volume coefficient
+        Vertical tail volume coefficient, based on type and dimension of designed aircraft
         :Unit: [ ]
         :rtype: float
-        source: KBE assignment support material
+        source: http://adg.stanford.edu/aa241/stability/taildesign.html
         """
-        return .083
+        return 0.0325 + 0.3375 * (self.fuselageDiameter**2 * self.fuselageLength) / (self.surfaceWing * self.spanWing)
 
     @Input
     def visual(self):
@@ -212,6 +212,15 @@ class Vtp(GeomBase):
         return 36.
 
     @Input(settable=settable)
+    def fuselageDiameter(self):
+        """
+        Aircraft fuselage diameter
+        :Unit: [m]
+        :rtype: float
+        """
+        return 4.
+
+    @Input(settable=settable)
     def conePos(self):
         """
         Aircraft tail cone most upper point vertical position
@@ -283,6 +292,7 @@ class Vtp(GeomBase):
         :Unit: [m]
         :rtype: float
         """
+        # TODO: creare la funzione esponenziale
         return .0001 * self.fuselageLength
 
     @Attribute
