@@ -720,6 +720,21 @@ class Engine(GeomBase):
                                 color='blue')
 
     @Part
+    def engineSolid(self):
+        """
+        Solid 3D representation of left engine, in its correct position
+        :Unit: [ ]
+        :rtype:
+        """
+        return (shape_in=self.engine, quantify=int(self.nEngine/2),
+                                from_position=XOY,
+                                to_position=translate(rotate(XOY, 'z', 0.0),
+                                                      'x', self.latPos[child.index],
+                                                      'y', self.vertPos[child.index],
+                                                      'z', self.longPos[child.index]),
+                                color='blue')
+
+    @Part
     def bypassExhaustLeft(self):
         """
         Solid 3D representation of left engine exhaust bypass plume, in its correct position

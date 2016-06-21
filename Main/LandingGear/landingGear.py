@@ -171,8 +171,25 @@ class LandingGear(GeomBase):
         """
         return
 
+    @Input(settable=settable)
+    def engine(self):
+        """
+        Enigne 3D representation
+        :return:
+        """
+        return
+
 
     # ### Attributes ##################################################################################################
+
+    @Attribute
+    def tipbackControl(self):
+        if self.tipbackAngle > self.maxTipbackAngle:
+            showwarning("Warning", "Tip back angle is bigger than the angle between the CG anf wheel hub."
+                                   " Please increase the gear height or increase the longitudinal position.")
+            return "Please increase height"
+        else:
+            return "No changes needed" #ToDo: non va bene il controllo cosi. ci deve essere una value inferiore di controllo (14 deg)
 
     @Attribute
     def hubLongPos(self):
@@ -321,20 +338,10 @@ class LandingGear(GeomBase):
 
     @Part
     def lateralStrikeArea(self):
-        return IntersectedShapes(shape_in=self.wing,
+        return IntersectedShapes(shape_in=FusedSolid(shape_in=self.wing, tool=self.engine.first),
                                  tool=self.lateralPlane,
                                  color='red',
                                  hidden=not self.visualChecks) #ToDO: al momento si interseca con la win, ma deve farlo anche con i motori
-
-    @Attribute
-    def tipbackControl(self):
-        if self.tipbackAngle > self.maxTipbackAngle:
-            showwarning("Warning", "Tip back angle is bigger than the angle between the CG anf wheel hub."
-                                   " Please increase the gear height or increase the longitudinal position.")
-            return "Please increase height"
-        else:
-            return "No changes needed" #ToDo: non va bene il controllo cosi. ci deve essere una value inferiore di controllo (14 deg)
-
 
     #######################
 
@@ -362,7 +369,20 @@ class LandingGear(GeomBase):
                                                'y', -1 * self.hubHeightPos,
                                                'z', self.hubLongPos),
                                      Vector(0, 1, 0), radians(90)),
-                     hidden=False)
+                     hidden=False,
+                     color='black')
+
+    @Part
+    def hub(self):
+        return Cylinder(radius=3 * self.wheelRadius / 5,
+                        height=2 * self.wheelRadius / 3,
+                        position=rotate(translate(self.position,
+                                                  'x', self.hubLatPos - self.wheelRadius / 3,
+                                                  'y', -1 * self.hubHeightPos,
+                                                  'z', self.hubLongPos),
+                                        Vector(0, 1, 0), radians(90)),
+                        hidden=False,
+                        color='gray')
 
 
 if __name__ == '__main__':
