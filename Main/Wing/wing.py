@@ -8,6 +8,7 @@ from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
+from Main.Wing.wake import Wake
 import Tkinter, Tkconstants, tkFileDialog
 
 
@@ -665,6 +666,14 @@ class Wing(GeomBase):
                                      self.ac),
                       color='Green',
                       hidden=self.visual)
+
+    # ###### Parts ####################################################################################################
+
+    @Part
+    def wake(self):
+        return Wake(cMACWing=self.cMAC,
+                    pointMAC=self.ACwr.position)
+
 
 if __name__ == '__main__':
     from parapy.gui import display
