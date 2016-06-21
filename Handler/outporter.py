@@ -1,11 +1,11 @@
 import os
 
-class Importer:
+class Outporter:
 
-    def __init__(self, Component, VariableName, Default, Path = []):
+
+    def __init__(self, Component, ListValues, Path = []):
         self.component = Component
-        self.variableName = VariableName
-        self.default = Default
+        self.listValues = ListValues
         self.filePath = Path
     """
     Handler that takes care of opening different format files.
@@ -37,7 +37,7 @@ class Importer:
 
     ##### Importer selection based on file extension #####
 
-    def getValue(self):
+    def writeValue(self):
         """
 
         :return:
@@ -45,12 +45,12 @@ class Importer:
         fileExt = self.fileExtension(self.filePath)
 
         if fileExt == ".xlsx":
-            from IOPorters.excel import Excel as VarImporter
+            from IOPorters.excelOut import ExcelOut as VarOutporter
             myImporter = VarImporter(Component=self.component,
                               VariableName=self.variableName,
                               Default=self.default,
                               filePath=self.filePath)
-            return VarImporter.finder(myImporter)
+            return VarOutporter.finder(myImporter)
 
         elif fileExt == '.txt':
             # ToDo: fare txt e magari anche Matlab
@@ -65,4 +65,3 @@ class Importer:
             print ('LOG:    File type ' + repr(fileExt) + ' is not supported in this application. Variable '
                    + repr(self.variableName) + ' will set to the default value: ' + repr(self.default))
             return self.default
-
