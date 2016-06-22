@@ -45,10 +45,9 @@ class Outporter:
         :return:
         """
         fileExt = self.fileExtension(self.filePath)
+        finalString = strftime("%d-%m-%Y %H" + "h %M" + "m %S" + "s", gmtime())
 
         if fileExt == ".xlsx":
-
-            finalString = strftime("%d-%m-%Y %H"+"h %M"+"m %S"+"s", gmtime())
 
             outputPath = os.path.dirname(Output.__file__) + '\output ' + finalString + '.xlsx'
 
@@ -69,3 +68,14 @@ class Outporter:
         else:
             #showwarning("Warning","File type is not supported in this application. Please choose a different format")
             print ('LOG:    File type ' + repr(fileExt) + ' is not supported in this application.')
+            outputPath = os.path.dirname(Output.__file__) + '\output ' + finalString + '.xlsx'
+
+            wb = openpyxl.Workbook()
+
+            wb.save(outputPath)
+
+            from IOPorters.excelOut import ExcelOut as VarOutporter
+            myOutporter = VarOutporter(Component=self.component,
+                                       ListValues=self.listValues,
+                                       outputPath=outputPath)
+            return VarOutporter.writer(myOutporter)
