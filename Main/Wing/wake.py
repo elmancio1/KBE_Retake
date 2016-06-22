@@ -34,6 +34,15 @@ class Wake(GeomBase):
         return 3.67
 
     @Input(settable=settable)
+    def cRootW(self):
+        """
+        Wing root chord
+        :Unit: [m]
+        :rtype: float
+        """
+        return 4.5
+
+    @Input(settable=settable)
     def pointMAC(self):
         """
         Point representing MAC quarter chord
@@ -41,6 +50,24 @@ class Wake(GeomBase):
         :rtype: Point
         """
         return Point(5.76, -1.46, 17.53)
+
+    @Input(settable=settable)
+    def longPosW(self):
+        """
+        Longitudinal position of wing model
+        :Unit: [m]
+        :rtype: float
+        """
+        return 13.
+
+    @Input(settable=settable)
+    def vertPosW(self):
+        """
+        Longitudinal position of wing model
+        :Unit: [m]
+        :rtype: float
+        """
+        return -1.67
 
     # ### Attributes ##################################################################################################
 
@@ -54,7 +81,7 @@ class Wake(GeomBase):
         return [1.2 + (5 - 1.2) / 100 * i for i in range(101)]
 
     @Attribute
-    def yUp(self):
+    def yUpMAC(self):
         """
         Set of y coordinates to represent the upper line of the wake wing function
         :Unit: [ ]
@@ -69,7 +96,7 @@ class Wake(GeomBase):
         return y_1
 
     @Attribute
-    def yMid(self):
+    def yMidMAC(self):
         """
         Set of y coordinates to represent the middle line of the wake wing function
         :Unit: [ ]
@@ -84,17 +111,17 @@ class Wake(GeomBase):
         return y_2
 
     @Attribute
-    def yMidRev(self):
+    def yMidRevMAC(self):
         """
         Reverse set of y coordinates of the middle line of the wake wing function, to make possible the polygon
         :Unit: [ ]
         :rtype: float
         source: KBE support material
         """
-        return list(reversed(self.yMid))
+        return list(reversed(self.yMidMAC))
 
     @Attribute
-    def yBot(self):
+    def yBotMAC(self):
         """
         Set of y coordinates to represent the bottom line of the wake wing function
         :Unit: [ ]
@@ -109,52 +136,173 @@ class Wake(GeomBase):
         return y_3
 
     @Attribute
-    def pointsDanger(self):
+    def pointsDangerMAC(self):
         """
         Points representing the danger part of wing wake
         :Unit: [ ]
         :rtype: float
         source: KBE support material
         """
-        return self.yUp + self.yMidRev + [self.yUp[0]]
+        return self.yUpMAC + self.yMidRevMAC + [self.yUpMAC[0]]
 
     @Attribute
-    def pointsSafer(self):
+    def pointsSaferMAC(self):
         """
         Points representing the safer (lower) part of wing wake
         :Unit: [ ]
         :rtype: float
         source: KBE support material
         """
-        return self.yBot + self.yMidRev + [self.yBot[0]]
+        return self.yBotMAC + self.yMidRevMAC + [self.yBotMAC[0]]
+
+    @Attribute
+    def yUpW(self):
+        """
+        Set of y coordinates to represent the upper line of the wake wing function at wing root
+        :Unit: [ ]
+        :rtype: float
+        source: KBE support material
+        """
+        y_1 = []
+        for i in self.xCoord:
+            y_1.append(Point(0,
+                             self.vertPosW + float((.0072 * i**3 - .1016 * i**2 + .7088 * i - .0818) * self.cRootW),
+                             self.longPosW + 0.25*self.cRootW + float(i) * self.cRootW))
+        return y_1
+
+    @Attribute
+    def yMidW(self):
+        """
+        Set of y coordinates to represent the middle line of the wake wing function at wing root
+        :Unit: [ ]
+        :rtype: float
+        source: KBE support material
+        """
+        y_2 = []
+        for i in self.xCoord:
+            y_2.append(Point(0,
+                             self.vertPosW + float((-.0002 * i**3 - .0063 * i**2 + .1939 * i - .094) * self.cRootW),
+                             self.longPosW + 0.25*self.cRootW + float(i) * self.cRootW))
+        return y_2
+
+    @Attribute
+    def yMidRevW(self):
+        """
+        Reverse set of y coordinates of the middle line of the wake wing function, to make possible the polygon
+        :Unit: [ ]
+        :rtype: float
+        source: KBE support material
+        """
+        return list(reversed(self.yMidW))
+
+    @Attribute
+    def yBotW(self):
+        """
+        Set of y coordinates to represent the bottom line of the wake wing function at wing root
+        :Unit: [ ]
+        :rtype: float
+        source: KBE support material
+        """
+        y_3 = []
+        for i in self.xCoord:
+            y_3.append(Point(0,
+                             self.vertPosW + float((-.002 * i**3 + .0304 * i**2 - .1642 * i + .0882) * self.cRootW),
+                             self.longPosW + 0.25*self.cRootW + float(i) * self.cRootW))
+        return y_3
+
+    @Attribute
+    def pointsDangerW(self):
+        """
+        Points representing the danger part of wing wake at wing root
+        :Unit: [ ]
+        :rtype: float
+        source: KBE support material
+        """
+        return self.yUpW + self.yMidRevW + [self.yUpW[0]]
+
+    @Attribute
+    def pointsSaferW(self):
+        """
+        Points representing the safer (lower) part of wing wake at wing root
+        :Unit: [ ]
+        :rtype: float
+        source: KBE support material
+        """
+        return self.yBotW + self.yMidRevW + [self.yBotW[0]]
 
     # ###### Parts ####################################################################################################
 
     @Part
-    def curveDanger(self):
+    def curveDangerMAC(self):
         """
         Curve representing the danger part of wing wake
         :Unit: [ ]
-        :rtype: float
-        source: KBE support material
+        :rtype:
         """
-        return PolygonalFace(self.pointsDanger,
+        return PolygonalFace(self.pointsDangerMAC,
                              color='red',
-                             transparency=.6,
+                             transparency=.7,
                              hidden=False)
 
     @Part
-    def curveSafer(self):
+    def curveSaferMAC(self):
         """
         Curve representing the safer (lower) part of wing wake
         :Unit: [ ]
-        :rtype: float
-        source: KBE support material
+        :rtype:
         """
-        return PolygonalFace(self.pointsSafer,
+        return PolygonalFace(self.pointsSaferMAC,
                              color='orange',
-                             transparency=.6,
+                             transparency=.7,
                              hidden=False)
+
+    @Part
+    def curveDangerW(self):
+        """
+        Curve representing the danger part of wing wake at wing root
+        :Unit: [ ]
+        :rtype:
+        """
+        return PolygonalFace(self.pointsDangerW,
+                             color='red',
+                             transparency=.7,
+                             hidden=False)
+
+    @Part
+    def curveSaferW(self):
+        """
+        Curve representing the safer (lower) part of wing wake at wing root
+        :Unit: [ ]
+        :rtype:
+        """
+        return PolygonalFace(self.pointsSaferW,
+                             color='orange',
+                             transparency=.7,
+                             hidden=False)
+
+    @Part
+    def wakeDanger(self):
+        """
+        Solid representing the danger part of wing wake
+        :Unit: [ ]
+        :rtype:
+        """
+        return LoftedSolid([self.curveDangerMAC.wires[0], self.curveDangerW.wires[0]],
+                           color='red',
+                           transparency=.7,
+                           hidden=False)
+
+    @Part
+    def wakeSafer(self):
+        """
+        Solid representing the safer (lower) part of wing wake
+        :Unit: [ ]
+        :rtype:
+        """
+        return LoftedSolid([self.curveSaferMAC.wires[0], self.curveSaferW.wires[0]],
+                           color='orange',
+                           transparency=.7,
+                           hidden=False)
 
 
 if __name__ == '__main__':

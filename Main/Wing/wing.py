@@ -506,7 +506,7 @@ class Wing(GeomBase):
         """
         return TranslatedCurve(curve_in=self.curveRoot.crv,
                                displacement=Vector(0, self.vertPos, self.longPos),
-                               hidden=True)
+                               hidden=False)
 
     @Part
     def curveTipPos(self):
@@ -682,7 +682,10 @@ class Wing(GeomBase):
     @Part
     def wake(self):
         return Wake(cMACWing=self.cMAC,
-                    pointMAC=self.ACwr.position)
+                    pointMAC=self.ACwr.position,
+                    cRootW=self.chordRoot,
+                    longPosW=self.longPos,
+                    vertPosW=self.vertPos)
 
 
 if __name__ == '__main__':
