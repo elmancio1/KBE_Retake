@@ -112,8 +112,6 @@ class Aircraft(GeomBase):
         lst.extend([["EOF"]])
         return lst
 
-
-
     #### Parts ####
 
     @Part
