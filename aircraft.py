@@ -2,6 +2,7 @@ from __future__ import division
 from parapy.geom import *
 from parapy.core import *
 from Handler.importer import Importer
+from Handler.outporter import Outporter
 from Input import Files
 from math import *
 import Tkinter
@@ -97,6 +98,22 @@ class Aircraft(GeomBase):
         filename = tkFileDialog.askopenfilename(**file_opt)
         return str(filename)
 
+    @Attribute
+    def outputResult(self):
+        return Outporter(Component='Performance',
+                         ListValues=self.listValues,
+                         Path=self.filePath).writeValues()
+
+    @Attribute
+    def listValues(self):
+        lst = []
+        lst.extend(self.fuselage.outputList)
+        lst.extend(self.wingbase.outputList)
+        lst.extend([["EOF"]])
+        return lst
+
+    #### Parts ####
+
     @Part
     def wingbase(self):
         return Wing(maCruise=self.maCruise,
@@ -139,6 +156,7 @@ class Aircraft(GeomBase):
                    cMACWing=self.wingbase.cMAC,
                    spanWing=self.wingbase.span,
                    fuselageLength=self.fuselage.fuselageLength,
+                   fuselageDiameter=self.fuselage.fuselageDiameter,
                    posFraction=self.wingbase.posFraction,
                    conePos=self.fuselage.tailSectionCurves[1].center.y,
                    tlH=self.htpbase.tl,
@@ -155,6 +173,7 @@ class Aircraft(GeomBase):
                    cMACWing=self.wingbase.cMAC,
                    spanWing=self.wingbase.span,
                    fuselageLength=self.fuselage.fuselageLength,
+                   fuselageDiameter=self.fuselage.fuselageDiameter,
                    posFraction=self.wingbase.posFraction,
                    conePos=self.fuselage.tailSectionCurves[1].center.y,
                    tlV=self.vtpbase.tl,

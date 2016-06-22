@@ -463,6 +463,16 @@ class Wing(GeomBase):
         #TODO: sei sicurodi questa formula? cmq avendo creato la rappresentazione della MAC ora la sua posizione ce l'hai autonomamente
         return (self.posFraction * self.fuselageLength) - (0.25*self.chordRoot)
 
+    @Attribute
+    def outputList(self):
+        lst = []
+        lst.append([None])
+        lst.append(["Wing"])
+        lst.append([None, "Wing Span", self.span, "m"])
+        lst.append([None, "EOC"])
+
+        return lst
+
     # ###### Parts ####################################################################################################
 
     @Part
@@ -496,7 +506,7 @@ class Wing(GeomBase):
         """
         return TranslatedCurve(curve_in=self.curveRoot.crv,
                                displacement=Vector(0, self.vertPos, self.longPos),
-                               hidden=True)
+                               hidden=False)
 
     @Part
     def curveTipPos(self):
@@ -672,7 +682,10 @@ class Wing(GeomBase):
     @Part
     def wake(self):
         return Wake(cMACWing=self.cMAC,
-                    pointMAC=self.ACwr.position)
+                    pointMAC=self.ACwr.position,
+                    cRootW=self.chordRoot,
+                    longPosW=self.longPos,
+                    vertPosW=self.vertPos)
 
 
 if __name__ == '__main__':

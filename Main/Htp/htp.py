@@ -162,12 +162,12 @@ class Htp(GeomBase):
     @Input
     def vc(self):
         """
-        Horizontal tail volume coefficient
+        Horizontal tail volume coefficient, based on type and dimension of designed aircraft
         :Unit: [ ]
         :rtype: float
-        source: KBE assignment support material
+        source: http://adg.stanford.edu/aa241/stability/taildesign.html
         """
-        return 1.
+        return 0.3 + 0.7 * (self.fuselageLength * self.fuselageDiameter**2) / (self.surfaceWing * self.cMACWing)
 
     @Input
     def visual(self):
@@ -251,6 +251,15 @@ class Htp(GeomBase):
         :rtype: float
         """
         return 36.
+
+    @Input(settable=settable)
+    def fuselageDiameter(self):
+        """
+        Aircraft fuselage diameter
+        :Unit: [m]
+        :rtype: float
+        """
+        return 4.
 
     @Input(settable=settable)
     def conePos(self):
