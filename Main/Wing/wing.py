@@ -433,9 +433,12 @@ class Wing(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
-        return min(0.18, (((cos(radians(self.sweep50))**3) * (self.maTechnology - self.maDD *
+        tc = min(0.18, (((cos(radians(self.sweep50))**3) * (self.maTechnology - self.maDD *
                             cos(radians(self.sweep50)))) - 0.115 * self.clCruise**1.5) /
                             cos(radians(self.sweep50))**2)
+        if self.maDD < 0.4:
+            tc = 0.18
+        return tc
 
     @Attribute
     def longPos(self):
