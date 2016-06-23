@@ -569,6 +569,7 @@ class Htp(GeomBase):
         :rtype: string
         """
         if self.checkDanger.edges != []:
+            showwarning("Warning", "Horizontal tail plane is immersed in wing wake.")
             return "Red"
         elif (self.checkDanger.edges == [] and self.checkSafer.edges != []):
             return "Orange"
