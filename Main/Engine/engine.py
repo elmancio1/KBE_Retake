@@ -14,6 +14,15 @@ class Engine(GeomBase):
     """
 
     @Input
+    def visual(self):
+        """
+        Define the visualization of the visual checks, it could be either True or False
+        :Unit: [ ]
+        :rtype: string
+        """
+        return False
+
+    @Input
     def bypassRatio(self):
         """
         Engine bypass-Ratio
@@ -144,15 +153,6 @@ class Engine(GeomBase):
                             VariableName='engine Position',
                             Default='wing',
                               Path=self.filePath).getValue())
-
-    @Input
-    def visual(self):
-        """
-        Define the visualization of the visual checks, it could be either True or False
-        :Unit: [ ]
-        :rtype: string
-        """
-        return True
 
     window = Tk()
     window.wm_withdraw()
@@ -551,6 +551,7 @@ class Engine(GeomBase):
         :rtype:
         """
         # ToDo: mettere un ulteriore if che eviti l'intersezione tra ala e nacelle
+        #ToDo: la posizione vertical del motore e' hardcoded.
         if self.enginePos == 'wing' and -0.2 < self.engineStagger < 0.18:
             if self.nEngine == 2 and self.enginePos == 'wing':
                 return [-1 * (0.07 + 0.03 * cos(15 * (self.engineStagger + 0.03)) + self.tcRatio / 4) * self.chord35 +
@@ -590,7 +591,8 @@ class Engine(GeomBase):
                     self.engineStagger * self.chord70 + tan(radians(self.sweepLE)) * self.latPos[1] +
                     self.wingLongPos - self.cowlLength]
         elif self.nEngine == 2 and self.enginePos == 'fuselage':
-            return [self.noseLength + self.cylinderLength + 0.50 * self.nacelleLength]
+            return [self.noseLength + self.cylinderLength - 0.20 * self.nacelleLength]
+        #ToDo: la posizione longitudinal non garantisce che il motore non esca dalla fuselage.
 
 # #### Part ##########################################################################################################
 
@@ -758,7 +760,7 @@ class Engine(GeomBase):
                                                       'y', self.vertPos[child.index],
                                                       'z', self.longPos[child.index]),
                                 color='cyan', transparency=0.75,
-                                hidden=self.visual)
+                                hidden=not self.visual)
 
     @Part
     def coreExhaustLeft(self):
@@ -774,7 +776,7 @@ class Engine(GeomBase):
                                                       'y', self.vertPos[child.index],
                                                       'z', self.longPos[child.index]),
                                 color='red', transparency=0.7,
-                                hidden=self.visual)
+                                hidden=not self.visual)
 
     @Part
     def bypassExhaustRight(self):
@@ -790,7 +792,7 @@ class Engine(GeomBase):
                                                       'y', self.vertPos[child.index],
                                                       'z', self.longPos[child.index]),
                                 color='cyan', transparency=0.75,
-                                hidden=self.visual)
+                                hidden=not self.visual)
 
     @Part
     def coreExhaustRight(self):
@@ -806,7 +808,7 @@ class Engine(GeomBase):
                                                       'y', self.vertPos[child.index],
                                                       'z', self.longPos[child.index]),
                                 color='red', transparency=0.7,
-                                hidden=self.visual)
+                                hidden=not self.visual)
 
 if __name__ == '__main__':
     from parapy.gui import display

@@ -144,7 +144,7 @@ class Vtp(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        return True
+        return False
 
     window = Tk()
     window.wm_withdraw()
@@ -461,7 +461,7 @@ class Vtp(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        if not self.rudderCheck:
+        if self.rudderCheck:
             return 0.6
         else:
             return 0
@@ -564,7 +564,7 @@ class Vtp(GeomBase):
         return PolygonalFace(self.pointsWakeHtp,
                              color='red',
                              transparency=.4,
-                             hidden=self.rudderCheck)
+                             hidden=not self.rudderCheck)
 
     @Part
     def rudder(self):
@@ -576,7 +576,7 @@ class Vtp(GeomBase):
         return PolygonalFace(self.pointsRudder,
                              color='blue',
                              transparency=.5,
-                             hidden=self.rudderCheck)
+                             hidden=not self.rudderCheck)
 
     @Part
     def check(self):
@@ -588,7 +588,7 @@ class Vtp(GeomBase):
         return Subtracted(shape_in=self.rudder, tool=self.htpWake,
                           color='green',
                           transparency=.2,
-                          hidden=self.rudderCheck)
+                          hidden=not self.rudderCheck)
 
     @Part
     def planeMAC(self):
@@ -610,7 +610,7 @@ class Vtp(GeomBase):
         return IntersectedShapes(shape_in=self.tail,
                                  tool=self.planeMAC,
                                  color='red',
-                                 hidden=self.visual)
+                                 hidden=not self.visual)
 
     @Part
     def AC(self):
@@ -624,7 +624,7 @@ class Vtp(GeomBase):
                                      self.MAC.edges[0].point1.y,
                                      self.MAC.edges[0].point1.z - 0.75*self.cMAC),
                       color='Red',
-                      hidden=self.visual)
+                      hidden=not self.visual)
 
 if __name__ == '__main__':
     from parapy.gui import display
