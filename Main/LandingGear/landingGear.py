@@ -193,6 +193,56 @@ class LandingGear(GeomBase):
             return "No changes needed" #ToDo: non va bene il controllo cosi. ci deve essere una value inferiore di controllo (14 deg)
 
     @Attribute
+    def checkLateralAngle(self):
+        """
+
+
+         :return:
+         """
+        lateral = 5 # deg
+        x = self.hubLatPos
+        y = -1 * self.hubHeightPos
+        z = self.hubLongPos
+        R = self.wheelRadius
+        rotationPoint = Point(x, y - R + 0.15 / cos(radians(lateral)), z)
+        piano = Plane(reference=rotationPoint, normal=Vector(-sin(radians(lateral)), cos(radians(lateral)), 0))
+        intShape = IntersectedShapes(shape_in=self.fusedWE, tool=piano)
+        int = intShape.edges
+
+        if not int:
+            return "Lateral angle check is satisfied"
+        else:
+            showwarning("Warning", "The lateral clearance constraint is not satisfied. "
+                                   "Please increase gear height or move if further out.")
+            return "Lateral angle check is not satisfied. Please increase gear height or move if further out."
+
+    @Attribute
+    def lateralAngle(self):
+        """
+
+
+        :return:
+        """
+        if self.checkLateralAngle=="Lateral angle check is satisfied":
+            lateral = 5
+        else:
+            lateral = 0
+        x = self.hubLatPos
+        y = -1 * self.hubHeightPos
+        z = self.hubLongPos
+        R = self.wheelRadius
+        int = []
+        while int == []:
+            rotationPoint = Point(x, y - R, z)
+
+            piano = Plane(reference=rotationPoint, normal=Vector(-sin(radians(lateral)), cos(radians(lateral)), 0))
+            intShape = IntersectedShapes(shape_in=self.fusedWE, tool=piano)
+            int = intShape.edges
+            lateral += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
+
+        return lateral
+
+    @Attribute
     def hubLongPos(self):
         """
         Longitudinal position of the wheel hub
@@ -275,29 +325,6 @@ class LandingGear(GeomBase):
             tipback += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
         return tipback
 
-    @Attribute
-    def lateralAngle(self):
-        """
-
-
-        :return:
-        """
-        lateral = 0
-        x = self.hubLatPos
-        y = -1 * self.hubHeightPos
-        z = self.hubLongPos
-        R = self.wheelRadius
-        int = []
-        while int == []:
-            rotationPoint = Point(x, y - R, z)
-
-            piano = Plane(reference=rotationPoint, normal=Vector(-sin(radians(lateral)), cos(radians(lateral)), 0))
-            intShape = IntersectedShapes(shape_in=self.fusedWE, tool=piano)
-            int = intShape.edges
-            lateral += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
-        return lateral
-
-
 ################
 
     @Part
@@ -323,7 +350,7 @@ class LandingGear(GeomBase):
                                  hidden=not self.visualChecks)
 
     @Part
-    def lateralPoint(self):
+    def contactPoint(self):
         return Sphere(radius=0.04,
                       position=Point(self.hubLatPos, -1 * self.hubHeightPos - self.wheelRadius,
                      self.hubLongPos),
@@ -342,7 +369,7 @@ class LandingGear(GeomBase):
         return IntersectedShapes(shape_in=self.fusedWE,
                                  tool=self.lateralPlane,
                                  color='red',
-                                 hidden=not self.visualChecks) #ToDO: al momento si interseca con la win, ma deve farlo anche con i motori
+                                 hidden=not self.visualChecks)
 
     @Part
     def fusedWE(self):
@@ -389,6 +416,22 @@ class LandingGear(GeomBase):
                                         Vector(0, 1, 0), radians(90)),
                         hidden=False,
                         color='gray')
+
+    @Part
+    def wheelLeft(self):
+        return MirroredShape(shape_in=self.wheel,
+                             reference_point=Point(),
+                             vector1=self.wheel.position.Vy,
+                             vector2=self.wheel.position.Vx,
+                             color='black')
+
+    @Part
+    def hubLeft(self):
+        return MirroredShape(shape_in=self.hub,
+                             reference_point=Point(),
+                             vector1=self.hub.position.Vy,
+                             vector2=self.hub.position.Vx,
+                             color='gray')
 
 
 if __name__ == '__main__':

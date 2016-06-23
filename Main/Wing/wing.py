@@ -26,7 +26,7 @@ class Wing(GeomBase):
 
         :rtype: boolean
         """
-        return True
+        return False
 
     @Input
     def newAirfoil(self):
