@@ -280,6 +280,15 @@ class Evaluations(GeomBase):
         """
         return
 
+    @Input(settable=settable)
+    def enginePos(self):
+        """
+        Wing position, could be either "low" or "high" wing
+        :Unit: [ ]
+        :rtype: string
+        """
+        return 'wing'
+
     # ### Evaluations #################################################################################################
 
     # ### Surfaces ####################################################################################################
@@ -530,9 +539,9 @@ class Evaluations(GeomBase):
         :rtype: float
         source: KBE support material
         """
-        if self.posFraction == 0.5:  # wing mounted engines
+        if self.enginePos == 'wing':  # wing mounted engines
             return -4.0
-        elif self.posFraction == 0.6:  # tail mounted engines
+        elif self.enginePos == 'fuselage':  # tail mounted engines
             return -2.5
 
     @Attribute
@@ -545,12 +554,14 @@ class Evaluations(GeomBase):
         """
         acSum = 0.0
         for i in self.longPosE:
-            if self.posFraction == 0.5:  # wing mounted engines
+            if self.enginePos == 'wing':  # wing mounted engines
                 ln = self.acW - i
-            elif self.posFraction == 0.6:  # tail mounted engines
+            elif self.enginePos == 'fuselage':  # tail mounted engines
                 ln = self.acW - (i + self.nacelleLength)
             acSum = +self.kn * ln * (self.nacelleDiameter**2) / (self.surfaceW * self.cMACW * self.clAlphaWF)
         return acSum
+
+
 
     # ###### Parts ####################################################################################################
 

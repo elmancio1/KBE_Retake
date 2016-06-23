@@ -131,7 +131,9 @@ class Aircraft(GeomBase):
                     hCruise=self.hCruise,
                     filePath=self.filePath,
                     cg=self.evaluations.cg,
-                    ac=self.evaluations.ac)
+                    ac=self.evaluations.ac,
+                    noseLength=self.fuselage.noseLength,
+                    cylinderLength=self.fuselage.cylinderLength)
 
     @Part
     def fuselage(self):
@@ -238,7 +240,8 @@ class Aircraft(GeomBase):
                            nacelleDiameter=self.enginebase.nacelleDiameter,
                            nacelleLength=self.enginebase.nacelleLength,
                            fuselage=self.fuselage.loft,
-                           wing=self.wingbase.rightWing)
+                           wing=self.wingbase.rightWing,
+                           enginePos=self.enginebase.enginePos)
 
 
 if __name__ == '__main__':

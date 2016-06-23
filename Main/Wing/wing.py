@@ -91,13 +91,13 @@ class Wing(GeomBase):
         elif self.wingPosition == 'high wing':
             return 3 - self.sweep25 / 10 - 2
 
-    @Input
-    def posFraction(self):
+    @Attribute
+    def cylinderFraction(self):
         """
-        Wing position fraction of the fuselage, due to engine position
-        :Unit: [m]
-        :rtype: float
-        """
+            Wing position fraction of the fuselage, due to engine position
+            :Unit: [m]
+            :rtype: float
+            """
         if self.enginePos == 'wing':
             return 0.5
         elif self.enginePos == 'fuselage':
@@ -105,8 +105,18 @@ class Wing(GeomBase):
         else:
             showwarning("Warning", "Please choose between wing or fuselage mounted")
             return 0.5
-        #ToDo: riguardando il ppt dice che la percentuale e'da prendere rispetto alla parte cilindrica del fuselage. Non di tutto il fuselage!
 
+
+    @Input
+    def posFraction(self):
+        """
+        Wing position fraction of the fuselage, due to engine position
+        :Unit: [m]
+        :rtype: float
+        """
+        pos = (self.noseLength + self.cylinderLength * self.cylinderFraction) / self.fuselageLength
+        #ToDo: riguardando il ppt dice che la percentuale e'da prendere rispetto alla parte cilindrica del fuselage. Non di tutto il fuselage!
+        return pos
     @Input
     def visual(self):
         """
@@ -216,6 +226,24 @@ class Wing(GeomBase):
         :rtype: float
         """
         return 14.67
+
+    @Input(settable=settable)
+    def noseLength(self):
+        """
+        Nose length
+        :Unit: [m]
+        :rtype: float
+        """
+        return 3.0
+
+    @Input(settable=settable)
+    def cylinderLength(self):
+        """
+        Cylindrical part length
+        :Unit: [m]
+        :rtype: float
+        """
+        return 22.0
 
     # ### Attributes ##################################################################################################
 
