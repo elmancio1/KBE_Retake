@@ -49,10 +49,13 @@ class Wing(GeomBase):
     @Input
     def maTechnology(self):
         """
-        Wing airfoil Mach technology parameter, higher values mean higher possible Mach
+        Wing airfoil Mach technology parameter, higher values mean higher possible Mach.
+        The technology factor in the formula is equal to 0.87 for NACA 6 airfoil and 1 to other conventional airfoils.
+
         :Unit: [ ]
         :rtype: float
         """
+        #ToDo: si deve rendere possibile la selezione in base all'airfoil?
         return 0.935
 
     @Input
@@ -102,6 +105,7 @@ class Wing(GeomBase):
         else:
             showwarning("Warning", "Please choose between wing or fuselage mounted")
             return 0.5
+        #ToDo: riguardando il ppt dice che la percentuale e'da prendere rispetto alla parte cilindrica del fuselage. Non di tutto il fuselage!
 
     @Input
     def visual(self):
