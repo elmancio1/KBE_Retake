@@ -8,6 +8,7 @@ from tkMessageBox import *
 from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Handler.htpCalc import HtpCalc
+from Handler.xFoil import Xfoil
 from Input import Airfoils
 import Tkinter, Tkconstants, tkFileDialog
 
@@ -19,6 +20,15 @@ class Htp(GeomBase):
     defaultPath = os.path.dirname(Airfoils.__file__) + '\NACA_0012.dat'  # From the Airfoil folder path add name of
 
     # default File
+
+    @Input
+    def xfoilAnalysis(self):
+        """
+        Boolean input to choose to start the xfoil analysis
+
+        :rtype: boolean
+        """
+        return True
 
     @Input
     def newAirfoil(self):
@@ -178,6 +188,15 @@ class Htp(GeomBase):
         :rtype: string
         """
         return False
+
+    @Input
+    def perc(self):
+        """
+        Span percentage for xFoil plan, user requested
+        :Unit: [ ]
+        :rtype: float
+        """
+        return .5
 
     window = Tk()
     window.wm_withdraw()
@@ -608,7 +627,7 @@ class Htp(GeomBase):
         """
         return TranslatedShape(shape_in=self.curveRootPol,
                                displacement=Vector(0, self.vertPos, self.longPos),
-                               hidden=False)
+                               hidden=True)
 
     @Part
     def curveTip(self):
@@ -769,6 +788,19 @@ class Htp(GeomBase):
         """
         return IntersectedShapes(shape_in=self.wakeSafer, tool=self.curveRootPosPol,
                                  hidden=False)
+
+    # ###### xFoil ################################################################################################
+
+    @Part
+    def xfoil(self):
+        return Xfoil(perc=self.perc,
+                     sweepLE=self.sweepLE,
+                     chordRoot=self.chordRoot,
+                     chordTip=self.chordTip,
+                     span=0.5*self.span,
+                     longPos=self.longPos,
+                     loft=self.rightTail.solids[0],
+                     hidden=not self.xfoilAnalysis)
 
 
 if __name__ == '__main__':

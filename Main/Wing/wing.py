@@ -9,6 +9,7 @@ from tkFileDialog import askopenfilename
 from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
 from Main.Wing.wake import Wake
+from Handler.xFoil import Xfoil
 import Tkinter, Tkconstants, tkFileDialog
 
 
@@ -23,6 +24,15 @@ class Wing(GeomBase):
     def wakeCheck(self):
         """
         Boolean input to choose to show the wake of the wing. True means that it is hidden
+
+        :rtype: boolean
+        """
+        return True
+
+    @Input
+    def xfoilAnalysis(self):
+        """
+        Boolean input to choose to start the xfoil analysis
 
         :rtype: boolean
         """
@@ -111,6 +121,15 @@ class Wing(GeomBase):
         :rtype: string
         """
         return True
+
+    @Input
+    def perc(self):
+        """
+        Span percentage for xFoil plan, user requested
+        :Unit: [ ]
+        :rtype: float
+        """
+        return .5
 
     window = Tk()
     window.wm_withdraw()
@@ -492,7 +511,7 @@ class Wing(GeomBase):
         :rtype:
         """
         return Airfoil(airfoilData=self.airfoilRoot,
-                       chord=self.chordRoot,
+                       chord=.99*self.chordRoot,
                        hidden=True)
 
     @Part
@@ -594,6 +613,7 @@ class Wing(GeomBase):
                                      self.MACr.edges[0].point1.z - 0.75*self.cMAC),
                       color='Red',
                       hidden=False)
+
     @Part
     def planeMACl(self):
         """
@@ -686,7 +706,7 @@ class Wing(GeomBase):
                       color='Green',
                       hidden=self.visual)
 
-    # ###### Parts ####################################################################################################
+    # ###### Wing wake ################################################################################################
 
     @Part
     def wake(self):
@@ -698,6 +718,19 @@ class Wing(GeomBase):
                     cTipW=self.chordTip,
                     pointTip=self.rightWing.edges[2].midpoint,
                     hidden=self.wakeCheck)
+
+    # ###### xFoil ################################################################################################
+
+    @Part
+    def xfoil(self):
+        return Xfoil(perc=self.perc,
+                     sweepLE=self.sweepLE,
+                     chordRoot=self.chordRoot,
+                     chordTip=self.chordTip,
+                     span=0.5*self.span,
+                     longPos=self.longPos,
+                     loft=self.rightWing.solids[0],
+                     hidden=not self.xfoilAnalysis)
 
 
 if __name__ == '__main__':
