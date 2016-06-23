@@ -22,10 +22,9 @@ class ExcelOut:
             for value in line:
                 if value is None:
                     pass
-                elif value is float:
-                    _ = ws.cell(column=col, row=row, value="%f" % value)
                 else:
-                    _ = ws.cell(column=col, row=row, value="%s" % value)
+                    _ = ws.cell(column=col, row=row, value="%f" % value)
+
                 col+=1
 
             row += 1

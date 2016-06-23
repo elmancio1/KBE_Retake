@@ -697,7 +697,7 @@ class Wing(GeomBase):
                     vertPosW=self.vertPos,
                     cTipW=self.chordTip,
                     pointTip=self.rightWing.edges[2].midpoint,
-                    hidden=self.wakeCheck)
+                    hidden=not self.wakeCheck)
 
 
 if __name__ == '__main__':
