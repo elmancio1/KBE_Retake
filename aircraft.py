@@ -187,7 +187,9 @@ class Aircraft(GeomBase):
                    chordTipV=self.vtpbase.chordTip,
                    longPosV=self.vtpbase.longPos,
                    vertPosV=self.vtpbase.vertPos,
-                   rcr=self.vtpbase.rcr)
+                   rcr=self.vtpbase.rcr,
+                   wakeDanger=self.wingbase.wake.curveDangerW,
+                   wakeSafer=self.wingbase.wake.curveSaferW)
 
     @Part
     def landingGear(self):
@@ -201,6 +203,7 @@ class Aircraft(GeomBase):
                            fuselage=self.fuselage.loft,
                            wing=self.wingbase.rightWing,
                            engines=self.enginebase.engineSolid)
+    # TODO: aggiungere waring a controllo carrello
 
     @Part
     def evaluations(self):

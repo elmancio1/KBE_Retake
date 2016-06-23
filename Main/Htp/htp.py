@@ -17,6 +17,7 @@ class Htp(GeomBase):
     Basic class horizontal tail plane
     """
     defaultPath = os.path.dirname(Airfoils.__file__) + '\NACA_0012.dat'  # From the Airfoil folder path add name of
+
     # default File
 
     @Input
@@ -94,8 +95,8 @@ class Htp(GeomBase):
         hvPerc = self.hVertPerc
         check = 0.  # first guess of free portion of the rudder, in order to enter anyway the cycle
         iter = 0.
-        if hvPerc < 1/3:
-            while check < 1/3:
+        if hvPerc < 1 / 3:
+            while check < 1 / 3:
                 calctail = HtpCalc(hVertPerc=hvPerc,
                                    aspectRatio=self.aspectRatio,
                                    taperRatio=self.taperRatio,
@@ -120,7 +121,7 @@ class Htp(GeomBase):
                                    rcr=self.rcr)
 
                 check = calctail.rudderFree
-                if check < 1/3:
+                if check < 1 / 3:
                     iter += 1.
                     hvPerc += 0.01  # increment of horizontal height of htp of 1 percent
             if iter > 0:
@@ -167,7 +168,7 @@ class Htp(GeomBase):
         :rtype: float
         source: http://adg.stanford.edu/aa241/stability/taildesign.html
         """
-        return 0.3 + 0.7 * (self.fuselageLength * self.fuselageDiameter**2) / (self.surfaceWing * self.cMACWing)
+        return 0.3 + 0.7 * (self.fuselageLength * self.fuselageDiameter ** 2) / (self.surfaceWing * self.cMACWing)
 
     @Input
     def visual(self):
@@ -379,6 +380,24 @@ class Htp(GeomBase):
         """
         return .35
 
+    @Input(settable=settable)
+    def wakeDanger(self):
+        """
+        Dangerous part of wing wake at wing root
+        :Unit: [ ]
+        :rtype:
+        """
+        return
+
+    @Input(settable=settable)
+    def wakeSafer(self):
+        """
+        Safer part of wing wake at wing root
+        :Unit: [ ]
+        :rtype:
+        """
+        return
+
     # ### Attributes ##################################################################################################
 
     @Attribute
@@ -412,10 +431,11 @@ class Htp(GeomBase):
             cR = self.cMACWing  # first guess for the tail root chord
             posYMAC = 10.  # first guess for the tail MAC position
 
-            while (self.fuselageLength - (self.wingAC + tl + 0.75*cR - posYMAC * tan(radians(self.sweep25)))) < 0:
+            while (self.fuselageLength - (self.wingAC + tl + 0.75 * cR - posYMAC * tan(radians(self.sweep25)))) < 0:
                 tl = tl - self.tlDecrement
-                cR = 2/(1 + TR) * sqrt((self.vc * self.cMACWing * self.surfaceWing)/(self.aspectRatio * tl))
-                posYMAC = (1+2*TR)/((1+TR)*6) * sqrt((self.aspectRatio * self.vc * self.cMACWing * self.surfaceWing)/tl)
+                cR = 2 / (1 + TR) * sqrt((self.vc * self.cMACWing * self.surfaceWing) / (self.aspectRatio * tl))
+                posYMAC = (1 + 2 * TR) / ((1 + TR) * 6) * sqrt(
+                    (self.aspectRatio * self.vc * self.cMACWing * self.surfaceWing) / tl)
             return tl
 
         else:
@@ -423,13 +443,12 @@ class Htp(GeomBase):
             TR = self.taperRatio
             tl = self.tlV  # first guess for horizontal tail arm
             while res > 0.001:
-
                 cR = 2 / (1 + TR) * sqrt((self.vc * self.cMACWing * self.surfaceWing) / (self.aspectRatio * tl))
                 posYMAC = (1 + 2 * TR) / ((1 + TR) * 6) * \
                           sqrt((self.aspectRatio * self.vc * self.cMACWing * self.surfaceWing) / tl)
-                tlNew = self.tlV - .25*self.cMACV + 0.25*cR + posYMAC * tan(radians(self.sweep25)) + \
-                       (self.hVertPercCalc * self.spanV - self.cMACyPosV) * tan(radians(self.sweepLEV))
-                res = (tlNew - tl)**2
+                tlNew = self.tlV - .25 * self.cMACV + 0.25 * cR + posYMAC * tan(radians(self.sweep25)) + \
+                        (self.hVertPercCalc * self.spanV - self.cMACyPosV) * tan(radians(self.sweepLEV))
+                res = (tlNew - tl) ** 2
                 tl = tlNew
 
             return tl
@@ -477,7 +496,7 @@ class Htp(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return (2/3) * self.chordRoot * (1 + self.taperRatio + self.taperRatio**2) / (1 + self.taperRatio)
+        return (2 / 3) * self.chordRoot * (1 + self.taperRatio + self.taperRatio ** 2) / (1 + self.taperRatio)
 
     @Attribute
     def cMACyPos(self):
@@ -486,7 +505,7 @@ class Htp(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return self.span * (1 + 2*self.taperRatio) / ((1 + self.taperRatio)*6)
+        return self.span * (1 + 2 * self.taperRatio) / ((1 + self.taperRatio) * 6)
 
     @Attribute
     def sweep50(self):
@@ -528,7 +547,7 @@ class Htp(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return self.wingAC + self.tl - .25*self.chordRoot - self.cMACyPos * tan(radians(self.sweep25))
+        return self.wingAC + self.tl - .25 * self.chordRoot - self.cMACyPos * tan(radians(self.sweep25))
 
     @Attribute
     def vertPos(self):
@@ -542,6 +561,21 @@ class Htp(GeomBase):
         else:
             return self.conePos + self.spanV * self.hVertPercCalc
 
+    @Attribute
+    def tailColor(self):
+        """
+        Horizontal tail color, depending on the wake check
+        :Unit: [ ]
+        :rtype: string
+        """
+        if self.checkDanger.edges != []:
+            showwarning("Warning", "Horizontal tail plane is immersed in wing wake.")
+            return "Red"
+        elif (self.checkDanger.edges == [] and self.checkSafer.edges != []):
+            return "Orange"
+        else:
+            return "Yellow"
+
     # ###### Parts ####################################################################################################
 
     @Part
@@ -552,8 +586,29 @@ class Htp(GeomBase):
         :rtype:
         """
         return Airfoil(airfoilData=self.airfoilRoot,
-                       chord=.99*self.chordRoot,
+                       chord=.99 * self.chordRoot,
                        hidden=True)
+
+    @Part
+    def curveRootPol(self):
+        """
+        Polygon representing root airfoil curve
+
+        :rtype:
+        """
+        return PolygonalFace(self.curveRoot.crv.points,
+                             hidden=True)
+
+    @Part
+    def curveRootPosPol(self):
+        """
+        Polygon representing root airfoil curve placed in the final position
+
+        :rtype:
+        """
+        return TranslatedShape(shape_in=self.curveRootPol,
+                               displacement=Vector(0, self.vertPos, self.longPos),
+                               hidden=False)
 
     @Part
     def curveTip(self):
@@ -590,13 +645,13 @@ class Htp(GeomBase):
                                                    self.longPos + self.span / 2 * tan(radians(self.sweepLE))),
                                hidden=True)
 
-#    @Part
-#    def curveRootPos2(self):
-#        return TransformedCurve(curve_in=self.curveRoot.crv,
-#                                from_position=self.curveRoot.position,
-#                                to_position=translate(self.curveTip.position,
-#                                                      'z', self.longPos,
-#                                                      'y', self.vertPos))
+    #    @Part
+    #    def curveRootPos2(self):
+    #        return TransformedCurve(curve_in=self.curveRoot.crv,
+    #                                from_position=self.curveRoot.position,
+    #                                to_position=translate(self.curveTip.position,
+    #                                                      'z', self.longPos,
+    #                                                      'y', self.vertPos))
 
     @Part
     def rightTail(self):
@@ -605,7 +660,8 @@ class Htp(GeomBase):
 
         :rtype:
         """
-        return LoftedSolid([self.curveRootPos, self.curveTipPos])
+        return LoftedSolid([self.curveRootPos, self.curveTipPos],
+                           color=self.tailColor)
 
     @Part
     def leftTail(self):
@@ -617,7 +673,8 @@ class Htp(GeomBase):
         return MirroredShape(shape_in=self.rightTail,
                              reference_point=self.rightTail.position,
                              vector1=self.rightTail.position.Vy,
-                             vector2=self.rightTail.position.Vz)
+                             vector2=self.rightTail.position.Vz,
+                             color=self.tailColor)
 
     @Part
     def planeMACr(self):
@@ -651,9 +708,10 @@ class Htp(GeomBase):
         return Sphere(radius=abs(self.curveRoot.maxY),
                       position=Point(self.MACr.edges[0].point1.x,
                                      self.MACr.edges[0].point1.y,
-                                     self.MACr.edges[0].point1.z - 0.75*self.cMAC),
+                                     self.MACr.edges[0].point1.z - 0.75 * self.cMAC),
                       color='Red',
                       hidden=self.visual)
+
     @Part
     def planeMACl(self):
         """
@@ -686,9 +744,32 @@ class Htp(GeomBase):
         return Sphere(radius=abs(self.curveRoot.maxY),
                       position=Point(self.MACl.edges[0].point1.x,
                                      self.MACl.edges[0].point1.y,
-                                     self.MACl.edges[0].point1.z - 0.75*self.cMAC),
+                                     self.MACl.edges[0].point1.z - 0.75 * self.cMAC),
                       color='Red',
                       hidden=self.visual)
+
+    # ###### Wake check ###################################################################################################
+
+    @Part
+    def checkDanger(self):
+        """
+        Intersection between htp root airfoil and dangerous wing wake
+
+        :rtype:
+        """
+        return IntersectedShapes(shape_in=self.wakeDanger, tool=self.curveRootPosPol,
+                                 hidden=False)
+
+    @Part
+    def checkSafer(self):
+        """
+        Intersection between htp root airfoil and safer wing wake
+
+        :rtype:
+        """
+        return IntersectedShapes(shape_in=self.wakeSafer, tool=self.curveRootPosPol,
+                                 hidden=False)
+
 
 if __name__ == '__main__':
     from parapy.gui import display

@@ -20,6 +20,15 @@ class Wing(GeomBase):
     # default File
 
     @Input
+    def wakeCheck(self):
+        """
+        Boolean input to choose to show the wake of the wing. True means that it is hidden
+
+        :rtype: boolean
+        """
+        return True
+
+    @Input
     def newAirfoil(self):
         """
         Boolean input to choose between default path or user chosen.
@@ -506,7 +515,7 @@ class Wing(GeomBase):
         """
         return TranslatedCurve(curve_in=self.curveRoot.crv,
                                displacement=Vector(0, self.vertPos, self.longPos),
-                               hidden=False)
+                               hidden=True)
 
     @Part
     def curveTipPos(self):
@@ -685,7 +694,10 @@ class Wing(GeomBase):
                     pointMAC=self.ACwr.position,
                     cRootW=self.chordRoot,
                     longPosW=self.longPos,
-                    vertPosW=self.vertPos)
+                    vertPosW=self.vertPos,
+                    cTipW=self.chordTip,
+                    pointTip=self.rightWing.edges[2].midpoint,
+                    hidden=self.wakeCheck)
 
 
 if __name__ == '__main__':

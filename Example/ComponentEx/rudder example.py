@@ -41,7 +41,19 @@ class RudderEx(Base):
 
     @Part
     def int(self):
-        return Subtracted(shape_in=self.quad1, tool=self.quad3)
+        return Subtracted(shape_in=self.quad2, tool=self.quad1)
+
+    @Part
+    def prova1(self):
+        return IntersectedShapes(shape_in=self.quad2, tool=self.quad1)
+
+    @Part
+    def prova2(self):
+        return IntersectedShapes(shape_in=self.quad2, tool=self.quad3)
+
+    @Part
+    def prova3(self):
+        return IntersectedShapes(shape_in=self.quad1, tool=self.quad4)
 
     @Attribute
     def prova(self):
@@ -74,7 +86,20 @@ class RudderEx(Base):
     @Part
     def cube3(self):
         return TranslatedShape(shape_in=self.cube2,
+                               displacement=Vector(0, 0, 1.75))
+
+    @Part
+    def cube4(self):
+        return TranslatedShape(shape_in=self.cube2,
                                displacement=Vector(0, 0, 3))
+
+    @Part
+    def intersi(self):
+        return IntersectedShapes(shape_in=self.cube1, tool=self.cube3)
+
+    @Part
+    def interno(self):
+        return IntersectedShapes(shape_in=self.cube1, tool=self.cube4)
 
     @Part
     def fused1(self):
