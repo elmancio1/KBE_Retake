@@ -18,7 +18,7 @@ class LandingGear(GeomBase):
         Visualize checks for positioning.
         :type: boolean
         :return:
-        """
+        """ #ToDo: add another check for the lateral control in order to split the work
         return False
 
     @Input
