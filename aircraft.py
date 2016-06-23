@@ -208,7 +208,8 @@ class Aircraft(GeomBase):
                            cg=self.evaluations.cg,
                            fuselage=self.fuselage.loft,
                            wing=self.wingbase.rightWing,
-                           engines=self.enginebase.engineSolid)
+                           engines=self.enginebase.engineSolid,
+                           htp = self.htpbase.rightTail)
     # TODO: aggiungere waring a controllo carrello
 
     @Part
