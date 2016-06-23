@@ -30,7 +30,7 @@ class LandingGear(GeomBase):
         """
         return float(Importer(Component='Landing Gear',
                               VariableName='height',
-                              Default=1.3,
+                              Default=1.6,
                               Path=self.filePath).getValue()) #ToDo: per value = 0 la ruota interseca il corpo dell'aereo
 
     @Input
@@ -43,7 +43,7 @@ class LandingGear(GeomBase):
 
         return float(Importer(Component='Landing Gear',
                               VariableName='gearLongPos',
-                              Default=0.4,
+                              Default=0.6,
                               Path=self.filePath).getValue())
 
     @Input
@@ -69,7 +69,7 @@ class LandingGear(GeomBase):
         """
         return float(Importer(Component='Landing Gear',
                               VariableName='gearLatPos',
-                              Default=1.5,
+                              Default=1.8,
                               Path=self.filePath).getValue())
 
     @Input
