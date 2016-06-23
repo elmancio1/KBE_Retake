@@ -328,6 +328,7 @@ class Fuselage(GeomBase):
         lst.append([None])
         lst.append(["Fuselage"])
         lst.append([None, "Fuselage Lenght", self.fuselageLength, "m"])
+        lst.append([None, "EOC"])
 
         return lst
 

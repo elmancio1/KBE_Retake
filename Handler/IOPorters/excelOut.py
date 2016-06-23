@@ -15,13 +15,7 @@ class ExcelOut:
         wb = Workbook()
         ws = wb.active
 
-        name = "NOME AEREO"             #ToDO: inserire il nome del progetto/aereo in aircraft e passarlo qui
-
-        _ = ws.cell(column=1, row=1, value="Aircraft Name")
-        _ = ws.cell(column=3, row=1, value="%s" % name)
-
-
-        row = 3
+        row = 1
         col = 1
         for line in self.listValues:
 

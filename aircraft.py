@@ -25,6 +25,10 @@ class Aircraft(GeomBase):
     """
 
     @Input
+    def projectName(self):
+        return "Preliminary tail sizing"
+
+    @Input
     def maCruise(self):
         """
         Cruise Mach number
@@ -106,7 +110,9 @@ class Aircraft(GeomBase):
 
     @Attribute
     def listValues(self):
-        lst = []
+        lst = [["Project name", self.projectName],
+               [None],
+               ["Component:", "Variable:", "Value:", "Unit:"]]
         lst.extend(self.fuselage.outputList)
         lst.extend(self.wingbase.outputList)
         lst.extend([["EOF"]])
