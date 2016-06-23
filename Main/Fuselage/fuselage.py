@@ -64,7 +64,7 @@ class Fuselage(GeomBase):
         """
         return float(Importer(Component='Fuselage',
                               VariableName='tailSlenderness',
-                              Default=3.0,
+                              Default=2.11,
                               Path=self.filePath).getValue())
 
     @Input(settable=False)

@@ -551,6 +551,7 @@ class Engine(GeomBase):
         :rtype:
         """
         # ToDo: mettere un ulteriore if che eviti l'intersezione tra ala e nacelle
+        #ToDo: la posizione vertical del motore e' hardcoded.
         if self.enginePos == 'wing' and -0.2 < self.engineStagger < 0.18:
             if self.nEngine == 2 and self.enginePos == 'wing':
                 return [-1 * (0.07 + 0.03 * cos(15 * (self.engineStagger + 0.03)) + self.tcRatio / 4) * self.chord35 +
@@ -590,7 +591,8 @@ class Engine(GeomBase):
                     self.engineStagger * self.chord70 + tan(radians(self.sweepLE)) * self.latPos[1] +
                     self.wingLongPos - self.cowlLength]
         elif self.nEngine == 2 and self.enginePos == 'fuselage':
-            return [self.noseLength + self.cylinderLength + 0.50 * self.nacelleLength]
+            return [self.noseLength + self.cylinderLength - 0.50 * self.nacelleLength]
+        #ToDo: la posizione longitudinal non garantisce che il motore non esca dalla fuselage.
 
 # #### Part ##########################################################################################################
 
