@@ -1,7 +1,4 @@
-from openpyxl import Workbook
-
-
-class ExcelOut:
+class JsonOut:
 
     def __init__(self, Component, ListValues, outputPath):
         self.path = outputPath
