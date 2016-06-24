@@ -1,0 +1,11 @@
+{
+  "Fuselage":
+  {
+    "fuselageLength": 30.0,
+    "fuselageDiameter": 4.2
+  },
+  "Wing":
+  {
+    "wingLoading": 5200.0
+  }
+}

@@ -38,7 +38,7 @@ class Aircraft(GeomBase):
         return float(Importer(Component='Performance',
                               VariableName='M cruise',
                               Default=0.77,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def wingLoading(self):
@@ -50,7 +50,7 @@ class Aircraft(GeomBase):
         return float(Importer(Component='Performance',
                               VariableName='wingLoading',
                               Default=5000.,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def mTOW(self):

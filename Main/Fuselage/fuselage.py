@@ -24,7 +24,7 @@ class Fuselage(GeomBase):
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageLength',
                               Default=30.0,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def fuselageDiameter(self):
@@ -36,7 +36,7 @@ class Fuselage(GeomBase):
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageDiameter',
                               Default=4.0,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
 
     @Input
@@ -65,7 +65,7 @@ class Fuselage(GeomBase):
         return float(Importer(Component='Fuselage',
                               VariableName='tailSlenderness',
                               Default=2.11,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input(settable=False)
     def tailSlendernessCalc(self):
@@ -113,7 +113,7 @@ class Fuselage(GeomBase):
         return float(Importer(Component='Fuselage',
                               VariableName='tailUpAngle',
                               Default=5.0,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input(settable=False)
     def maxTailUp(self):
@@ -204,7 +204,7 @@ class Fuselage(GeomBase):
         return float(Importer(Component='Performance',
                               VariableName='M cruise',
                               Default=0.7,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input(settable=settable)
     def filePath(self):
