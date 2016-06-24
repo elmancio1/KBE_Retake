@@ -32,7 +32,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Engine',
                               VariableName='BPR',
                               Default=3.0,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def a0(self):
@@ -44,7 +44,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Engine',
                               VariableName='a0',
                               Default=340.3,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def rho0(self):
@@ -56,7 +56,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Engine',
                               VariableName='rho0',
                               Default=1.225,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def TIT(self):
@@ -68,7 +68,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Engine',
                               VariableName='TIT',
                               Default=1375.,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def nEngine(self):
@@ -80,7 +80,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Engine',
                               VariableName='nEngine',
                               Default=2.,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def etaNozzle(self):
@@ -92,7 +92,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Engine',
                               VariableName='etaNozzle',
                               Default=.97,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def etaMech(self):
@@ -104,7 +104,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Engine',
                               VariableName='etaMech',
                               Default=.75,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def cowlingType(self):
@@ -116,7 +116,7 @@ class Engine(GeomBase):
         return str(Importer(Component='Engine',
                             VariableName='cowling Type',
                             Default='partial',
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def cowlingPos(self):
@@ -128,7 +128,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Engine',
                               VariableName='cowling Position',
                               Default=.75,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def engineStagger(self):
@@ -140,7 +140,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Engine',
                               VariableName='cowling Stagger',
                               Default=-0.15,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def enginePos(self):
@@ -152,7 +152,7 @@ class Engine(GeomBase):
         return str(Importer(Component='Engine',
                             VariableName='engine Position',
                             Default='wing',
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     window = Tk()
     window.wm_withdraw()
@@ -202,7 +202,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageLength',
                               Default=30.0,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input(settable=settable)
     def fuselageDiameter(self):
@@ -214,7 +214,7 @@ class Engine(GeomBase):
         return float(Importer(Component='Fuselage',
                               VariableName='fuselageDiameter',
                               Default=4.0,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input(settable=settable)
     def wingSpan(self):
