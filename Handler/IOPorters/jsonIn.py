@@ -12,10 +12,15 @@ class Json:
 
     def finder(self):
 
-        component = self.data[self.component]
-        value = component[self.variableName]
+        try:
+            component = self.data[self.component]
+            value = component[self.variableName]
+            print('LOG:    Value of ' + repr(self.variableName) + ' is set to: ' + repr(value))
+        except KeyError:
+            value = self.default
+            print('LOG:    Could not find variable ' + repr(self.variableName) + '. Using the default value: ' \
+            + repr(self.default))
 
-        print component, value
         return value
 
 
