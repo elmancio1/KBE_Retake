@@ -27,7 +27,7 @@ class Vtp(GeomBase):
 
         :rtype: boolean
         """
-        return True
+        return False
 
     @Input
     def newAirfoil(self):
@@ -157,7 +157,7 @@ class Vtp(GeomBase):
         return False
 
     @Input
-    def perc(self):
+    def percxfoil(self):
         """
         Span percentage for xFoil plan, user requested
         :Unit: [ ]
@@ -649,7 +649,7 @@ class Vtp(GeomBase):
 
     @Part
     def xfoil(self):
-        return Xfoil(perc=self.perc,
+        return Xfoil(perc=self.percxfoil,
                      sweepLE=self.sweepLE,
                      chordRoot=self.chordRoot,
                      chordTip=self.chordTip,
@@ -657,7 +657,7 @@ class Vtp(GeomBase):
                      longPos=self.longPos,
                      vertPos=self.vertPos,
                      loft=self.tail.solids[0],
-                     surface="vtp",
+                     surface="vertical tail plane",
                      hidden=not self.xfoilAnalysis)
 
 if __name__ == '__main__':
