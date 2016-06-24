@@ -45,6 +45,8 @@ class Wing(GeomBase):
 
         :rtype: boolean
         """
+        # TODO: aggiungere path semplificato direttamente nella cartella airfoil
+        # TODO: aggiungere piccola spiegazione prima airfoil root poi tip
         return False
 
     @Input

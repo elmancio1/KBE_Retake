@@ -77,7 +77,8 @@ class Aircraft(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        tailType = askyesnocancel(title="Tail type selection", message="Yes = T tail, No = cruciform, Cancel = conventional")
+        tailType = askyesnocancel(title="Tail type selection",
+                                  message="Yes = T tail, No = cruciform, Cancel = conventional")
 
         if tailType:
             return 'T tail'
@@ -86,7 +87,7 @@ class Aircraft(GeomBase):
         else:
             return 'cruciform'
 
-    #### Attributes ###
+    # ### Attributes ##################################################################################################
 
     @Attribute
     def filePath(self):
