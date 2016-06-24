@@ -36,7 +36,7 @@ class Wing(GeomBase):
 
         :rtype: boolean
         """
-        return True
+        return False
 
     @Input
     def newAirfoil(self):
@@ -127,6 +127,7 @@ class Wing(GeomBase):
         pos = (self.noseLength + self.cylinderLength * self.cylinderFraction) / self.fuselageLength
         #ToDo: riguardando il ppt dice che la percentuale e'da prendere rispetto alla parte cilindrica del fuselage. Non di tutto il fuselage!
         return pos
+
     @Input
     def visual(self):
         """
@@ -137,7 +138,7 @@ class Wing(GeomBase):
         return True
 
     @Input
-    def perc(self):
+    def percxfoil(self):
         """
         Span percentage for xFoil plan, user requested
         :Unit: [ ]
@@ -758,7 +759,7 @@ class Wing(GeomBase):
 
     @Part
     def xfoil(self):
-        return Xfoil(perc=self.perc,
+        return Xfoil(perc=self.percxfoil,
                      sweepLE=self.sweepLE,
                      chordRoot=self.chordRoot,
                      chordTip=self.chordTip,

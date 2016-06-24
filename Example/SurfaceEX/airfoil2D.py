@@ -272,7 +272,7 @@ class Airfoil2D(GeomBase):
     def pts(self):
         return Point(0, 0, 2), Point(2, 0, 0), Point(2, 0, 2), Point(0, 0, 2)
 
-    @Attribute
+    @Input
     def cardine(self):
         return Point(1, 0, 1)
 
@@ -282,7 +282,7 @@ class Airfoil2D(GeomBase):
 
     @Attribute
     def pts2d(self):
-        return points_in_plane(self.pts, Point(1, 0, 1), Vector(0, 1, 0), Vector(1, 0, 0))
+        return points_in_plane(self.pts, self.cardine, Vector(0, 1, 0), Vector(1, 0, 0))
 
     @Part
     def ptsShowsd(self):

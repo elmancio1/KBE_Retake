@@ -28,7 +28,7 @@ class Htp(GeomBase):
 
         :rtype: boolean
         """
-        return True
+        return False
 
     @Input
     def newAirfoil(self):
@@ -190,7 +190,7 @@ class Htp(GeomBase):
         return False
 
     @Input
-    def perc(self):
+    def percxfoil(self):
         """
         Span percentage for xFoil plan, user requested
         :Unit: [ ]
@@ -793,14 +793,14 @@ class Htp(GeomBase):
 
     @Part
     def xfoil(self):
-        return Xfoil(perc=self.perc,
+        return Xfoil(perc=self.percxfoil,
                      sweepLE=self.sweepLE,
                      chordRoot=self.chordRoot,
                      chordTip=self.chordTip,
                      span=0.5*self.span,
                      longPos=self.longPos,
                      loft=self.rightTail.solids[0],
-                     surface="htp",
+                     surface="horizontal tail plane",
                      hidden=not self.xfoilAnalysis)
 
 

@@ -131,7 +131,7 @@ class Xfoil(GeomBase):
     @Input(settable=settable)
     def surface(self):
         """
-        Indicate which surface is being analyzed, could be either "wing", "htp" or "vtp"
+        Indicate which surface is analyzed, could be either "wing", "horizontal tail plane" or "vertical tail plane"
         :Unit: [ ]
         :rtype: string
         """
@@ -146,7 +146,7 @@ class Xfoil(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
-        if self.surface == "vtp":
+        if self.surface == "vertical tail plane":
             return Vector(0, cos(radians(self.sweepLE)), sin(radians(self.sweepLE)))
         else:
             return Vector(cos(radians(self.sweepLE)), 0, sin(radians(self.sweepLE)))
@@ -160,7 +160,7 @@ class Xfoil(GeomBase):
         :rtype: float
         """
         sweepLE = radians(self.sweepLE)
-        if self.surface == "vtp":
+        if self.surface == "vertical tail plane":
             return Point(0,
                          self.vertPos + self.chordRoot * tan(sweepLE) +
                          self.perc * (self.span * (1 + (tan(sweepLE)) ** 2) - self.chordRoot * tan(sweepLE)),
@@ -187,11 +187,20 @@ class Xfoil(GeomBase):
         :Unit: [ ]
         :rtype: Point
         """
-        if self.surface == "vtp":
-            return points_in_plane(self.pointsxfoil3D, self.pointsxfoil3D[0], Vector(1, 0, 0), Vector(0, 1, 0))
+        if self.surface == "vertical tail plane":
+            yx = points_in_plane(self.pointsxfoil3D, Point(), Vector(0, -1, 0), Vector(1, 0, 0))
+            xy = []
+            for point in yx:  # transferring the airfoil points in x,y coordinates
+                pointXY = point.rotate90(Vector(0, 0, 1))
+                xy.append(pointXY)
+            return xy
         else:
-            return self.pointsxfoil3D
-
+            yx = points_in_plane(self.pointsxfoil3D, Point(), Vector(1, 0, 0), Vector(0, 1, 0))
+            xy =[]
+            for point in yx:  # transferring the airfoil points in x,y coordinates
+                pointXY = point.rotate90(Vector(0, 0, 1))
+                xy.append(pointXY)
+            return xy
 
     @Attribute
     def clAlpha(self):
@@ -236,7 +245,7 @@ class Xfoil(GeomBase):
         plt.plot(*self.clAlpha)
         plt.xlabel('alpha (alphaStall = %g)' % self.alphaStall)
         plt.ylabel('Cl (ClMax = %g)' % self.clMax)
-        plt.title('Cl vs Alpha at %g span' % self.perc)
+        plt.title('Cl vs Alpha at %g span of %s' % (self.perc, self.surface))
         plt.grid(b=True, which='both', color='0.65', linestyle='-')
         return plt.show()
 
@@ -263,10 +272,6 @@ class Xfoil(GeomBase):
                                  tool=self.plane,
                                  color='black',
                                  hidden=False)
-
-    @Part
-    def prova(self):
-        return FittedCurve(self.pointsxfoil2D)
 
 
 if __name__ == '__main__':
