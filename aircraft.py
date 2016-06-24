@@ -26,10 +26,7 @@ class Aircraft(GeomBase):
 
     @Input
     def projectName(self):
-        return str(Importer(Component='Project',
-                              VariableName='name',
-                              Default='Tail sizing',
-                              Path=self.filePath).getValue)
+        return "Preliminary tail sizing"
 
     @Input
     def maCruise(self):
@@ -41,7 +38,7 @@ class Aircraft(GeomBase):
         return float(Importer(Component='Performance',
                               VariableName='M cruise',
                               Default=0.77,
-                              Path=self.filePath).getValue)
+                              Path=self.filePath).getValue())
 
     @Input
     def wingLoading(self):
@@ -51,9 +48,9 @@ class Aircraft(GeomBase):
         :rtype: float
         """
         return float(Importer(Component='Performance',
-                              VariableName='Wing Loading',
+                              VariableName='wingLoading',
                               Default=5000.,
-                              Path=self.filePath).getValue)
+                              Path=self.filePath).getValue())
 
     @Input
     def mTOW(self):
@@ -62,10 +59,7 @@ class Aircraft(GeomBase):
         :Unit: [N]
         :rtype: float
         """
-        return float(Importer(Component='Performance',
-                              VariableName='MTOW',
-                              Default=422713.,
-                              Path=self.filePath).getValue)
+        return 422713.
 
     @Input
     def hCruise(self):
@@ -74,10 +68,7 @@ class Aircraft(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return float(Importer(Component='Performance',
-                              VariableName='Cruise altitude',
-                              Default=10000.,
-                              Path=self.filePath).getValue)
+        return 10000.
 
     @Input
     def tailType(self):
@@ -86,13 +77,17 @@ class Aircraft(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
+        tailType = askyesnocancel(title="Tail type selection",
+                                  message="Yes = T tail, No = cruciform, Cancel = conventional")
 
-        return str(Importer(Component='Configuration',
-                              VariableName='Tail Type',
-                              Default='T tail',
-                              Path=self.filePath).getValue)
+        if tailType:
+            return 'T tail'
+        elif tailType is None:
+            return 'conventional'
+        else:
+            return 'cruciform'
 
-    #### Attributes ###
+    # ### Attributes ##################################################################################################
 
     @Attribute
     def filePath(self):
@@ -100,7 +95,7 @@ class Aircraft(GeomBase):
         This time the dialog just returns a filename and the file is opened by your own code.
         """
         defaultPath = os.path.dirname(Files.__file__)
-        defaultFile = os.path.dirname(Files.__file__) + '\defaultInput.json'
+        defaultFile = os.path.dirname(Files.__file__) + '\input.xlsx'
         file_opt = options = {}
         options['initialdir'] = defaultPath
         options['initialfile'] = defaultFile
@@ -110,7 +105,7 @@ class Aircraft(GeomBase):
 
     @Attribute
     def outputResult(self):
-        return Outporter(Component='',
+        return Outporter(Component='Performance',
                          ListValues=self.listValues,
                          Path=self.filePath).writeValues()
 
