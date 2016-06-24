@@ -14,7 +14,7 @@ from Main.Wing.wake import Wake
 import Tkinter, Tkconstants, tkFileDialog
 
 
-class Xfoil(GeomBase):
+class Airfoil2D(GeomBase):
     """
     Basic class that starts xFoil analysis on a lifting surface
     """
@@ -268,9 +268,34 @@ class Xfoil(GeomBase):
     def prova(self):
         return FittedCurve(self.pointsxfoil2D)
 
+    @Attribute
+    def pts(self):
+        return Point(0, 0, 2), Point(2, 0, 0), Point(2, 0, 2), Point(0, 0, 2)
+
+    @Attribute
+    def cardine(self):
+        return Point(1, 0, 1)
+
+    @Part
+    def ptsShow(self):
+        return PolygonalFace(self.pts)
+
+    @Attribute
+    def pts2d(self):
+        return points_in_plane(self.pts, Point(1, 0, 1), Vector(0, 1, 0), Vector(1, 0, 0))
+
+    @Part
+    def ptsShowsd(self):
+        return PolygonalFace(self.pts2d)
+
+    @Part
+    def cardineShow(self):
+        return Sphere(radius=.1,
+                      position=self.cardine)
+
 
 if __name__ == '__main__':
     from parapy.gui import display
 
-    obj = Xfoil()
+    obj = Airfoil2D()
     display(obj)
