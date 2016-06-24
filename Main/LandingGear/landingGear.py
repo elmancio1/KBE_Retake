@@ -30,7 +30,7 @@ class LandingGear(GeomBase):
         """
         return float(Importer(Component='Landing Gear',
                               VariableName='height',
-                              Default=1.,
+                              Default=1.6,
                               Path=self.filePath).getValue()) #ToDo: per value = 0 la ruota interseca il corpo dell'aereo
 
     @Input
@@ -43,7 +43,20 @@ class LandingGear(GeomBase):
 
         return float(Importer(Component='Landing Gear',
                               VariableName='gearLongPos',
-                              Default=0.4,
+                              Default=0.6,
+                              Path=self.filePath).getValue())
+
+    @Input
+    def noseLongPos(self):
+        """
+        Gear position with regard to the fuselage length
+        :Unit: []
+        :rtype: float
+        """
+
+        return float(Importer(Component='Landing Gear',
+                              VariableName='noseGearLongPos',
+                              Default=0.08,
                               Path=self.filePath).getValue())
 
 
@@ -56,7 +69,7 @@ class LandingGear(GeomBase):
         """
         return float(Importer(Component='Landing Gear',
                               VariableName='gearLatPos',
-                              Default=1.3,
+                              Default=1.8,
                               Path=self.filePath).getValue())
 
     @Input
@@ -69,6 +82,18 @@ class LandingGear(GeomBase):
         return float(Importer(Component='Landing Gear',
                               VariableName='main wheel diameter',
                               Default=0.5,
+                              Path=self.filePath).getValue())
+
+    @Input
+    def noseWheelRadius(self):
+        """
+        Diameter of the main wheel.
+        :Unit: [m]
+        :rtype: float
+        """
+        return float(Importer(Component='Landing Gear',
+                              VariableName='nose wheel diameter',
+                              Default=0.3,
                               Path=self.filePath).getValue())
 
     @Input
@@ -179,62 +204,82 @@ class LandingGear(GeomBase):
         """
         return
 
+    @Input(settable=settable)
+    def htp(self):
+        """
+        Htp 3D representation
+        :return:
+        """
+        return
+
 
 
     # ### Attributes ##################################################################################################
 
     @Attribute
     def tipbackControl(self):
+
+        if self.tipbackAngle < 14.0:
+            print("Warning: the tip back angle is smaller than 14 deg.")
+            showwarning('Warning', 'The tipback angle is smaller than 14 deg.'
+                                   'Please increase longitudinal position value or increase the leg length')
+            return "Tipback angle is too small. Risk of tail strike on takeoff and landing."
         if self.tipbackAngle > self.maxTipbackAngle:
             showwarning("Warning", "Tip back angle is bigger than the angle between the CG anf wheel hub."
                                    " Please increase the gear height or increase the longitudinal position.")
             return "Please increase height"
         else:
-            return "No changes needed" #ToDo: non va bene il controllo cosi. ci deve essere una value inferiore di controllo (14 deg)
+            return "No changes needed"
 
     @Attribute
-    def hubLongPos(self):
+    def checkLateralAngle(self):
         """
-        Longitudinal position of the wheel hub
-        :Unit: [m]
-        :return:
-        """
-        longPos = self.fuselageLength * self.posFraction + self.longPos * self.cMAC
 
-        if longPos < self.cg:
-            print("Warning: the longitudinal position of the gear is less than the cg longitudinal location.")
-            showwarning('Warning', 'The main gear is in front of the center of gravity. Please increase the value '
-                                   'of the longitudinal gear position.')
-            longPos = self.cg + 0.5 * self.cMAC #the position is changed to something possible.
 
-        return longPos
+         :return:
+         """
+        lateral = 5 # deg
+        x = self.hubLatPos
+        y = -1 * self.hubHeightPos
+        z = self.hubLongPos
+        R = self.wheelRadius
+        rotationPoint = Point(x, y - R + 0.15 / cos(radians(lateral)), z)
+        piano = Plane(reference=rotationPoint, normal=Vector(-sin(radians(lateral)), cos(radians(lateral)), 0))
+        intShape = IntersectedShapes(shape_in=self.fusedWE, tool=piano)
+        int = intShape.edges
 
-    @Attribute
-    def hubHeightPos(self):
-        """
-        Length of the main landing gear length.
-        :Unit: [m]
-        :type: float
-        :return:
-        """
-        return self.height + self.fuselageDiameter / 2
+        if not int:
+            return "Lateral angle check is satisfied"
+        else:
+            showwarning("Warning", "The lateral clearance constraint is not satisfied. "
+                                   "Please increase gear height or move if further out.")
+            return "Lateral angle check is not satisfied. Please increase gear height or move if further out."
 
     @Attribute
-    def hubLatPos(self):
+    def lateralAngle(self):
         """
-        Lateral position of the wheel hub.
-        :Unit: [m]
-        :type: float
+
+
         :return:
         """
-        lat = self.latPos
-        if self.latPos < 1.0:
-            print("Warning: The lateral distance between the wheels is less than the fuselage diameter.")
-            showwarning('Warning', 'The lateral distance between the wheels is less than the fuselage diameter.'
-                                   ' Please increase the value of the lateral gear position.')
-            lat = 1.1 #ToDo: Harcoded o troviamo qualcosa id meglio?
+        if self.checkLateralAngle=="Lateral angle check is satisfied":
+            lateral = 5
+        else:
+            lateral = 0
+        x = self.hubLatPos
+        y = -1 * self.hubHeightPos
+        z = self.hubLongPos
+        R = self.wheelRadius
+        int = []
+        while int == []:
+            rotationPoint = Point(x, y - R, z)
 
-        return lat * self.fuselageDiameter / 2
+            piano = Plane(reference=rotationPoint, normal=Vector(-sin(radians(lateral)), cos(radians(lateral)), 0))
+            intShape = IntersectedShapes(shape_in=self.fusedWE, tool=piano)
+            int = intShape.edges
+            lateral += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
+
+        return lateral
 
     @Attribute
     def maxTipbackAngle(self):
@@ -245,12 +290,6 @@ class LandingGear(GeomBase):
         o = self.hubLongPos - self.cg
         a = self.hubHeightPos
         angle = degrees(atan(o / a))
-
-        if angle < 14.0:
-            print("Warning: the angle between CG and wheel hub is smaller than 14 deg.")
-            showwarning('Warning', 'The angle between CG and wheel hub is smaller than 14 deg.'
-                                   'Please increase longitudinal position or decrease the leg length')
-
         return angle
 
     @Attribute
@@ -271,32 +310,89 @@ class LandingGear(GeomBase):
 
             piano = Plane(reference=rotationPoint, normal=Vector(0, cos(radians(tipback)), -sin(radians(tipback))))
             int_shape = IntersectedShapes(shape_in=self.fuselage, tool=piano)
+            #ToDo: mettendeo self.fusedFH si cotrolla anche se tocca la coda. E molto pesante.
             int = int_shape.edges
             tipback += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
         return tipback
 
     @Attribute
-    def lateralAngle(self):
+    def hubLongPos(self):
         """
-
-
+        Longitudinal position of the wheel hub
+        :Unit: [m]
         :return:
         """
-        lateral = 0
-        x = self.hubLatPos
-        y = -1 * self.hubHeightPos
-        z = self.hubLongPos
-        R = self.wheelRadius
-        int = []
-        while int == []:
-            rotationPoint = Point(x, y - R, z)
+        longPos = self.fuselageLength * self.posFraction + self.longPos * self.cMAC
 
-            piano = Plane(reference=rotationPoint, normal=Vector(-sin(radians(lateral)), cos(radians(lateral)), 0))
-            intShape = IntersectedShapes(shape_in=self.fusedWE, tool=piano)
-            int = intShape.edges
-            lateral += self.tipbackPrecision #ToDo: la precisione del tpack e settabile. va bene?
-        return lateral
+        if longPos < self.cg:
+            print("Warning: the longitudinal position of the gear is less than the cg longitudinal location.")
+            showwarning('Warning', 'The main gear is in front of the center of gravity. Please increase the value '
+                                   'of the longitudinal gear position.')
+            longPos = self.cg + abs(self.hubHeightPos) * tan(radians(14))
 
+        return longPos
+
+    @Attribute
+    def noseHubLongPos(self):
+        """
+        Longitudinal position of the wheel hub
+        :Unit: [m]
+        :return:
+        """
+        return self.noseLongPos * self.fuselageLength
+
+    @Attribute
+    def hubHeightPos(self):
+        """
+        Length of the main landing gear length.
+        :Unit: [m]
+        :type: float
+        :return:
+        """
+        return self.height + self.fuselageDiameter / 2
+
+    @Attribute
+    def noseHeightPos(self):
+        """
+        Length of the nose landing gear length.
+        :Unit: [m]
+        :type: float
+        :return:
+        """
+        return self.height + self.fuselageDiameter / 2 - self.noseWheelRadius + self.wheelRadius
+
+    @Attribute
+    def hubLatPos(self):
+        """
+        Lateral position of the wheel hub with lateral tip constraint.
+        :Unit: [m]
+        :type: float
+        :return:
+        """
+        YmlgGiven = self.latPos * self.fuselageDiameter / 2
+        Ymlg = self.fuselageDiameter / 2
+        ln = self.cg - self.noseHubLongPos
+        lm = self.hubLongPos - self.cg
+        z = self.hubHeightPos + self.wheelRadius
+        phi = atan(Ymlg / (lm + ln))
+        proj = ln * sin(phi)
+        psi = degrees(atan(z / proj))
+
+        while psi > 55:
+
+            Ymlg += 0.01
+            phi = atan(Ymlg / (lm + ln))
+            proj = ln * sin(phi)
+            psi = degrees(atan(z / proj))
+
+        if YmlgGiven < Ymlg:
+            print("Warning: The lateral distance between the wheels is less than the tipover constraint.")
+            showwarning('Warning', 'The lateral distance between the wheels is less than the tipover constraint.'
+                                   ' Please increase the value of latPos to: ' + repr(Ymlg / (self.fuselageDiameter / 2)))
+        else:
+            Ymlg = YmlgGiven
+
+        return Ymlg
 
 ################
 
@@ -323,7 +419,7 @@ class LandingGear(GeomBase):
                                  hidden=not self.visualChecks)
 
     @Part
-    def lateralPoint(self):
+    def contactPoint(self):
         return Sphere(radius=0.04,
                       position=Point(self.hubLatPos, -1 * self.hubHeightPos - self.wheelRadius,
                      self.hubLongPos),
@@ -342,12 +438,18 @@ class LandingGear(GeomBase):
         return IntersectedShapes(shape_in=self.fusedWE,
                                  tool=self.lateralPlane,
                                  color='red',
-                                 hidden=not self.visualChecks) #ToDO: al momento si interseca con la win, ma deve farlo anche con i motori
+                                 hidden=not self.visualChecks)
 
     @Part
     def fusedWE(self):
         return Fused(shape_in=self.wing,
                      tool=self.engines,
+                     hidden=True)
+
+    @Part
+    def fusedFH(self):
+        return Fused(shape_in=self.fuselage,
+                     tool=self.htp,
                      hidden=True)
     #######################
 
@@ -364,7 +466,31 @@ class LandingGear(GeomBase):
                                                 'y', -1 * self.hubHeightPos,
                                                 'z', self.hubLongPos),
                                       Vector(0, 1, 0), radians(90)),
-                      hidden=False)
+                      hidden=True)
+
+    @Part
+    def noseWheel(self):
+        return Torus(major_radius=self.noseWheelRadius - self.noseWheelRadius / 3,
+                     minor_radius=self.noseWheelRadius / 3,
+                     position=rotate(translate(self.position,
+                                               'x', 0,
+                                               'y', -1 * self.noseHeightPos,
+                                               'z', self.noseHubLongPos),
+                                     Vector(0, 1, 0), radians(90)),
+                     hidden=False,
+                     color='black')
+
+    @Part
+    def noseHub(self):
+        return Cylinder(radius=3 * self.noseWheelRadius / 5,
+                        height=2 * self.noseWheelRadius / 3,
+                        position=rotate(translate(self.position,
+                                                  'x', - self.noseWheelRadius / 3,
+                                                  'y', -1 * self.noseHeightPos,
+                                                  'z', self.noseHubLongPos),
+                                        Vector(0, 1, 0), radians(90)),
+                        hidden=False,
+                        color='gray')
 
     @Part
     def wheel(self):
@@ -389,6 +515,22 @@ class LandingGear(GeomBase):
                                         Vector(0, 1, 0), radians(90)),
                         hidden=False,
                         color='gray')
+
+    @Part
+    def wheelLeft(self):
+        return MirroredShape(shape_in=self.wheel,
+                             reference_point=Point(),
+                             vector1=self.wheel.position.Vy,
+                             vector2=self.wheel.position.Vx,
+                             color='black')
+
+    @Part
+    def hubLeft(self):
+        return MirroredShape(shape_in=self.hub,
+                             reference_point=Point(),
+                             vector1=self.hub.position.Vy,
+                             vector2=self.hub.position.Vx,
+                             color='gray')
 
 
 if __name__ == '__main__':

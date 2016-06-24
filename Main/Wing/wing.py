@@ -27,7 +27,7 @@ class Wing(GeomBase):
 
         :rtype: boolean
         """
-        return True
+        return False
 
     @Input
     def xfoilAnalysis(self):
@@ -59,10 +59,13 @@ class Wing(GeomBase):
     @Input
     def maTechnology(self):
         """
-        Wing airfoil Mach technology parameter, higher values mean higher possible Mach
+        Wing airfoil Mach technology parameter, higher values mean higher possible Mach.
+        The technology factor in the formula is equal to 0.87 for NACA 6 airfoil and 1 to other conventional airfoils.
+
         :Unit: [ ]
         :rtype: float
         """
+        #ToDo: si deve rendere possibile la selezione in base all'airfoil?
         return 0.935
 
     @Input
@@ -98,13 +101,13 @@ class Wing(GeomBase):
         elif self.wingPosition == 'high wing':
             return 3 - self.sweep25 / 10 - 2
 
-    @Input
-    def posFraction(self):
+    @Attribute
+    def cylinderFraction(self):
         """
-        Wing position fraction of the fuselage, due to engine position
-        :Unit: [m]
-        :rtype: float
-        """
+            Wing position fraction of the fuselage, due to engine position
+            :Unit: [m]
+            :rtype: float
+            """
         if self.enginePos == 'wing':
             return 0.5
         elif self.enginePos == 'fuselage':
@@ -113,6 +116,17 @@ class Wing(GeomBase):
             showwarning("Warning", "Please choose between wing or fuselage mounted")
             return 0.5
 
+
+    @Input
+    def posFraction(self):
+        """
+        Wing position fraction of the fuselage, due to engine position
+        :Unit: [m]
+        :rtype: float
+        """
+        pos = (self.noseLength + self.cylinderLength * self.cylinderFraction) / self.fuselageLength
+        #ToDo: riguardando il ppt dice che la percentuale e'da prendere rispetto alla parte cilindrica del fuselage. Non di tutto il fuselage!
+        return pos
     @Input
     def visual(self):
         """
@@ -231,6 +245,24 @@ class Wing(GeomBase):
         :rtype: float
         """
         return 14.67
+
+    @Input(settable=settable)
+    def noseLength(self):
+        """
+        Nose length
+        :Unit: [m]
+        :rtype: float
+        """
+        return 3.0
+
+    @Input(settable=settable)
+    def cylinderLength(self):
+        """
+        Cylindrical part length
+        :Unit: [m]
+        :rtype: float
+        """
+        return 22.0
 
     # ### Attributes ##################################################################################################
 
@@ -452,9 +484,12 @@ class Wing(GeomBase):
         :Unit: [ ]
         :rtype: float
         """
-        return min(0.18, (((cos(radians(self.sweep50))**3) * (self.maTechnology - self.maDD *
+        tc = min(0.18, (((cos(radians(self.sweep50))**3) * (self.maTechnology - self.maDD *
                             cos(radians(self.sweep50)))) - 0.115 * self.clCruise**1.5) /
                             cos(radians(self.sweep50))**2)
+        if self.maDD < 0.4:
+            tc = 0.18
+        return tc
 
     @Attribute
     def longPos(self):
@@ -717,7 +752,7 @@ class Wing(GeomBase):
                     vertPosW=self.vertPos,
                     cTipW=self.chordTip,
                     pointTip=self.rightWing.edges[2].midpoint,
-                    hidden=self.wakeCheck)
+                    hidden=not self.wakeCheck)
 
     # ###### xFoil ################################################################################################
 

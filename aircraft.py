@@ -25,6 +25,10 @@ class Aircraft(GeomBase):
     """
 
     @Input
+    def projectName(self):
+        return "Preliminary tail sizing"
+
+    @Input
     def maCruise(self):
         """
         Cruise Mach number
@@ -106,7 +110,9 @@ class Aircraft(GeomBase):
 
     @Attribute
     def listValues(self):
-        lst = []
+        lst = [["Project name", self.projectName],
+               [None],
+               ["Component:", "Variable:", "Value:", "Unit:"]]
         lst.extend(self.fuselage.outputList)
         lst.extend(self.wingbase.outputList)
         lst.extend([["EOF"]])
@@ -125,7 +131,9 @@ class Aircraft(GeomBase):
                     hCruise=self.hCruise,
                     filePath=self.filePath,
                     cg=self.evaluations.cg,
-                    ac=self.evaluations.ac)
+                    ac=self.evaluations.ac,
+                    noseLength=self.fuselage.noseLength,
+                    cylinderLength=self.fuselage.cylinderLength)
 
     @Part
     def fuselage(self):
@@ -202,7 +210,8 @@ class Aircraft(GeomBase):
                            cg=self.evaluations.cg,
                            fuselage=self.fuselage.loft,
                            wing=self.wingbase.rightWing,
-                           engines=self.enginebase.engineSolid)
+                           engines=self.enginebase.engineSolid,
+                           htp = self.htpbase.rightTail)
     # TODO: aggiungere waring a controllo carrello
 
     @Part
@@ -231,7 +240,8 @@ class Aircraft(GeomBase):
                            nacelleDiameter=self.enginebase.nacelleDiameter,
                            nacelleLength=self.enginebase.nacelleLength,
                            fuselage=self.fuselage.loft,
-                           wing=self.wingbase.rightWing)
+                           wing=self.wingbase.rightWing,
+                           enginePos=self.enginebase.enginePos)
 
 
 if __name__ == '__main__':
