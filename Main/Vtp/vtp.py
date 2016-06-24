@@ -657,7 +657,7 @@ class Vtp(GeomBase):
                      longPos=self.longPos,
                      vertPos=self.vertPos,
                      loft=self.tail.solids[0],
-                     vertical=True,
+                     surface="vtp",
                      hidden=not self.xfoilAnalysis)
 
 if __name__ == '__main__':

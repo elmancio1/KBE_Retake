@@ -765,6 +765,7 @@ class Wing(GeomBase):
                      span=0.5*self.span,
                      longPos=self.longPos,
                      loft=self.rightWing.solids[0],
+                     surface="wing",
                      hidden=not self.xfoilAnalysis)
 
 

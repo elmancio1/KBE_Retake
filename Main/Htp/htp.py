@@ -800,6 +800,7 @@ class Htp(GeomBase):
                      span=0.5*self.span,
                      longPos=self.longPos,
                      loft=self.rightTail.solids[0],
+                     surface="htp",
                      hidden=not self.xfoilAnalysis)
 
 
