@@ -1,5 +1,5 @@
 from openpyxl import Workbook
-from decimal import *
+
 
 class ExcelOut:
 

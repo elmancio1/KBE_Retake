@@ -51,14 +51,13 @@ class Importer:
 
         elif fileExt == '.json':
 
-            from IOPorters.jsonIn import Json as VarImporter
+            from IOPorters.jsonIn import JsonIn as VarImporter
 
         elif fileExt == '.mat':
 
             pass
 
         else:
-            #showwarning("Warning","File type is not supported in this application. Please choose a different format")
             print ('LOG:    File type ' + repr(fileExt) + ' is not supported in this application. Variable '
                    + repr(self.variableName) + ' will set to the default value: ' + repr(self.default))
             return self.default

@@ -1,7 +1,7 @@
 import json
 
 
-class Json:
+class JsonIn:
 
     def __init__(self, Component, VariableName, Default, filePath):
         with open(filePath) as data_file:
