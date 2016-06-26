@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="03682f75-c838-45dc-bb0b-939e0fdc7504" name="Default" comment="">
+    <list default="true" id="03682f75-c838-45dc-bb0b-939e0fdc7504" name="Default" comment="risolvimento problemi">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Handler/IOPorters/excelOut.py" afterPath="$PROJECT_DIR$/Handler/IOPorters/excelOut.py" />
     </list>
     <ignored path="KBE_Retake.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,8 +32,8 @@
       <file leaf-file-name="aircraft.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/aircraft.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="143" column="25" selection-start-line="143" selection-start-column="25" selection-end-line="143" selection-end-column="25" />
+            <state relative-caret-position="340">
+              <caret line="153" column="0" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="29" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -40,21 +41,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fuselage.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Main/Fuselage/fuselage.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4403">
-              <caret line="279" column="55" selection-start-line="279" selection-start-column="52" selection-end-line="279" selection-end-column="55" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="defaultInput.json" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Input/Files/defaultInput.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="10" selection-end-column="30" />
+            <state relative-caret-position="289">
+              <caret line="17" column="3" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
               <folding />
             </state>
           </provider>
@@ -64,6 +55,16 @@
         <entry file="file://$PROJECT_DIR$/Example/jsonEx.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="250">
+              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitattributes" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitattributes">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
               <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
               <folding />
             </state>
@@ -80,11 +81,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="excelOut.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="excelOut.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Handler/IOPorters/excelOut.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+            <state relative-caret-position="284">
+              <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -102,7 +103,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="outporter.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="outporter.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Handler/outporter.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="488">
@@ -166,13 +167,13 @@
         <option value="$PROJECT_DIR$/Main/Airfoil/airfoil.py" />
         <option value="$PROJECT_DIR$/Main/Wing/wing.py" />
         <option value="$PROJECT_DIR$/Main/Vtp/vtp.py" />
-        <option value="$PROJECT_DIR$/Handler/IOPorters/excelOut.py" />
         <option value="$PROJECT_DIR$/aircraft.py" />
         <option value="$PROJECT_DIR$/.idea/workspace.xml" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/Input/Files/defaultInput.json" />
         <option value="$PROJECT_DIR$/Example/jsonEx.py" />
         <option value="$PROJECT_DIR$/Handler/outporter.py" />
+        <option value="$PROJECT_DIR$/Handler/IOPorters/excelOut.py" />
       </list>
     </option>
   </component>
@@ -862,7 +863,14 @@
       <option name="project" value="LOCAL" />
       <updated>1466936167180</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="risolvimento problemi">
+      <created>1466936178269</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1466936178269</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TodoView">
@@ -970,13 +978,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/Python27/Lib/logging/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="1170" column="0" selection-start-line="1170" selection-start-column="0" selection-end-line="1170" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Python27/Lib/site-packages/parapy/geom/occ/boolean.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="166">
@@ -1240,40 +1241,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/aircraft.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="143" column="25" selection-start-line="143" selection-start-column="25" selection-end-line="143" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-153">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Handler/IOPorters/excelOut.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Input/Files/A3XX.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1282,26 +1249,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Input/Files/defaultInput.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="10" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Output/jsonfile.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Example/jsonEx.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1323,6 +1274,64 @@
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitattributes">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="50" column="20" selection-start-line="50" selection-start-column="20" selection-end-line="50" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Example/jsonEx.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Input/Files/defaultInput.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="3" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/aircraft.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="153" column="0" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Handler/IOPorters/excelOut.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="284">
+          <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
+          <folding />
         </state>
       </provider>
     </entry>

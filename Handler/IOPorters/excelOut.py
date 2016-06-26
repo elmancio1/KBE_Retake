@@ -16,6 +16,14 @@ class ExcelOut:
 
         row = 1
         col = 1
+
+        lst = [["Project name", self.projectName],
+               [None],
+               ["Component:", "Variable:", "Value:", "Unit:"]]
+
+        lst.extend([["EOF"]])
+
+
         for line in self.listValues:
 
             for value in line:
