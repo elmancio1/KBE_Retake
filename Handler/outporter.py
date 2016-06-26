@@ -50,6 +50,9 @@ class Outporter:
             from IOPorters.excelOut import ExcelOut as VarOutporter
 
         elif fileExt == '.json':
+
+            outputPath = os.path.dirname(Output.__file__) + '\output ' + finalString + '.json'
+
             from IOPorters.jsonOut import JsonOutOut as VarOutporter
 
         else:
