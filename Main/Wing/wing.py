@@ -10,6 +10,7 @@ from Main.Airfoil.airfoil import Airfoil
 from Input import Airfoils
 from Main.Wing.wake import Wake
 from Handler.xFoil import Xfoil
+from parapy.lib.cst import points_to_cst
 import Tkinter, Tkconstants, tkFileDialog
 
 #ToDo: cambiare tutti gli input settable to attribute because of Palermo
@@ -147,6 +148,15 @@ class Wing(GeomBase):
         :rtype: float
         """
         return .5
+
+    @Input
+    def visc(self):
+        """
+        Trigger for viscous calculation in Q3D, 0 for inviscid and 1 for viscous analysis
+        :Unit: [ ]
+        :rtype: boolean
+        """
+        return 0
 
     window = Tk()
     window.wm_withdraw()
@@ -462,6 +472,68 @@ class Wing(GeomBase):
         return p0 * (1 - a * self.hCruise / T0)**(g / (R * a))
 
     @Attribute
+    def temperatureCruise(self):
+        """
+        Static temperature at cruise altitude
+        :Unit: [K]
+        :rtype: float
+        """
+        T0 = 288.15  # static temperature at sea level, [K]
+        a = 0.0065  # temperature gradient, [K/m]
+        if self.hCruise < 11000.:
+            return T0 - a * self.hCruise
+        else:
+            return 216.65
+
+    @Attribute
+    def densityCruise(self):
+        """
+        Static density at cruise altitude
+        :Unit: [kg/m^3]
+        :rtype: float
+        """
+        R = 287.  # specific gas constant, [J/kg K]
+        return self.pressureCruise / (R * self.temperatureCruise)
+
+    @Attribute
+    def viscosityCruise(self):
+        """
+        Static viscosity at cruise altitude, evaluated by Sutherland's law
+        :Unit: [ ]
+        :rtype: float
+        Source: http://www.cfd-online.com/Wiki/Sutherland's_law
+        """
+        Tref = 273.15  # reference temperature, [K]
+        Muref = 1.716e-5  # reference viscosity, [ ]
+        S = 110.4  # Sutherland temperature [K]
+        T = self.temperatureCruise
+        return Muref * (T / Tref)**1.5 * ((Tref + S) / (T + S))
+
+    @Attribute
+    def speedCruise(self):
+        """
+        Aircraft speed at cruise altitude
+        :Unit: [m/s]
+        :rtype: float
+        """
+        k = 1.4  # heat capacity ratio, [ ]
+        R = 287.  # specific gas constant, [J/kg K]
+        return self.maCruise * sqrt(k * R * self.temperatureCruise)
+
+    @Attribute
+    def re(self):
+        """
+        Aircraft Reynolds number evaluated at cruise altitude and spee, based on MAC
+        :Unit: [ ]
+        :rtype: float
+        """
+        rho = self.densityCruise
+        U = self.speedCruise
+        L = self.cMAC
+        mu = self.viscosityCruise
+        return (rho * U * L) / mu
+
+    @Attribute
     def dynamicPressure(self):
         """
         Dynamic pressure at aircraft speed and altitude
@@ -770,6 +842,84 @@ class Wing(GeomBase):
                      loft=self.rightWing.solids[0],
                      surface="wing",
                      hidden=not self.xfoilAnalysis)
+
+    # ### CST #########################################################################################################
+
+    @Attribute
+    def upperPointsRoot(self):
+        """
+        Points representing the upper part of root airfoil
+
+        :rtype:
+        """
+        curve = TrimmedCurve(self.curveRoot, 0, 0.5)
+        return curve.equispaced_points(100)
+
+    @Attribute
+    def cstUR(self):
+        """
+        cst coefficient representing the upper part of root airfoil
+
+        :rtype:
+        """
+        return points_to_cst(self.upperPointsRoot, 6, normalize=True)
+
+    @Attribute
+    def lowerPointsRoot(self):
+        """
+        Points representing the lower part of root airfoil
+
+        :rtype:
+        """
+        curve = TrimmedCurve(self.curveRoot, 0.5, 1)
+        return curve.equispaced_points(100)
+
+    @Attribute
+    def cstLR(self):
+        """
+        cst coefficient representing the lower part of root airfoil
+
+        :rtype:
+        """
+        return points_to_cst(self.lowerPointsRoot, 6, normalize=True)
+
+    @Attribute
+    def upperPointsTip(self):
+        """
+        Points representing the upper part of tip airfoil
+
+        :rtype:
+        """
+        curve = TrimmedCurve(self.curveTip, 0, 0.5)
+        return curve.equispaced_points(100)
+
+    @Attribute
+    def cstUT(self):
+        """
+        cst coefficient representing the upper part of tip airfoil
+
+        :rtype:
+        """
+        return points_to_cst(self.upperPointsRoot, 6, normalize=True)
+
+    @Attribute
+    def lowerPointsTip(self):
+        """
+        Points representing the lower part of tip airfoil
+
+        :rtype:
+        """
+        curve = TrimmedCurve(self.curveTip, 0.5, 1)
+        return curve.equispaced_points(100)
+
+    @Attribute
+    def cstLT(self):
+        """
+        cst coefficient representing the lower part of tip airfoil
+
+        :rtype:
+        """
+        return points_to_cst(self.lowerPointsTip, 6, normalize=True)
 
 
 if __name__ == '__main__':
