@@ -1,6 +1,7 @@
 from openpyxl import Workbook
 from openpyxl import load_workbook
 
+
 class Excel:
 
     def __init__(self, Component, VariableName, Default, filePath):
@@ -9,9 +10,6 @@ class Excel:
         self.component = Component
         self.variableName = VariableName
         self.default = Default
-
-
-
 
     def finder(self):
         componentRead = None

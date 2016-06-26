@@ -37,6 +37,7 @@ class Importer:
 
     ##### Importer selection based on file extension #####
 
+    @property
     def getValue(self):
         """
 
@@ -45,24 +46,26 @@ class Importer:
         fileExt = self.fileExtension(self.filePath)
 
         if fileExt == ".xlsx":
-            from IOPorters.excelIn import Excel as VarImporter
-            myImporter = VarImporter(Component=self.component,
-                              VariableName=self.variableName,
-                              Default=self.default,
-                              filePath=self.filePath)
-            return VarImporter.finder(myImporter)
 
-        elif fileExt == '.txt':
-            # ToDo: fare txt e magari anche Matlab
+            from IOPorters.excelIn import Excel as VarImporter
+
+        elif fileExt == '.json':
+
+            from IOPorters.jsonIn import JsonIn as VarImporter
+
+        elif fileExt == '.mat':
+
             pass
 
-        elif fileExt == '.dat':
-
-            airfoilPath = str(self.filePath)
-
         else:
-            #showwarning("Warning","File type is not supported in this application. Please choose a different format")
             print ('LOG:    File type ' + repr(fileExt) + ' is not supported in this application. Variable '
                    + repr(self.variableName) + ' will set to the default value: ' + repr(self.default))
             return self.default
+
+        myImporter = VarImporter(Component=self.component,
+                                 VariableName=self.variableName,
+                                 Default=self.default,
+                                 filePath=self.filePath)
+
+        return VarImporter.finder(myImporter)
 

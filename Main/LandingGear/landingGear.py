@@ -31,7 +31,7 @@ class LandingGear(GeomBase):
         return float(Importer(Component='Landing Gear',
                               VariableName='height',
                               Default=1.6,
-                              Path=self.filePath).getValue()) #ToDo: per value = 0 la ruota interseca il corpo dell'aereo
+                              Path=self.filePath).getValue) #ToDo: per value = 0 la ruota interseca il corpo dell'aereo
 
     @Input
     def longPos(self):
@@ -44,7 +44,7 @@ class LandingGear(GeomBase):
         return float(Importer(Component='Landing Gear',
                               VariableName='gearLongPos',
                               Default=0.6,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def noseLongPos(self):
@@ -57,7 +57,7 @@ class LandingGear(GeomBase):
         return float(Importer(Component='Landing Gear',
                               VariableName='noseGearLongPos',
                               Default=0.08,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
 
     @Input
@@ -70,7 +70,7 @@ class LandingGear(GeomBase):
         return float(Importer(Component='Landing Gear',
                               VariableName='gearLatPos',
                               Default=1.8,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def wheelRadius(self):
@@ -82,7 +82,7 @@ class LandingGear(GeomBase):
         return float(Importer(Component='Landing Gear',
                               VariableName='main wheel diameter',
                               Default=0.5,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def noseWheelRadius(self):
@@ -94,7 +94,7 @@ class LandingGear(GeomBase):
         return float(Importer(Component='Landing Gear',
                               VariableName='nose wheel diameter',
                               Default=0.3,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def tipbackPrecision(self):
