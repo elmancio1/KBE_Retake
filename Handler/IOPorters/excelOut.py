@@ -17,7 +17,7 @@ class ExcelOut:
         row = 1
         col = 1
 
-        lst = [["Project name", self.projectName],
+        lst = [["Project name", "Project Name"],
                [None],
                ["Component:", "Variable:", "Value:", "Unit:"]]
 

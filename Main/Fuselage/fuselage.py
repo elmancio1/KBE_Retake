@@ -329,6 +329,15 @@ class Fuselage(GeomBase):
         lst.append(["Fuselage"])
         lst.append([None, "Fuselage Lenght", self.fuselageLength, "m"])
         lst.append([None, "EOC"])
+        lst = {}
+        inputs ={
+            "Performance":
+                {"Fuselage Length": {"value": self.fuselageLength, "unit": "m"},
+                 "Fuselage Diameter": {"value": self.fuselageDiameter, "unit": "m"},
+                 "Fuselage Diameter": {"value": self.fuselageDiameter, "unit": "m"}}
+        }
+        lst.update(inputs)
+
 
         return lst
 
