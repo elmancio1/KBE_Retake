@@ -11,16 +11,6 @@ class Outporter:
     def __init__(self, ListValues, Path = []):
         self.listValues = ListValues
         self.filePath = Path
-    """
-    Handler that takes care of opening different format files.
-    Supported files are :
-        *txt
-        *excel
-        *csv
-        *matlab
-        *xml
-        """
-
 
     def fileName(self):
         """
