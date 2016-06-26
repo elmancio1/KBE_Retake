@@ -16,8 +16,6 @@ class Airfoil(GeomBase):
     window = Tk()
     window.wm_withdraw()
 
-    defaultPath = os.path.dirname(Airfoils.__file__) + '\NACA0012.dat'  # From the Airfoil folder path add name of
-                                                                       # default File
 
     # ### Input required from wing/tail planes ###################################################################
 
@@ -33,7 +31,7 @@ class Airfoil(GeomBase):
 
         :rtype: string
         """
-        return self.defaultPath
+        return os.path.dirname(Airfoils.__file__) + '\NACA0012.dat'
 
 
     @Input(settable=settable)

@@ -12,7 +12,7 @@ from Main.Wing.wake import Wake
 from Handler.xFoil import Xfoil
 import Tkinter, Tkconstants, tkFileDialog
 
-
+#ToDo: cambiare tutti gli input settable to attribute because of Palermo
 class Wing(GeomBase):
     """
     Basic class Wing

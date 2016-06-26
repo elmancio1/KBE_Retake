@@ -3,10 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="03682f75-c838-45dc-bb0b-939e0fdc7504" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Handler/IOPorters/excelIn.py" afterPath="$PROJECT_DIR$/Handler/IOPorters/excelIn.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Handler/IOPorters/jsonOut.py" afterPath="$PROJECT_DIR$/Handler/IOPorters/jsonOut.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Handler/outporter.py" afterPath="$PROJECT_DIR$/Handler/outporter.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/aircraft.py" afterPath="$PROJECT_DIR$/aircraft.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Main/Airfoil/airfoil.py" afterPath="$PROJECT_DIR$/Main/Airfoil/airfoil.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Main/Wing/wing.py" afterPath="$PROJECT_DIR$/Main/Wing/wing.py" />
     </list>
     <ignored path="KBE_Retake.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -32,11 +30,33 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="aircraft.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="aircraft.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/aircraft.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1071">
-              <caret line="102" column="68" selection-start-line="102" selection-start-column="68" selection-end-line="102" selection-end-column="68" />
+            <state relative-caret-position="1564">
+              <caret line="92" column="45" selection-start-line="92" selection-start-column="45" selection-end-line="92" selection-end-column="45" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="airfoil.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Main/Airfoil/airfoil.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="wing.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Main/Wing/wing.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2159">
+              <caret line="14" column="72" selection-start-line="14" selection-start-column="72" selection-end-line="14" selection-end-column="72" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -91,7 +111,7 @@
       <file leaf-file-name="importer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Handler/importer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="855">
+            <state relative-caret-position="507">
               <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
               <folding />
             </state>
@@ -139,7 +159,6 @@
         <option value="$PROJECT_DIR$/README" />
         <option value="$PROJECT_DIR$/Example/ComponentEx/airfoilEx.py" />
         <option value="$PROJECT_DIR$/Main/aircraft.py" />
-        <option value="$PROJECT_DIR$/Main/Airfoil/airfoil.py" />
         <option value="$PROJECT_DIR$/Handler/Importers/htpCalc.py" />
         <option value="$PROJECT_DIR$/Handler/vtpCalc.py" />
         <option value="$PROJECT_DIR$/Main/Fuselage/fuselage.py" />
@@ -158,12 +177,13 @@
         <option value="$PROJECT_DIR$/Handler/xFoil.py" />
         <option value="$PROJECT_DIR$/Main/Htp/htp.py" />
         <option value="$PROJECT_DIR$/Main/Vtp/vtp.py" />
-        <option value="$PROJECT_DIR$/Main/Wing/wing.py" />
         <option value="$PROJECT_DIR$/Handler/IOPorters/jsonOut.py" />
         <option value="$PROJECT_DIR$/Handler/importer.py" />
         <option value="$PROJECT_DIR$/Handler/outporter.py" />
         <option value="$PROJECT_DIR$/Handler/IOPorters/excelIn.py" />
         <option value="$PROJECT_DIR$/aircraft.py" />
+        <option value="$PROJECT_DIR$/Main/Airfoil/airfoil.py" />
+        <option value="$PROJECT_DIR$/Main/Wing/wing.py" />
       </list>
     </option>
   </component>
@@ -175,7 +195,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-7" />
-    <option name="width" value="974" />
+    <option name="width" value="911" />
     <option name="height" value="1047" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
@@ -218,6 +238,38 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="KBE_Retake" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="KBE_Retake" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="KBE_Retake" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="KBE_Retake" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="KBE_Retake" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Wing" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -905,23 +957,30 @@
       <option name="project" value="LOCAL" />
       <updated>1466787541918</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="risolvimento problemi">
+      <created>1466932417382</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1466932417382</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="974" height="1047" extended-state="0" />
+    <frame x="-7" y="0" width="911" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20192307" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21649484" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33972913" sideWeight="0.5063425" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295711" sideWeight="0.49788582" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.082056895" sideWeight="0.49788582" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28774616" sideWeight="0.4936575" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28774616" sideWeight="0.4936575" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32822758" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -964,7 +1023,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fuselage completed" />
     <MESSAGE value="wing and airfoil implementation started" />
     <MESSAGE value="wing and airfoil implementation - importing the airfoil" />
     <MESSAGE value="wing positioning" />
@@ -989,7 +1047,8 @@
     <MESSAGE value="xfoil completed" />
     <MESSAGE value="Airfoil added" />
     <MESSAGE value="Merge remote-tracking branch 'refs/remotes/origin/verticalTail'&#10;&#10;# Conflicts:&#10;#&#9;aircraft.py&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'refs/remotes/origin/verticalTail'&#10;&#10;# Conflicts:&#10;#&#9;aircraft.py&#10;" />
+    <MESSAGE value="risolvimento problemi" />
+    <option name="LAST_COMMIT_MESSAGE" value="risolvimento problemi" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -999,7 +1058,7 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="11" />
+      <option name="time" value="12" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1111,13 +1170,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Handler/Importers/htpCalc.py" />
-    <entry file="file://$PROJECT_DIR$/Main/Airfoil/airfoil.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="84" column="8" selection-start-line="84" selection-start-column="8" selection-end-line="84" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Python27/Lib/site-packages/parapy/geom/occ/surface.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -1270,16 +1322,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Main/Wing/wing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="602">
-          <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Main/Htp/htp.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="602">
@@ -1326,14 +1368,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Handler/importer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="855">
-          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Handler/outporter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
@@ -1362,10 +1396,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Handler/importer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="507">
+          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/aircraft.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="102" column="68" selection-start-line="102" selection-start-column="68" selection-end-line="102" selection-end-column="68" />
+        <state relative-caret-position="1564">
+          <caret line="92" column="45" selection-start-line="92" selection-start-column="45" selection-end-line="92" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Main/Airfoil/airfoil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Main/Wing/wing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2159">
+          <caret line="14" column="72" selection-start-line="14" selection-start-column="72" selection-end-line="14" selection-end-column="72" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
