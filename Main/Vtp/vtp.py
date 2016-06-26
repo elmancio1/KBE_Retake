@@ -12,6 +12,7 @@ from Handler.xFoil import Xfoil
 from Input import Airfoils
 import Tkinter, Tkconstants, tkFileDialog
 
+#ToDO: la coda esce leggermente dal fuselage a cuasa del suo sweep
 
 class Vtp(GeomBase):
     """

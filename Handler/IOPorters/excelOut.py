@@ -3,9 +3,8 @@ from openpyxl import Workbook
 
 class ExcelOut:
 
-    def __init__(self, Component, ListValues, outputPath):
+    def __init__(self, ListValues, outputPath):
         self.path = outputPath
-        self.component = Component
         self.listValues = ListValues
 
 

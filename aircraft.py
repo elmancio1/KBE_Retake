@@ -110,8 +110,7 @@ class Aircraft(GeomBase):
 
     @Attribute
     def outputResult(self):
-        return Outporter(Component='',
-                         ListValues=self.listValues,
+        return Outporter(ListValues=self.listValues,
                          Path=self.filePath).writeValues()
 
     @Attribute
@@ -142,8 +141,7 @@ class Aircraft(GeomBase):
 
     @Attribute
     def outputResult(self):
-        return Outporter(Component='Performance',
-                         ListValues=self.listValues,
+        return Outporter(ListValues=self.listValues,
                          Path=self.filePath).writeValues()
 
     @Attribute
