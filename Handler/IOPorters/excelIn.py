@@ -6,7 +6,7 @@ class Excel:
 
     def __init__(self, Component, VariableName, Default, filePath):
         self.excelFile = load_workbook(filePath)
-        self.sheet = self.excelFile['Sheet1']
+        self.sheet = self.excelFile.worksheets[0]
         self.component = Component
         self.variableName = VariableName
         self.default = Default

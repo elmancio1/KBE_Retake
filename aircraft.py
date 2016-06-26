@@ -18,7 +18,7 @@ from Main.Analysis.evaluations import Evaluations
 import tkFileDialog
 import os
 
-
+#ToDo: se il fuselage viene accorciato o rimpicciolito troppo va tutto a puttane... si deve assolutamente trovare una soluzione
 class Aircraft(GeomBase):
     """
     Basic class Aircraft
@@ -26,7 +26,10 @@ class Aircraft(GeomBase):
 
     @Input
     def projectName(self):
-        return "Preliminary tail sizing"
+        return str(Importer(Component='Project',
+                              VariableName='name',
+                              Default='Tail sizing',
+                              Path=self.filePath).getValue)
 
     @Input
     def maCruise(self):
@@ -38,7 +41,7 @@ class Aircraft(GeomBase):
         return float(Importer(Component='Performance',
                               VariableName='M cruise',
                               Default=0.77,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def wingLoading(self):
@@ -48,9 +51,9 @@ class Aircraft(GeomBase):
         :rtype: float
         """
         return float(Importer(Component='Performance',
-                              VariableName='wingLoading',
+                              VariableName='Wing Loading',
                               Default=5000.,
-                              Path=self.filePath).getValue())
+                              Path=self.filePath).getValue)
 
     @Input
     def mTOW(self):
@@ -59,7 +62,10 @@ class Aircraft(GeomBase):
         :Unit: [N]
         :rtype: float
         """
-        return 422713.
+        return float(Importer(Component='Performance',
+                              VariableName='MTOW',
+                              Default=422713.,
+                              Path=self.filePath).getValue)
 
     @Input
     def hCruise(self):
@@ -68,7 +74,10 @@ class Aircraft(GeomBase):
         :Unit: [m]
         :rtype: float
         """
-        return 10000.
+        return float(Importer(Component='Performance',
+                              VariableName='Cruise altitude',
+                              Default=10000.,
+                              Path=self.filePath).getValue)
 
     @Input
     def tailType(self):
@@ -77,15 +86,43 @@ class Aircraft(GeomBase):
         :Unit: [ ]
         :rtype: string
         """
-        tailType = askyesnocancel(title="Tail type selection",
-                                  message="Yes = T tail, No = cruciform, Cancel = conventional")
 
-        if tailType:
-            return 'T tail'
-        elif tailType is None:
-            return 'conventional'
-        else:
-            return 'cruciform'
+        return str(Importer(Component='Configuration',
+                              VariableName='Tail Type',
+                              Default='T tail',
+                              Path=self.filePath).getValue)
+
+    #### Attributes ###
+
+    @Attribute
+    def filePath(self):
+        """Returns an opened file in read mode.
+        This time the dialog just returns a filename and the file is opened by your own code.
+        """
+        defaultPath = os.path.dirname(Files.__file__)
+        defaultFile = os.path.dirname(Files.__file__) + '\defaultInput.json'
+        file_opt = options = {}
+        options['initialdir'] = defaultPath
+        options['initialfile'] = defaultFile
+        # get filename
+        filename = tkFileDialog.askopenfilename(**file_opt)
+        return str(filename)
+
+    @Attribute
+    def outputResult(self):
+        return Outporter(Component='',
+                         ListValues=self.listValues,
+                         Path=self.filePath).writeValues()
+
+    @Attribute
+    def listValues(self):
+        lst = [["Project name", self.projectName],
+               [None],
+               ["Component:", "Variable:", "Value:", "Unit:"]]
+        lst.extend(self.fuselage.outputList)
+        lst.extend(self.wingbase.outputList)
+        lst.extend([["EOF"]])
+        return lst
 
     # ### Attributes ##################################################################################################
 

@@ -2,6 +2,9 @@ import os
 import Output
 from time import gmtime, strftime
 import openpyxl
+from tkMessageBox import *
+
+
 class Outporter:
 
 
@@ -56,26 +59,20 @@ class Outporter:
             wb.save(outputPath)
 
             from IOPorters.excelOut import ExcelOut as VarOutporter
-            myOutporter = VarOutporter(Component=self.component,
-                                       ListValues=self.listValues,
-                                       outputPath=outputPath)
-            return VarOutporter.writer(myOutporter)
 
-        elif fileExt == '.txt':
-            # ToDo: fare txt e magari anche Matlab
-            pass
+        elif fileExt == '.json':
+            from IOPorters.jsonOut import JsonOutOut as VarOutporter
 
         else:
-            #showwarning("Warning","File type is not supported in this application. Please choose a different format")
-            print ('LOG:    File type ' + repr(fileExt) + ' is not supported in this application.')
-            outputPath = os.path.dirname(Output.__file__) + '\output ' + finalString + '.xlsx'
+            print ('Warning:    File type ' + repr(fileExt) + ' is not supported in this application. '
+                                                              'The file will be exported in .json format.')
+            showwarning("Warning", "File type " + repr(fileExt) + " is not supported in this application."
+                                                                  " The file will be exported in .json format.")
+            outputPath = os.path.dirname(Output.__file__) + '\output ' + finalString + '.json'
 
-            wb = openpyxl.Workbook()
+            from IOPorters.jsonOut import JsonOutOut as VarOutporter
 
-            wb.save(outputPath)
+        myOutporter = VarOutporter(ListValues=self.listValues,
+                                   outputPath=outputPath)
 
-            from IOPorters.excelOut import ExcelOut as VarOutporter
-            myOutporter = VarOutporter(Component=self.component,
-                                       ListValues=self.listValues,
-                                       outputPath=outputPath)
-            return VarOutporter.writer(myOutporter)
+        return VarOutporter.writer(myOutporter)
